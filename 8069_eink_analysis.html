@@ -122,11 +122,11 @@
 
 <nav class="stepnav" id="stepnav">
   <a href="#step1" class="active" data-step="1"><span class="n">01</span>現金流六大規則</a>
-  <a href="#step2" class="locked" data-step="2"><span class="n">02</span>基本資訊</a>
-  <a href="#step3" class="locked" data-step="3"><span class="n">03</span>法說會</a>
-  <a href="#step4" class="locked" data-step="4"><span class="n">04</span>營收趨勢</a>
-  <a href="#step5" class="locked" data-step="5"><span class="n">05</span>前瞻本益比</a>
-  <a href="#step6" class="locked" data-step="6"><span class="n">06</span>投資決策</a>
+  <a href="#step2" data-step="2"><span class="n">02</span>基本資訊</a>
+  <a href="#step3" data-step="3"><span class="n">03</span>法說會</a>
+  <a href="#step4" data-step="4"><span class="n">04</span>營收趨勢</a>
+  <a href="#step5" data-step="5"><span class="n">05</span>前瞻本益比</a>
+  <a href="#step6" data-step="6"><span class="n">06</span>投資決策</a>
 </nav>
 
 <main>
@@ -217,10 +217,240 @@
     <b>關於 GitHub 版控：</b> 目前這個分析環境的網路存取是關閉的，我暫時無法執行 <span style="font-family:var(--mono)">git push</span> 到你的 repository，即使你提供 Token 也會 push 失敗——這點會如實告知，不會假裝已推送成功。這份報告我會用檔案的方式提供給你，你可以自行下載或視需要手動上傳到 repo。
   </div>
 </section>
+
+<section class="pad" id="step2">
+  <span class="progress-tag">【第 2 步／共 6 步：基本資訊查詢】</span>
+
+  <div class="callout">
+    <b>公司基本資料：</b>元太科技（8069.TWO，上櫃，隸屬電子–光電產業），是全球電子紙顯示器（E Ink 電子紙）龍頭廠商，產品應用涵蓋電子書閱讀器、電子貨架標籤（ESL）、數位看板、電子筆記本等。2026 年第一季法說會揭露，公司產品組合正從傳統黑白電子產品轉向高毛利的彩色電子紙（Spectra™ 6），營業利益率明顯提升。
+  </div>
+
+  <h3>股價快照（非即時報價，僅供參考）</h3>
+  <table>
+    <thead><tr><th>查詢時間點</th><th>收盤價</th><th>漲跌</th><th>本益比（同業平均）</th></tr></thead>
+    <tbody>
+      <tr><td>2026/07/31 14:30</td><td>189.0</td><td class="pos">+7.00（+3.85%）</td><td>19.63（159.00）</td></tr>
+      <tr><td>2026/07/03 14:30</td><td>212.5</td><td class="pos">+7.00（+3.41%）</td><td>22.07（195.54）</td></tr>
+    </tbody>
+  </table>
+  <div class="snap-note">📎 兩筆為不同查詢時間點各自的收盤快照，不是同一頁面顯示的區間——股價在這段期間確實從 212.5 回落到 189.0。正式交易請以你的看盤軟體/券商 App 即時報價為準。資料來源：<a href="https://tw.stock.yahoo.com/quote/8069/dividend" style="color:var(--accent)">Yahoo股市(07/31)</a>、<a href="https://tw.stock.yahoo.com/quote/8069/eps" style="color:var(--accent)">Yahoo股市(07/03)</a></div>
+
+  <h3>EPS（每股盈餘）</h3>
+  <table>
+    <thead><tr><th>期別</th><th>單季EPS</th><th>季增率</th><th>年增率</th></tr></thead>
+    <tbody>
+      <tr><td>2026 Q1</td><td>2.41</td><td class="pos">+148.45%</td><td class="pos">+26.18%</td></tr>
+      <tr><td>2025 Q4</td><td>0.97</td><td class="neg">-73.57%</td><td class="neg">-68.51%</td></tr>
+      <tr><td>2025 Q3</td><td>3.67</td><td class="pos">+42.25%</td><td class="pos">+109.71%</td></tr>
+      <tr><td>2025 Q2</td><td>2.58</td><td class="pos">+35.08%</td><td class="pos">+46.59%</td></tr>
+      <tr><td>2025 Q1</td><td>1.91</td><td class="neg">-37.99%</td><td class="pos">+64.66%</td></tr>
+    </tbody>
+  </table>
+  <p><b>近四季（TTM）EPS 加總 ≈ 9.63 元</b>（2025 Q2～2026 Q1）。<b>2025 全年 EPS 為 9.14 元</b>，是公司歷年淨利首度突破百億元的一年。查證過程中沒有發現近 1-2 年有股票分割或減資，僅因員工認股權執行使流通股數略有增加（詳見股利段落），基期一致，EPS 逐季比較不需額外換算。</p>
+  <div class="snap-note">📎 資料來源：<a href="https://tw.stock.yahoo.com/quote/8069/eps" style="color:var(--accent)">Yahoo股市 每股盈餘</a></div>
+
+  <h3>股利與殖利率</h3>
+  <div class="callout">
+    元太<b>已連續 11 年發放股利，累計 33.46 元</b>，近 5 年平均現金殖利率 2.19%。最新一次（2025 年度）現金股利原公告每股 5.9 元，因員工認股權執行影響在外流通股數，實際調整為每股 <b>5.8882 元</b>，除息日 2026/07/20（除息日昨收 181.5 元，現金殖利率 3.24%），預計 2026/08/21 發放。以 07/31 最新收盤價 189.0 元計算，殖利率約 3.11%。
+  </div>
+  <div class="snap-note">📎 資料來源：<a href="https://tw.stock.yahoo.com/quote/8069/dividend" style="color:var(--accent)">Yahoo股市 股利政策</a>、<a href="https://finance.biggo.com.tw/news/twse_major_8069_1150701_144545" style="color:var(--accent)">BigGo財經（公司重訊）</a></div>
+
+  <h3>近期營收</h3>
+  <table>
+    <thead><tr><th>期別</th><th>營收</th><th>月增率</th><th>年增率</th></tr></thead>
+    <tbody>
+      <tr><td>2026年6月</td><td>40.41億</td><td class="pos">+23.2%</td><td class="neg">-0.6%</td></tr>
+      <tr><td>2026年1-6月累計</td><td>188.50億</td><td>—</td><td class="pos">+0.9%</td></tr>
+      <tr><td>2026 Q1（法說會揭露）</td><td>86.33億</td><td>—</td><td class="pos">+7%</td></tr>
+      <tr><td>2025全年</td><td>361.16億</td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <p>值得留意的落差：元太在 2026 年第一季法說會給出<b>全年營收成長 20-25% 的指引</b>（來自 ESL 電子貨架標籤、數位看板需求），但截至上半年累計營收年增僅 <b>+0.9%</b>，離全年指引仍有明顯距離，可能代表成長動能主要集中在下半年，這點會在後續步驟（法說會深入討論／營收趨勢）持續追蹤，暫不代表指引不可信，只是目前進度落後全年目標步調。</p>
+  <div class="snap-note">📎 資料來源：<a href="https://finance.technews.tw/2026/07/08/eih-8069-202606-financial-report" style="color:var(--accent)">TechNews科技新報（6月營收，07/08報導）</a>、<a href="https://poorstock.com/earningcall/8069" style="color:var(--accent)">散戶鬥嘴鼓 法說會整理（Q1財務數據）</a>、<a href="https://www.nstock.tw/%E5%85%83%E5%A4%AA%E5%81%9A%E4%BB%80%E9%BA%BC.html" style="color:var(--accent)">nStock（2025全年營收）</a></div>
+
+  <h3>法說會日期與連結</h3>
+  <div class="callout">
+    最新一次法說會：<b>2026/05/08</b>，說明 2026 年第一季財務與業務資訊。當季營收 86.33 億元（YoY +7%）、營業利益 28.14 億元（YoY +31%）、稅後淨利 27.8 億元（YoY +27%），毛利率攀升至近六成，主要受惠彩色電子紙 Spectra™ 6 出貨占比首度超越黑白產品。<br>
+    公司投資人關係官網：<a href="https://tw.eink.com/" style="color:var(--accent)">https://tw.eink.com/</a><br>
+    公開資訊觀測站簡報 PDF（僅供你自行點開查看，我無法直接解析此連結內容）：<a href="https://mopsov.twse.com.tw/nas/STR/806920260508M001.pdf" style="color:var(--accent)">mopsov.twse.com.tw 簡報連結</a><br>
+    第三方法說會彙整（含歷次日期與簡報連結）：<a href="https://poorstock.com/earningcall/8069" style="color:var(--accent)">散戶鬥嘴鼓 - 元太法說會整理</a>
+  </div>
+  <div class="snap-note">📎 上方 Q1 財務數字，我交叉比對了「散戶鬥嘴鼓」整理的法說會摘要與 CMoney 財經新聞報導兩個獨立來源，數字一致，可信度較高。MOPS 官網 PDF 連結本身因 robots.txt 限制無法由我直接讀取分析，僅供你自行點開查看。</div>
+
+  <div class="callout">
+    <b>第二步小結：</b>元太目前處於「傳統黑白電子紙 → 高毛利彩色電子紙」的產品轉型期，2026 Q1 獲利表現亮眼、殖利率約 3%，屬於中度成長股搭配溫和股息的組合。全年營收指引（+20-25%）與上半年實際進度（+0.9%）之間的落差，是後續步驟需要持續關注的重點。
+  </div>
+</section>
+
+<section class="pad" id="step3">
+  <span class="progress-tag">【第 3 步／共 6 步：詢問是否深入討論法說會資料】</span>
+  <div class="callout">
+    先概略瀏覽一下元太最近一次（2026/05/08，Q1）法說會的重點方向，這場法說會實際涵蓋了幾條不同的線索，不只是單一題材：
+    <ul style="margin:10px 0 4px; padding-left:20px;">
+      <li><b>產品組合轉型</b>：彩色電子紙 Spectra™ 6 出貨面積首度超越黑白產品，帶動毛利率攀升</li>
+      <li><b>產能擴產</b>：觀音廠分階段擴產，因應 ESL／數位看板需求</li>
+      <li><b>全年營收指引</b>：公司首次給出明確的 20-25% 全年成長指引，但上半年實際進度只有 +0.9%</li>
+      <li><b>新應用拓展</b>：跨出傳統顯示器，投入車用內裝、建築表面等「會思考的表面」應用</li>
+      <li><b>財務結構</b>：資產規模突破千億、每股淨值提升、信用評等調升至 twA</li>
+    </ul>
+    你想挑哪個方向深入聊聊？也可以直接跟我說你自己想問的問題。
+  </div>
+
+  <h3>深入討論：全年營收指引 20-25% vs 上半年實際 +0.9%，落差原因</h3>
+  <div class="callout">
+    <b>結論先講：</b>落差主要來自「單一大尺寸產線（H5）良率爬坡進度落後預期」，加上元太過去幾年的季節性節奏（H2 通常優於 H1），公司的成長假設本來就是<b>下半年集中發力</b>，不是上半年出了問題才臨時修正。
+  </div>
+
+  <h4>1. H5 大尺寸產線良率爬坡比預期慢</h4>
+  <p>元太用來生產大尺寸電子紙（數位看板應用）的新世代產線 H5，2025 年已量產，但 2026 年的重點任務是把良率拉升到內部標準，公司原本設定的目標時間點是<b>第三季</b>，比先前市場預期的時間更久。這代表 H1（尤其是數位看板這塊物聯網應用）的出貨量還沒有真正放量，成長動能要等 Q3 良率過關後才會顯現。同時公司規劃中的下一代產線 H6 要到 2026 年才裝機，2027 年才開始貢獻營收，代表今年的大尺寸產能成長幾乎全押在 H5 一條線上，一旦良率進度不如預期，短期內沒有替代產線可以補上。</p>
+
+  <h4>2. 公司自己揭露的季節性節奏：H2 通常優於 H1</h4>
+  <p>元太過去法說會揭露的營運節奏是 ESL（電子貨架標籤）市場有淡旺季：第二、三季通常是全年高點，第四季則因 ESL 進入傳統淡季、加上零售客戶庫存調整，部分訂單遞延到隔年第一季，使第四季成為全年相對低點。換句話說，公司給的全年指引本來就是「上半年打底、下半年衝刺」的節奏，不是單季表現不如預期後才臨時上修展望。</p>
+
+  <h4>3. 用數字反推下半年需要達到的水準</h4>
+  <table>
+    <thead><tr><th>項目</th><th>金額</th></tr></thead>
+    <tbody>
+      <tr><td>2025 全年營收</td><td>361.16 億</td></tr>
+      <tr><td>2026 指引下緣（+20%）</td><td>433.4 億</td></tr>
+      <tr><td>2026 指引上緣（+25%）</td><td>451.5 億</td></tr>
+      <tr><td>2026 H1 實際</td><td>188.50 億</td></tr>
+      <tr><td class="pos">要達成指引，H2 需要達到</td><td class="pos">244.9～263.0 億</td></tr>
+    </tbody>
+  </table>
+  <p>也就是說，下半年營收大約要比上半年再高出 30%～40%，才能讓全年落在公司指引區間內。這個數字本身不算誇張——過去元太的 Q2、Q3 本來就常是全年高點——但確實高度依賴 H5 良率如期在 Q3 達標，一旦良率爬坡再度延遲，全年指引就有落空風險。</p>
+
+  <h4>4. 市場法人的態度：喜憂參半</h4>
+  <p>值得留意的是，即使公司給出樂觀的全年指引，部分外資券商在今年稍早仍下修目標價（歐系從 305 元下修至 236 元、日系從 291 元下修至 256 元），主要考量正是大尺寸產線良率進度與記憶體等零組件漲價對消費性電子產品（電子書、電子筆記本）的成本壓力，顯示市場對「H2 加速」這個假設本身也還在觀望，並非全面買單。</p>
+
+  <div class="snap-note">📎 資料來源：<a href="https://tw.stock.yahoo.com/news/%E5%85%83%E5%A4%AA%E4%B8%8A%E5%8D%8A%E5%B9%B4%E7%87%9F%E6%94%B6%E7%8D%B2%E5%88%A9%E9%80%90%E5%AD%A3%E5%89%B5%E6%AC%A1%E9%AB%98-2026%E5%B9%B4%E6%A5%AD%E7%B8%BE%E5%B0%87%E8%B6%85%E8%B6%8A%E5%8E%BB%E5%B9%B4%E6%B0%B4%E6%BA%96-085014199.html" style="color:var(--accent)">MoneyDJ／時報資訊（2026/03/17，經Yahoo股市轉載）</a>、<a href="https://www.chinatimes.com/realtimenews/20260511001772-260410" style="color:var(--accent)">時報資訊（2026/05/11）</a>、<a href="https://uanalyze.com.tw/articles/9572149595" style="color:var(--accent)">優分析UAnalyze（H5/H6產線時程）</a>、<a href="https://fnc.ebc.net.tw/fncnews/stock/195674" style="color:var(--accent)">東森財經新聞（公司揭露之季節性節奏，原載於2025年8月法說會，用於說明公司歷年慣例模式）</a>。下半年所需營收金額（244.9～263.0億）為本人依據公司財測與已知數字自行反推計算，非公司或法人直接公布之數字，請留意這是推算值。</div>
+</section>
+
+<section class="pad" id="step4">
+  <span class="progress-tag">【第 4 步／共 6 步：營收趨勢視覺化】</span>
+
+  <div class="callout">
+    <b>資料來源：</b>使用者提供之 Goodinfo 月營收截圖（2025/01～2026/06，共 18 期），下方取最近 12 期（2025/07～2026/06）視覺化。
+  </div>
+
+  <h3>近 12 期單月營收</h3>
+  <table>
+    <thead><tr><th>月份</th><th>單月營收(億)</th><th>月增%</th><th>年增%</th></tr></thead>
+    <tbody>
+      <tr><td>2025/07</td><td>38.96</td><td class="neg">-4.18</td><td class="pos">+29.3</td></tr>
+      <tr><td>2025/08</td><td>33.36</td><td class="neg">-14.4</td><td class="pos">+8.33</td></tr>
+      <tr><td>2025/09</td><td>31.82</td><td class="neg">-4.61</td><td class="pos">+2.8</td></tr>
+      <tr><td>2025/10</td><td>21.49</td><td class="neg">-32.5</td><td class="neg">-34.2</td></tr>
+      <tr><td>2025/11</td><td>22.93</td><td class="pos">+6.73</td><td class="neg">-24.8</td></tr>
+      <tr><td>2025/12</td><td>25.74</td><td class="pos">+12.2</td><td class="neg">-23.3</td></tr>
+      <tr><td>2026/01</td><td>27.8</td><td class="pos">+8</td><td class="pos">+22.9</td></tr>
+      <tr><td>2026/02</td><td>26.04</td><td class="neg">-6.35</td><td class="pos">+0.62</td></tr>
+      <tr><td>2026/03</td><td>32.5</td><td class="pos">+24.8</td><td class="pos">+1.26</td></tr>
+      <tr><td>2026/04</td><td>28.95</td><td class="neg">-10.9</td><td class="neg">-12.6</td></tr>
+      <tr><td>2026/05</td><td>32.8</td><td class="pos">+13.3</td><td class="pos">+0.97</td></tr>
+      <tr><td>2026/06</td><td>40.41</td><td class="pos">+23.2</td><td class="neg">-0.62</td></tr>
+    </tbody>
+  </table>
+
+  <div class="chart-wrap"><div id="chart-rev"></div></div>
+
+  <p>從長條圖可以清楚看到兩件事，而且都跟我們前面第三步討論的內容互相呼應：</p>
+  <ol style="padding-left:20px;">
+    <li><b>2025 年 10-12 月是明顯的低谷</b>（21.49、22.93、25.74 億，年增率連 3 個月呈兩位數負成長），正好對應公司法說會揭露「ESL 進入傳統淡季、客戶庫存調整」的第四季季節性低點，不是營運突然轉壞，是每年固定的節奏。</li>
+    <li><b>2026 年上半年逐月呈現「打底、緩步墊高」的走勢</b>（1月27.8 → 6月40.41），6 月單月營收年增率雖只有 -0.62%（幾乎打平去年同期），但月增率高達 +23.2%，顯示營收正在往上墊，只是年增率因為去年基期（2025年下半年本身也不低）而顯得平淡。這與我們第三步分析「H5 大尺寸產線良率要到 Q3 才達標」的判斷一致——上半年還在爬坡期，尚未看到年增率明顯轉正。</li>
+  </ol>
+  <p>累計來看，2026 年 1-6 月單月數字加總為 <b>188.50 億</b>，與第二步查到的官方累計數字完全吻合，交叉驗證沒有問題。</p>
+
+  <div class="snap-note">📎 資料來源：使用者提供之 Goodinfo 月營收截圖（2025/01～2026/06）。長條圖標色說明：<span style="color:var(--c-peak); font-weight:600;">米色＝近12期高峰（2026/06，40.41億）</span>、<span style="color:var(--c-trough); font-weight:600;">粉色＝近12期谷底（2025/10，21.49億）</span>。</div>
+</section>
+
+<section class="pad" id="step5">
+  <span class="progress-tag">【第 5 步／共 6 步：前瞻本益比／EPS 預估】</span>
+
+  <div class="callout">
+    <b>法人共識（FactSet，14 位分析師，2026/06/20 最新一次調查）：</b>2026 年 EPS 預估中位數 <b>12.00 元</b>（區間 9.55～14.24 元）；2027 年中位數 13.72 元（11.81～17.62 元）；2028 年中位數 16.00 元（15.06～17.55 元）。
+  </div>
+
+  <h3>市場預估 EPS（法人共識，區間呈現）</h3>
+  <table>
+    <thead><tr><th>年度</th><th>最低</th><th>中位數</th><th>最高</th></tr></thead>
+    <tbody>
+      <tr><td>2026E</td><td>9.55</td><td>12.00</td><td>14.24</td></tr>
+      <tr><td>2027E</td><td>11.81</td><td>13.72</td><td>17.62</td></tr>
+      <tr><td>2028E</td><td>15.06</td><td>16.00</td><td>17.55</td></tr>
+    </tbody>
+  </table>
+
+  <h3>隱含前瞻本益比（現在貴不貴）</h3>
+  <p>以 07/31 最新收盤價 189.0 元計算，<b>股價 ÷ 預估EPS</b>：</p>
+  <table>
+    <thead><tr><th>年度</th><th>股價</th><th>預估EPS(中位數)</th><th>隱含本益比</th></tr></thead>
+    <tbody>
+      <tr><td>2026E</td><td>189.0</td><td>12.00</td><td>15.8x</td></tr>
+      <tr><td>2027E</td><td>189.0</td><td>13.72</td><td>13.8x</td></tr>
+      <tr><td>2028E</td><td>189.0</td><td>16.00</td><td>11.8x</td></tr>
+    </tbody>
+  </table>
+  <p>目前股價對應 2026 年預估獲利大約 15.8 倍本益比，比公司近幾年常見的 20 倍以上評價區間明顯偏低——這代表市場目前給元太的評價偏保守，還沒有完全買單那套「H2 加速、全年+20~25%成長」的樂觀假設。</p>
+
+  <h3>目標本益比法（合理價可能落在哪）</h3>
+  <p>用 <b>預估EPS × 假設合理倍數</b> 反推目標價區間（以 2026E EPS 中位數 12.00 元為基礎，設 3 組情境）：</p>
+  <table>
+    <thead><tr><th>假設本益比</th><th>推算目標價</th></tr></thead>
+    <tbody>
+      <tr><td>20倍</td><td>240 元</td></tr>
+      <tr><td>25倍</td><td>300 元</td></tr>
+      <tr><td>30倍</td><td>360 元</td></tr>
+    </tbody>
+  </table>
+  <p>這跟隱含本益比是同一個公式的不同用法，不是同一件事：前者是已知股價反推倍數，後者是假設倍數反推目標價，這裡算出的價格對「倍數怎麼選」高度敏感，只是敏感度試算，不是預測。實際上 FactSet 彙整的法人目標價中位數落在 <b>240～246 元</b> 附近（截至 2026/06 的最新調查），與 20 倍情境接近，但個別券商目標價分歧很大，過去甚至出現過 200～355 元的極端區間。</p>
+
+  <h3>誠實揭露：預估的不確定性</h3>
+  <div class="callout warn">
+    元太的分析師 2026 年 EPS 預估在最近幾個月反覆修正：<b>11.1 元（04月）→ 10.96 元 → 11.55 元（05月）→ 11.8 元 → 12.00 元（06月）</b>，目標價也在 215～245 元之間來回調整，顯示法人自己對「H5 良率何時真正達標」「H2 是否真能加速」這兩件事也還沒有一致的答案。這不是元太特有的現象，但提醒你：法人預估是「假設情境下的合理推估」，不是保證值，過度信任單一數字（尤其是最高估值 14.24 元這種樂觀情境）需要謹慎。
+  </div>
+  <div class="snap-note">📎 資料來源：<a href="https://today.line.me/tw/v3/article/8nLW72R" style="color:var(--accent)">鉅亨網／LINE TODAY（FactSet調查，2026/06/20）</a>、<a href="https://news.cnyes.com/news/id/6424729" style="color:var(--accent)">鉅亨網（2026/04）</a>、<a href="https://www.sinotrade.com.tw/richclub/news/6a2b53f8de5d6e550464850c" style="color:var(--accent)">豐雲學堂（目標價調降，2026/06/12）</a>、<a href="https://today.line.me/tw/v3/article/vX3RvzK" style="color:var(--accent)">鉅亨網（目標價歷史區間，2026/01）</a>。隱含本益比與目標本益比法之計算結果為本人依據上述法人共識數字自行換算，非法人直接公布的計算結果。</div>
+</section>
+
+<section class="pad" id="step6">
+  <span class="progress-tag">【第 6 步／共 6 步：投資決策推理】</span>
+
+  <div class="callout warn">
+    <b>先聲明：</b>以下是我根據前五步分析做的推理與觀點，不是專業投資建議，我不是理財顧問或證券分析師，實際投資決策請自行判斷並承擔風險。
+  </div>
+
+  <h3>核心切入點：呼應第一步的現金流結論</h3>
+  <p>第一步的現金流盲測結論是「良好但有一個具體弱點」：五項可評分規則平均約 71 分，資本支出多能自行內部資金支應（規則四評分 85），但<b>規則五（A是否大於稅前淨利 D）近三個完整年度（2022、2024、2025）都不通過</b>，代表帳面獲利成長速度已經連續超前實際營業現金流入好幾年。這個訊號在後續步驟裡沒有消失——反而在第五步看到法人對 EPS 預估的持續上修（甚至最高估值上看14.24元），如果獲利的「含金量」問題沒有改善，未來財報一旦公布，帳面數字和實際現金流的落差可能會比市場預期的更明顯。</p>
+
+  <h3>若尚未持有：會不會進場？</h3>
+  <div class="callout">
+    <b>傾向：先觀察，不急著追價。</b>目前股價對應 2026 年預估獲利約 15.8 倍本益比，比公司歷史常見的 20 倍以上評價明顯便宜，理論上有一定安全邊際；但這個便宜是因為市場還沒完全相信「H2 加速」的假設，而這個假設本身高度依賴 H5 產線良率能否如期在第三季（也就是現在，2026 年 7-9 月）達標。這件事目前<b>還沒有答案</b>，屬於尚未發生、需要等待驗證的訊號。
+  </div>
+  <p><b>具體觀察訊號（尚未發生，需要驗證）：</b></p>
+  <ul style="padding-left:20px;">
+    <li>2026 年 9 月單月營收是否明顯優於 6 月的 40.41 億（若能看到年增率轉正、且金額站上 40 億以上，代表 H5 良率爬坡確實有兌現）</li>
+    <li>公司下一次法說會（通常落在 11 月，說明 Q3 財報）是否重申或上修全年 20-25% 成長指引，而不是悄悄下修</li>
+  </ul>
+  <p>如果這兩個訊號都確認轉強，可以考慮分批進場；如果 9 月營收仍然疲弱、Q3 法說會下修指引，則代表目前的便宜評價是合理的，不必急著卡位。</p>
+
+  <h3>若已經持有：續抱還是賣出？</h3>
+  <div class="callout">
+    <b>傾向：續抱觀察，但不是無條件抱到底。</b>目前殖利率約 3%、獲利創高、現金流整體體質良好，沒有立即賣出的急迫理由；規則五的獲利品質疑慮是提醒你保持警覺，不是要你現在出場的訊號。
+  </div>
+  <p><b>具體觀察訊號（尚未發生，需要驗證）：</b></p>
+  <ul style="padding-left:20px;">
+    <li>2027 年公布的 2026 年度財報中，A（營業活動現金流）是否重新回到大於稅前淨利 D 的狀態——如果連續第四年不通過，獲利品質的疑慮會從「留意」升級為「明確警訊」</li>
+    <li>9-10 月營收若連續兩個月不如預期（低於 8 月同期或月增轉負超過一次），可能代表 H5 良率爬坡進度落後，這時可以考慮減碼觀察，而不是等到全年財報公布才反應</li>
+  </ul>
+
+  <div class="callout">
+    <b>總結：</b>元太現在是一檔「現金流體質良好、但獲利品質有近三年瑕疵、正處於產品轉型與產能爬坡關鍵期」的股票。它的故事能不能兌現，關鍵不在於故事本身好不好聽，而在於接下來 1-2 個月（9 月營收）跟年底前（Q3 財報、法說會）能不能拿出具體數字驗證。這就是為什麼投資決策不建議現在立刻下定論，而是設定好上面這些具體條件，等答案揭曉再行動。
+  </div>
+</section>
 </main>
 
 <footer class="report-footer">
-  <span>報告版本 v1.0（第 1 步）</span>
+  <span>報告版本 v4.0（完整六步驟）</span>
   <span id="gen-time"></span>
 </footer>
 
@@ -320,6 +550,11 @@
     </div>`;
   }
   dualBarChart('chart-bc', years, B, C);
+
+  // Step 4: revenue bar chart (last 12 months)
+  const revMonths = ["2025/07","2025/08","2025/09","2025/10","2025/11","2025/12","2026/01","2026/02","2026/03","2026/04","2026/05","2026/06"];
+  const revData = [38.96,33.36,31.82,21.49,22.93,25.74,27.8,26.04,32.5,28.95,32.8,40.41];
+  barChart('chart-rev', revMonths, revData, '億');
 
   // stepnav: click smooth scroll (only unlocked)
   document.querySelectorAll('nav.stepnav a:not(.locked)').forEach(a=>{
