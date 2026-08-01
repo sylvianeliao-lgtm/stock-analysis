@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>元太科技(8069) 現金流六大規則分析</title>
+<style>
+  :root{
+    --paper:#EDEAE3;
+    --paper-card:#F6F4EF;
+    --ink:#211F1C;
+    --ink-soft:#5B584F;
+    --rule:#CFC9BA;
+    --accent:#2B5D50;
+    --accent-soft:#D9E4DF;
+    --negv:#AE3B3B;
+    --posv:#2F6B4F;
+    --c-peak:#E8C468;
+    --c-trough:#D98A93;
+    --locked:#B8B4AA;
+    --serif: "Source Serif Pro", "Noto Serif TC", Georgia, serif;
+    --sans: "IBM Plex Sans", "Noto Sans TC", -apple-system, sans-serif;
+    --mono: "IBM Plex Mono", "Roboto Mono", monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); line-height:1.7; padding-bottom:80px;
+  }
+  header.top{
+    background:var(--ink); color:var(--paper); padding:28px 24px 20px;
+    position:relative; overflow:hidden;
+  }
+  header.top::before{
+    content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px;
+    border-radius:50%; background:radial-gradient(circle, rgba(237,234,227,0.08), transparent 70%);
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent-soft); opacity:.85;
+  }
+  h1{font-family:var(--serif); font-weight:600; font-size:28px; margin:6px 0 2px;}
+  .subtitle{font-family:var(--mono); font-size:13px; color:#C9C4B8;}
+
+  nav.stepnav{
+    position:sticky; top:0; z-index:50; background:var(--paper);
+    border-bottom:1px solid var(--rule); display:flex; overflow-x:auto;
+    padding:0 12px;
+  }
+  nav.stepnav a{
+    flex:0 0 auto; padding:12px 14px; font-family:var(--mono); font-size:12.5px;
+    color:var(--ink-soft); text-decoration:none; border-bottom:3px solid transparent;
+    white-space:nowrap; transition:color .2s, border-color .2s;
+  }
+  nav.stepnav a.active{ color:var(--ink); border-bottom-color:var(--accent); font-weight:600; }
+  nav.stepnav a.locked{ color:var(--locked); cursor:default; pointer-events:none; }
+  nav.stepnav a .n{ font-family:var(--mono); opacity:.6; margin-right:4px; }
+
+  main{max-width:920px; margin:0 auto; padding:28px 20px 60px;}
+  section.pad{padding:14px 0 40px;}
+  .progress-tag{
+    font-family:var(--mono); font-size:12px; letter-spacing:.06em; color:var(--accent);
+    background:var(--accent-soft); display:inline-block; padding:4px 10px; border-radius:2px;
+    margin-bottom:14px;
+  }
+  h2{font-family:var(--serif); font-size:22px; margin:28px 0 10px; border-bottom:1px solid var(--rule); padding-bottom:8px;}
+  h3{font-family:var(--serif); font-size:17px; margin:20px 0 8px; color:var(--ink);}
+  .callout{
+    border-left:4px solid var(--accent); background:var(--paper-card);
+    padding:14px 16px; margin:16px 0; border-radius:0 4px 4px 0;
+  }
+  .callout.warn{border-left-color:var(--negv); }
+  .callout b{color:var(--accent);}
+  .callout.warn b{color:var(--negv);}
+
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-family:var(--mono); font-size:13px;}
+  th,td{padding:7px 8px; text-align:right; border-bottom:1px solid var(--rule);}
+  th{background:var(--ink); color:var(--paper); font-family:var(--sans); font-size:12.5px; font-weight:500;}
+  td:first-child, th:first-child{text-align:left;}
+  tr:nth-child(even) td{background:rgba(0,0,0,0.02);}
+  .neg{color:var(--negv); font-weight:600;}
+  .pos{color:var(--posv);}
+  .pass{color:var(--posv); font-weight:600;}
+  .fail{color:var(--negv); font-weight:600;}
+  .quarter-row td{opacity:.72; font-style:italic;}
+
+  .chart-wrap{margin:16px 0 8px;}
+  svg text{font-family:var(--mono);}
+  .legend{display:flex; gap:16px; font-family:var(--mono); font-size:12px; margin-top:4px; color:var(--ink-soft);}
+  .legend span{display:inline-flex; align-items:center; gap:5px;}
+  .swatch{width:10px; height:10px; display:inline-block; border-radius:2px;}
+
+  .snap-note{font-family:var(--mono); font-size:11.5px; color:var(--ink-soft); margin-top:6px;}
+  .score-board{
+    display:flex; gap:14px; flex-wrap:wrap; margin:18px 0;
+  }
+  .score-card{
+    flex:1 1 140px; background:var(--paper-card); border:1px solid var(--rule);
+    padding:12px 14px; border-radius:4px;
+  }
+  .score-card .num{font-family:var(--serif); font-size:26px; font-weight:700;}
+  .score-card .label{font-family:var(--mono); font-size:11.5px; color:var(--ink-soft);}
+
+  footer.report-footer{
+    max-width:920px; margin:40px auto 0; padding:16px 20px; border-top:1px solid var(--rule);
+    font-family:var(--mono); font-size:11.5px; color:var(--ink-soft); display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .flash-refresh{ animation: inkflash .35s ease-out; }
+  }
+  @keyframes inkflash{ 0%{ filter:invert(1); } 100%{ filter:invert(0); } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">台股個股初步分析　STEP 1 / 6</div>
+  <h1>元太科技 8069　現金流量六大規則分析</h1>
+  <div class="subtitle">盲測階段：僅根據現金流量表數字判斷，尚未查證股價／EPS／產業背景</div>
+</header>
+
+<nav class="stepnav" id="stepnav">
+  <a href="#step1" class="active" data-step="1"><span class="n">01</span>現金流六大規則</a>
+  <a href="#step2" class="locked" data-step="2"><span class="n">02</span>基本資訊</a>
+  <a href="#step3" class="locked" data-step="3"><span class="n">03</span>法說會</a>
+  <a href="#step4" class="locked" data-step="4"><span class="n">04</span>營收趨勢</a>
+  <a href="#step5" class="locked" data-step="5"><span class="n">05</span>前瞻本益比</a>
+  <a href="#step6" class="locked" data-step="6"><span class="n">06</span>投資決策</a>
+</nav>
+
+<main>
+<section class="pad" id="step1">
+  <span class="progress-tag">【第 1 步／共 6 步：現金流量表六大規則分析】</span>
+
+  <div class="callout">
+    <b>暫定結論：</b> 五項可評分規則平均約 <b>71 分（良好，60–79%）</b>，本業現金流長期呈成長趨勢、資本支出多能自行內部資金支應。但<b>規則五（A 是否大於稅前淨利 D）僅 41.7% 通過</b>，尤其 2021、2022、2024、2025 年稅前淨利明顯高於營業現金流，獲利品質需留意。<br>
+    <b>缺口提醒：</b> 你提供的截圖沒有「期末現金餘額（E）」欄位，規則六暫無法評分，下方會說明如何補齊。
+  </div>
+
+  <h3>現金流量原始數據（使用者提供）</h3>
+  <table>
+    <thead>
+      <tr><th>年度</th><th>A 營業活動</th><th>B 投資活動</th><th>C 融資活動</th><th>D 稅前淨利</th></tr>
+    </thead>
+    <tbody id="cashflow-table"></tbody>
+  </table>
+  <div class="snap-note">📎 資料來源：使用者提供之現金流量表截圖（含年度股價、獲利欄位）。本步驟依規則僅擷取 A／B／C／D 四項數字進行盲測分析，不引用股價、EPS 或產業背景。</div>
+
+  <h2>規則一：A（營業活動現金流量）逐年成長趨勢</h2>
+  <div class="chart-wrap"><div id="chart-a"></div></div>
+  <p>從數字現象看，A 從 2014 年 42 億出發，2015、2018 兩年明顯回落（24.6 億、28.5 億），但此後幾乎每 2–3 年墊高一階：2020 年 49.2 億 → 2023 年一舉衝上 106 億 → 2024 年回落至 71.1 億 → 2025 年回升到 96 億。整體呈「震盪式墊高」而非單調直線成長。<br>
+  <b>個性標籤：「穩健造血、偶有喘息」型</b>——本業現金流長期方向向上，但波動幅度不小，說明營運現金流會隨資本支出週期或訂單淡旺季起伏，不是每年都線性成長。（26Q1 單季 22.1 億僅供參考，不代表全年水準，尚待後續季度資料確認全年趨勢。）</p>
+  <div class="score-card" style="max-width:220px;"><div class="num">75</div><div class="label">規則一評分</div></div>
+
+  <h2>規則二：B（投資活動現金流量）投資紀律評估</h2>
+  <div class="chart-wrap"><div id="chart-b"></div></div>
+  <p>B 在 12 個完整年度中有 9 年為負值，且多年呈現大幅負值（2018 年 -67.8 億、2021 年 -80.2 億、2023 年 -83.3 億），代表元太持續且大手筆地投入資本支出。作為面板／電子紙這類資本密集產業，長期重度投資本身屬正常現象，不宜單純以「負值越大越差」評分。<br>
+  <b>個性標籤：「敢衝的資本密集玩家」型</b>——只有 2016、2020、2025 年出現小幅正值（代表當年淨變賣資產或投資回收大於支出），其餘年份都選擇持續加碼投入。</p>
+  <div class="score-card" style="max-width:220px;"><div class="num">75</div><div class="label">規則二評分</div></div>
+
+  <h2>規則三：B 投資效益分析（隔年 A 是否轉強）</h2>
+  <table>
+    <thead><tr><th>重度投資年度</th><th>當年 B</th><th>隔年 A</th><th>較前一年 A</th><th>效果判斷</th></tr></thead>
+    <tbody>
+      <tr><td>2018</td><td class="neg">-67.8</td><td>2019：31.4</td><td>28.5 → 31.4</td><td class="pass">小幅回升</td></tr>
+      <tr><td>2019</td><td class="neg">-41.5</td><td>2020：49.2</td><td>31.4 → 49.2</td><td class="pass">明顯轉強</td></tr>
+      <tr><td>2021</td><td class="neg">-80.2</td><td>2022：60.3</td><td>46.9 → 60.3</td><td class="pass">明顯轉強</td></tr>
+      <tr><td>2022</td><td class="neg">-36.7</td><td>2023：106</td><td>60.3 → 106</td><td class="pass">大幅轉強</td></tr>
+      <tr><td>2023</td><td class="neg">-83.3</td><td>2024：71.1</td><td>106 → 71.1</td><td class="fail">隔年反而下滑</td></tr>
+      <tr><td>2024</td><td class="neg">-32.6</td><td>2025：96</td><td>71.1 → 96</td><td class="pass">明顯轉強</td></tr>
+    </tbody>
+  </table>
+  <p>核心比對指標用 A（而非易受業外損益干擾的 D）：6 個重度投資年度中有 5 個在隔年看到 A 轉強，只有 2023 年投資後、2024 年 A 反而下滑（但 2025 年隨即回升到 96 億，效果延後一年發酵）。<br>
+  <b>個性標籤：「敢衝且大致有實力」型</b>——投資轉化為造血能力的成功率高，僅一次出現延後發酵的情況，不算「老將自費特訓」的持續性失靈。</p>
+  <div class="score-card" style="max-width:220px;"><div class="num">78</div><div class="label">規則三評分</div></div>
+
+  <h2>規則四：C（融資活動）與 B 的組合合理性</h2>
+  <div class="chart-wrap"><div id="chart-bc"></div></div>
+  <p>逐年檢查「B 大幅負值同時 C 為正值（疑似舉債支應投資）」的組合：僅 <b>2019 年（B -41.5、C +6.08）</b>符合，其餘年份 C 大多為負值（2016 至 2024 多數年份 C 介於 -49.2 至 -0.94 之間），代表元太主要用發放股利／償還既有借款來消化資金，而非靠舉債擴張投資。26Q1 單季出現 B -14.6、C +4.67 的組合，但僅單季數字，不列入年度計分，需觀察後續季度是否延續。<br>
+  最嚴重警戒訊號（A 為負且 C 為正或小幅負）在任何一個完整年度都未出現，因為 A 從未轉負。<br>
+  <b>個性標籤：「自有資金優先」型」</b>——僅 2019 年單一年度出現輕微舉債支應投資的訊號，不是重複出現的模式。</p>
+  <div class="score-card" style="max-width:220px;"><div class="num">85</div><div class="label">規則四評分</div></div>
+
+  <h2>規則五：A 是否大於 D（稅前淨利）——現金流品質</h2>
+  <table>
+    <thead><tr><th>年度</th><th>A</th><th>D 稅前淨利</th><th>A ＞ D？</th></tr></thead>
+    <tbody id="rule5-table"></tbody>
+  </table>
+  <p>12 個完整年度中，僅 <b>2014、2016、2017、2020、2023</b> 共 5 年通過（A ＞ D），通過率 <b>5 ÷ 12 ＝ 41.7%</b>，落在「需觀察」區間（&lt;60%）。特別是 <b>2022 年（A 60.3 億 vs D 121 億）與 2025 年（A 96 億 vs D 128 億）</b>差距明顯，代表這兩年帳上稅前獲利遠高於實際營業現金流入。<br>
+  <b>個性標籤：「近年略有膨風」型</b>——並非長期性造假信號，但近三個完整年度（2022、2024、2025）都未通過，提醒需留意獲利中是否含較大比重業外收益或應收帳款/存貨變化墊高了帳面利潤。</p>
+  <div class="score-card" style="max-width:220px; border-left:4px solid var(--negv);"><div class="num" style="color:var(--negv);">41.7</div><div class="label">規則五評分（需觀察）</div></div>
+
+  <h2>規則六：E（期末現金餘額）穩定性 —— 資料缺口</h2>
+  <div class="callout warn">
+    <b>目前無法評分：</b>你提供的截圖欄位為「平均股本／財報評分／年度股價／獲利／營業‧投資‧融資‧其他活動／淨現金流／自由金流」，<b>沒有「期末現金餘額」這一項</b>。「淨現金流」是當年度 A+B+C+其他的加總變化量，並非資產負債表上的現金餘額水準，兩者意義不同，不能互相替代，也不會臆測換算。<br>
+    若方便的話，可以到下方連結截圖現金流量表中「期末現金及約當現金餘額」欄位（或年報資產負債表現金項）給我，我再補上規則六的評分：<br>
+    <span style="font-family:var(--mono); font-size:12.5px;">https://goodinfo.tw/tw/StockCashFlow.asp?STOCK_ID=8069</span>
+  </div>
+
+  <h2>總評分與關卡建議</h2>
+  <div class="score-board">
+    <div class="score-card"><div class="num">75</div><div class="label">規則一 A趨勢</div></div>
+    <div class="score-card"><div class="num">75</div><div class="label">規則二 B紀律</div></div>
+    <div class="score-card"><div class="num">78</div><div class="label">規則三 投資效益</div></div>
+    <div class="score-card"><div class="num">85</div><div class="label">規則四 C合理性</div></div>
+    <div class="score-card" style="border-left:4px solid var(--negv);"><div class="num" style="color:var(--negv);">41.7</div><div class="label">規則五 A&gt;D</div></div>
+    <div class="score-card" style="border-left:4px solid var(--locked); color:var(--locked);"><div class="num" style="color:var(--locked);">—</div><div class="label">規則六 待補資料</div></div>
+  </div>
+  <div class="callout">
+    <b>暫定平均（5 項規則，未含規則六）：約 71 分，屬「良好」等級（60–79%）。</b><br>
+    未觸發「A為負＋B重度負值＋C為正或小幅負」的三重警訊組合，<b>現金流體質可以繼續看下去</b>，可以進入第二步（基本資訊查詢）。<br>
+    唯一需要留意的重點：近三個完整年度規則五多次不通過，建議在第二步查詢基本面時，特別留意損益表中是否有較大業外收益項目，或應收帳款/存貨變化是否墊高了帳面淨利。
+  </div>
+
+  <div class="callout">
+    <b>關於 GitHub 版控：</b> 目前這個分析環境的網路存取是關閉的，我暫時無法執行 <span style="font-family:var(--mono)">git push</span> 到你的 repository，即使你提供 Token 也會 push 失敗——這點會如實告知，不會假裝已推送成功。這份報告我會用檔案的方式提供給你，你可以自行下載或視需要手動上傳到 repo。
+  </div>
+</section>
+</main>
+
+<footer class="report-footer">
+  <span>報告版本 v1.0（第 1 步）</span>
+  <span id="gen-time"></span>
+</footer>
+
+<script>
+  document.getElementById('gen-time').textContent = '生成時間：' + new Date().toLocaleString('zh-TW', {hour12:false});
+
+  const years = ["2014","2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"];
+  const A = [42,24.6,48.3,55.2,28.5,31.4,49.2,46.9,60.3,106,71.1,96];
+  const B = [7.31,10.8,0.78,-4.22,-67.8,-41.5,18.8,-80.2,-36.7,-83.3,-32.6,3.77];
+  const C = [-18,-49.2,-26.6,-18,-2.03,6.08,-12.6,-0.94,-25.4,-12,-3.54,-43.5];
+  const D = [15.7,27.5,24.1,33.4,32.6,37.2,42.4,65.5,121,98.2,109,128];
+
+  // cash flow table
+  const cfBody = document.getElementById('cashflow-table');
+  years.forEach((y,i)=>{
+    const tr = document.createElement('tr');
+    const cell = (v)=> `<td class="${v<0?'neg':'pos'}">${v}</td>`;
+    tr.innerHTML = `<td>${y}</td>${cell(A[i])}${cell(B[i])}${cell(C[i])}${cell(D[i])}`;
+    cfBody.appendChild(tr);
+  });
+  const qtr = document.createElement('tr');
+  qtr.className='quarter-row';
+  qtr.innerHTML = `<td>26Q1（單季）</td><td>22.1</td><td class="neg">-14.6</td><td>4.67</td><td>33.4</td>`;
+  cfBody.appendChild(qtr);
+
+  // rule5 table
+  const r5Body = document.getElementById('rule5-table');
+  years.forEach((y,i)=>{
+    const pass = A[i] > D[i];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${y}</td><td>${A[i]}</td><td>${D[i]}</td><td class="${pass?'pass':'fail'}">${pass?'✓ 通過':'✗ 未通過'}</td>`;
+    r5Body.appendChild(tr);
+  });
+
+  // simple single-series bar chart with zero axis, peak/trough highlight
+  function barChart(containerId, labels, data, unit){
+    const w = 820, h = 220, padL=36, padR=10, padT=14, padB=28;
+    const max = Math.max(...data), min = Math.min(...data, 0);
+    const range = max - min || 1;
+    const zeroY = padT + (max/range) * (h - padT - padB);
+    const bw = (w - padL - padR) / data.length;
+    const peakIdx = data.indexOf(max);
+    const troughIdx = data.indexOf(Math.min(...data));
+    let bars = '';
+    data.forEach((v,i)=>{
+      const barH = Math.abs(v)/range * (h - padT - padB);
+      const x = padL + i*bw + bw*0.18;
+      const bwActual = bw*0.64;
+      const y = v>=0 ? zeroY - barH : zeroY;
+      let fill = v<0 ? 'var(--negv)' : 'var(--posv)';
+      if(i===peakIdx) fill = 'var(--c-peak)';
+      if(i===troughIdx) fill = 'var(--c-trough)';
+      bars += `<rect x="${x}" y="${y}" width="${bwActual}" height="${Math.max(barH,1)}" fill="${fill}" rx="1"></rect>`;
+      bars += `<text x="${x+bwActual/2}" y="${v>=0? y-4 : y+barH+12}" font-size="10" fill="var(--ink-soft)" text-anchor="middle">${v}</text>`;
+      bars += `<text x="${x+bwActual/2}" y="${h-8}" font-size="10" fill="var(--ink-soft)" text-anchor="middle">${labels[i]}</text>`;
+    });
+    const svg = `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}">
+      <line x1="${padL}" y1="${zeroY}" x2="${w-padR}" y2="${zeroY}" stroke="var(--rule)" stroke-width="1"></line>
+      ${bars}
+    </svg>`;
+    document.getElementById(containerId).innerHTML = svg;
+  }
+
+  barChart('chart-a', years, A, '億');
+  barChart('chart-b', years, B, '億');
+
+  // dual bar chart B vs C
+  function dualBarChart(containerId, labels, d1, d2){
+    const w = 860, h = 230, padL=36, padR=10, padT=14, padB=30;
+    const all = d1.concat(d2);
+    const max = Math.max(...all), min = Math.min(...all, 0);
+    const range = max-min || 1;
+    const zeroY = padT + (max/range)*(h-padT-padB);
+    const bw = (w-padL-padR)/labels.length;
+    let bars='';
+    labels.forEach((lab,i)=>{
+      const groupX = padL + i*bw;
+      [ [d1[i],'var(--accent)'], [d2[i],'var(--ink-soft)'] ].forEach(([v,color],j)=>{
+        const barH = Math.abs(v)/range*(h-padT-padB);
+        const x = groupX + bw*0.15 + j*(bw*0.35);
+        const y = v>=0 ? zeroY-barH : zeroY;
+        // flag borrow-to-invest years: B<0 significant and C>0
+        let fill = color;
+        if(j===1 && d1[i]<0 && v>0) fill = 'var(--negv)';
+        bars += `<rect x="${x}" y="${y}" width="${bw*0.32}" height="${Math.max(barH,1)}" fill="${fill}" rx="1"></rect>`;
+      });
+      bars += `<text x="${groupX+bw/2}" y="${h-10}" font-size="10" fill="var(--ink-soft)" text-anchor="middle">${lab}</text>`;
+    });
+    const svg = `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}">
+      <line x1="${padL}" y1="${zeroY}" x2="${w-padR}" y2="${zeroY}" stroke="var(--rule)" stroke-width="1"></line>
+      ${bars}
+    </svg>`;
+    document.getElementById(containerId).innerHTML = svg + `<div class="legend">
+      <span><span class="swatch" style="background:var(--accent)"></span>B 投資活動</span>
+      <span><span class="swatch" style="background:var(--ink-soft)"></span>C 融資活動</span>
+      <span><span class="swatch" style="background:var(--negv)"></span>疑似舉債支應投資年度</span>
+    </div>`;
+  }
+  dualBarChart('chart-bc', years, B, C);
+
+  // stepnav: click smooth scroll (only unlocked)
+  document.querySelectorAll('nav.stepnav a:not(.locked)').forEach(a=>{
+    a.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if(target){ target.scrollIntoView({behavior:'smooth', block:'start'}); }
+    });
+  });
+
+  // IntersectionObserver: toggle active among unlocked sections
+  const sections = document.querySelectorAll('main section.pad');
+  const navLinks = document.querySelectorAll('nav.stepnav a');
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        navLinks.forEach(l=>l.classList.remove('active'));
+        const link = document.querySelector(`nav.stepnav a[href="#${entry.target.id}"]`);
+        if(link && !link.classList.contains('locked')) link.classList.add('active');
+      }
+    });
+  }, {threshold:0.4});
+  sections.forEach(s=>observer.observe(s));
+</script>
+
+</body>
+</html>
