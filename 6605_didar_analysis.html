@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>帝寶(6605) 現金流六大規則分析</title>
+<style>
+  :root{
+    --paper:#EDEAE3;
+    --paper-card:#F6F4EF;
+    --ink:#211F1C;
+    --ink-soft:#5B584F;
+    --rule:#CFC9BA;
+    --accent:#2B5D50;
+    --accent-soft:#D9E4DF;
+    --negv:#AE3B3B;
+    --posv:#2F6B4F;
+    --c-peak:#E8C468;
+    --c-trough:#D98A93;
+    --locked:#B8B4AA;
+    --serif: "Source Serif Pro", "Noto Serif TC", Georgia, serif;
+    --sans: "IBM Plex Sans", "Noto Sans TC", -apple-system, sans-serif;
+    --mono: "IBM Plex Mono", "Roboto Mono", monospace;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.7; padding-bottom:80px; }
+  header.top{ background:var(--ink); color:var(--paper); padding:28px 24px 20px; position:relative; overflow:hidden; }
+  header.top::before{ content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle, rgba(237,234,227,0.08), transparent 70%); }
+  .eyebrow{ font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-soft); opacity:.85; }
+  h1{font-family:var(--serif); font-weight:600; font-size:28px; margin:6px 0 2px;}
+  .subtitle{font-family:var(--mono); font-size:13px; color:#C9C4B8;}
+  nav.stepnav{ position:sticky; top:0; z-index:50; background:var(--paper); border-bottom:1px solid var(--rule); display:flex; overflow-x:auto; padding:0 12px; }
+  nav.stepnav a{ flex:0 0 auto; padding:12px 14px; font-family:var(--mono); font-size:12.5px; color:var(--ink-soft); text-decoration:none; border-bottom:3px solid transparent; white-space:nowrap; transition:color .2s, border-color .2s; }
+  nav.stepnav a.active{ color:var(--ink); border-bottom-color:var(--accent); font-weight:600; }
+  nav.stepnav a.locked{ color:var(--locked); cursor:default; pointer-events:none; }
+  nav.stepnav a .n{ font-family:var(--mono); opacity:.6; margin-right:4px; }
+  main{max-width:920px; margin:0 auto; padding:28px 20px 60px;}
+  section.pad{padding:14px 0 40px;}
+  .progress-tag{ font-family:var(--mono); font-size:12px; letter-spacing:.06em; color:var(--accent); background:var(--accent-soft); display:inline-block; padding:4px 10px; border-radius:2px; margin-bottom:14px; }
+  h2{font-family:var(--serif); font-size:22px; margin:28px 0 10px; border-bottom:1px solid var(--rule); padding-bottom:8px;}
+  h3{font-family:var(--serif); font-size:17px; margin:20px 0 8px; color:var(--ink);}
+  .callout{ border-left:4px solid var(--accent); background:var(--paper-card); padding:14px 16px; margin:16px 0; border-radius:0 4px 4px 0; }
+  .callout.warn{border-left-color:var(--negv); }
+  .callout b{color:var(--accent);}
+  .callout.warn b{color:var(--negv);}
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-family:var(--mono); font-size:13px;}
+  th,td{padding:7px 8px; text-align:right; border-bottom:1px solid var(--rule);}
+  th{background:var(--ink); color:var(--paper); font-family:var(--sans); font-size:12.5px; font-weight:500;}
+  td:first-child, th:first-child{text-align:left;}
+  tr:nth-child(even) td{background:rgba(0,0,0,0.02);}
+  .neg{color:var(--negv); font-weight:600;}
+  .pos{color:var(--posv);}
+  .pass{color:var(--posv); font-weight:600;}
+  .fail{color:var(--negv); font-weight:600;}
+  .quarter-row td{opacity:.72; font-style:italic;}
+  .chart-wrap{margin:16px 0 8px;}
+  svg text{font-family:var(--mono);}
+  .legend{display:flex; gap:16px; font-family:var(--mono); font-size:12px; margin-top:4px; color:var(--ink-soft);}
+  .legend span{display:inline-flex; align-items:center; gap:5px;}
+  .swatch{width:10px; height:10px; display:inline-block; border-radius:2px;}
+  .snap-note{font-family:var(--mono); font-size:11.5px; color:var(--ink-soft); margin-top:6px;}
+  .score-board{ display:flex; gap:14px; flex-wrap:wrap; margin:18px 0; }
+  .score-card{ flex:1 1 140px; background:var(--paper-card); border:1px solid var(--rule); padding:12px 14px; border-radius:4px; }
+  .score-card .num{font-family:var(--serif); font-size:26px; font-weight:700;}
+  .score-card .label{font-family:var(--mono); font-size:11.5px; color:var(--ink-soft);}
+  footer.report-footer{ max-width:920px; margin:40px auto 0; padding:16px 20px; border-top:1px solid var(--rule); font-family:var(--mono); font-size:11.5px; color:var(--ink-soft); display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">台股個股初步分析　STEP 1 / 6</div>
+  <h1>帝寶工業 6605　現金流量六大規則分析</h1>
+  <div class="subtitle">盲測階段：僅根據現金流量表數字判斷，尚未查證股價／EPS／產業背景</div>
+</header>
+
+<nav class="stepnav" id="stepnav">
+  <a href="#step1" class="active" data-step="1"><span class="n">01</span>現金流六大規則</a>
+  <a href="#step2" data-step="2"><span class="n">02</span>基本資訊</a>
+  <a href="#step3" data-step="3"><span class="n">03</span>法說會</a>
+  <a href="#step4" data-step="4"><span class="n">04</span>營收趨勢</a>
+  <a href="#step5" data-step="5"><span class="n">05</span>前瞻本益比</a>
+  <a href="#step6" data-step="6"><span class="n">06</span>投資決策</a>
+</nav>
+
+<main>
+<section class="pad" id="step1">
+  <span class="progress-tag">【第 1 步／共 6 步：現金流量表六大規則分析】</span>
+
+  <div class="callout">
+    <b>結論：</b>六項規則平均約 <b>75.5 分（良好，60–79%）</b>。最大亮點是<b>規則五（A是否大於稅前淨利D）15 個完整年度全數通過</b>，獲利品質非常紮實；最需要留意的是<b>規則四</b>——帝寶有近半數年度出現「B重度負值＋C同時為正」的舉債支應投資組合，資金來源比元太更依賴外部融資，屬於不同的資本結構風格，不算警訊但值得認知清楚。
+  </div>
+
+  <h3>現金流量原始數據（使用者提供，含期末現金餘額）</h3>
+  <table>
+    <thead><tr><th>年度</th><th>A 營業活動</th><th>B 投資活動</th><th>C 融資活動</th><th>D 稅前淨利</th><th>E 期末現金餘額</th></tr></thead>
+    <tbody id="cashflow-table"></tbody>
+  </table>
+  <div class="snap-note">📎 資料來源：使用者提供之現金流量表截圖（2011～2025年＋26Q1，含年度股價、獲利、期末現金餘額欄位）。本步驟依規則僅擷取 A／B／C／D／E 五項數字進行盲測分析，不引用股價、EPS 或產業背景。</div>
+
+  <h2>規則一：A（營業活動現金流量）逐年成長趨勢</h2>
+  <div class="chart-wrap"><div id="chart-a"></div></div>
+  <p>A 從 2011 年 17.1 億起步（當年稅前淨利甚至是虧損，詳見規則五），2012 年即跳升到 28.9 億，此後在 27～39 億區間波動了約 6 年（2012-2018），2019 年起緩步墊高，2022-2024 連續三年站上 42～50 億的歷史新高，2025 年則回落到 41.3 億（較 2024 年下滑約 17%）。<br>
+  <b>個性標籤：「長期向上、近一年喘息」型</b>——15 年區間方向明確向上，只是最近一年出現較明顯的回落，需要在第二步查證是否為單一年度波動或趨勢轉折。（26Q1 單季 13.2 億僅供參考，不代表全年水準。）</p>
+  <div class="score-card" style="max-width:220px;"><div class="num">72</div><div class="label">規則一評分</div></div>
+
+  <h2>規則二：B（投資活動現金流量）投資紀律評估</h2>
+  <div class="chart-wrap"><div id="chart-b"></div></div>
+  <p>B 在全部 15 個完整年度中<b>無一例外皆為負值</b>（從 2023 年最小的 -7.37 億，到 2018 年最大的 -45.6 億），代表帝寶每年都持續投入資本支出，沒有出現元太那種偶爾轉正（資產處分/投資回收）的年份。這種「年年都投資、幅度隨景氣調整」的模式，顯示資本支出紀律相對穩定、不是忽有忽無的隨機決策。<br>
+  <b>個性標籤：「按表操課的長期投資者」型</b>——持續性本身是正面訊號，但也代表帝寶的自由現金流會持續被資本支出侵蝕，需要搭配規則三判斷這些投資有沒有真正轉化為營運現金流成長。</p>
+  <div class="score-card" style="max-width:220px;"><div class="num">78</div><div class="label">規則二評分</div></div>
+
+  <h2>規則三：B 投資效益分析（隔年 A 是否轉強）</h2>
+  <table>
+    <thead><tr><th>相對重度投資年度（|B|接近或超過A）</th><th>當年 B</th><th>隔年 A</th><th>較前一年 A</th><th>效果判斷</th></tr></thead>
+    <tbody>
+      <tr><td>2011</td><td class="neg">-22.3</td><td>2012：28.9</td><td>17.1 → 28.9</td><td class="pass">明顯轉強（惟2011獲利為虧損年，基期特殊）</td></tr>
+      <tr><td>2013</td><td class="neg">-37.4</td><td>2014：35.9</td><td>26.9 → 35.9</td><td class="pass">明顯轉強</td></tr>
+      <tr><td>2016</td><td class="neg">-42.8</td><td>2017：29.2</td><td>27.8 → 29.2</td><td class="pass">小幅轉強</td></tr>
+      <tr><td>2017</td><td class="neg">-37.9</td><td>2018：38.4</td><td>29.2 → 38.4</td><td class="pass">明顯轉強</td></tr>
+      <tr><td>2018</td><td class="neg">-45.6</td><td>2019：34.5</td><td>38.4 → 34.5</td><td class="fail">隔年反而下滑</td></tr>
+    </tbody>
+  </table>
+  <p>5 個相對重度投資年度中，有 4 個在隔年看到 A 轉強，僅 2018 年投資後 2019 年 A 小幅下滑。整體轉化率不錯，只是 2011 年的比較基期本身是虧損年，解讀效果時要打一點折扣。<br>
+  <b>個性標籤：「多數時候能把投資轉化為現金流」型</b>。</p>
+  <div class="score-card" style="max-width:220px;"><div class="num">75</div><div class="label">規則三評分</div></div>
+
+  <h2>規則四：C（融資活動）與 B 的組合合理性</h2>
+  <div class="chart-wrap"><div id="chart-bc"></div></div>
+  <p>逐年檢查「B 大幅負值同時 C 為正值（疑似舉債支應投資）」的組合，帝寶符合這個組合的年度明顯偏多：<b>2011、2013、2014、2015、2016、2017、2018、2022 共 8 個年度（15 年中過半）</b>都出現 B 負值同時 C 為正值。其中 2013、2016、2017 三年 C 的正值幅度還不小（+15.1、+8.06、+15.5 億）。<br>
+  這跟元太「幾乎完全靠自有資金」的風格明顯不同，帝寶比較常態性地借助外部資金（借款）搭配自有現金一起支應資本支出。這不必然是壞事——只要 A 沒有轉負（本例中 A 全年度都是正值，最嚴重的警戒訊號從未觸發），代表本業仍持續有現金流入，只是財務槓桿的使用頻率明顯較高，屬於「風格不同」而非「體質變差」，但值得投資人清楚認知這一點，不要誤以為帝寶跟元太一樣是純自有資金的公司。<br>
+  <b>個性標籤：「善用財務槓桿的常態借款者」型</b>。</p>
+  <div class="score-card" style="max-width:220px; border-left:4px solid var(--negv);"><div class="num" style="color:var(--negv);">60</div><div class="label">規則四評分（需認知槓桿使用較頻繁）</div></div>
+
+  <h2>規則五：A 是否大於 D（稅前淨利）——現金流品質</h2>
+  <table>
+    <thead><tr><th>年度</th><th>A</th><th>D 稅前淨利</th><th>A ＞ D？</th></tr></thead>
+    <tbody id="rule5-table"></tbody>
+  </table>
+  <p><b>15 個完整年度（2011～2025）全數通過</b>，通過率 <b>100%</b>，是六大規則中表現最亮眼的一項。特別值得一提的是 <b>2011 年稅前淨利是 -5.43 億（虧損）</b>，但當年營業活動現金流入仍有 17.1 億，代表當年的會計虧損很可能來自業外的一次性費用或非現金認列項目（如資產減損），本業實際仍持續產生正現金流，不是單純的營運惡化。<br>
+  <b>個性標籤：「帳實一致、幾乎沒有膨風」型</b>——這是六項規則裡最能建立信心的一項，跟稍早分析的元太（規則五僅 41.7% 通過）形成明顯對比。</p>
+  <div class="score-card" style="max-width:220px; border-left:4px solid var(--posv);"><div class="num" style="color:var(--posv);">100</div><div class="label">規則五評分（優秀）</div></div>
+
+  <h2>規則六：E（期末現金餘額）穩定性</h2>
+  <div class="chart-wrap"><div id="chart-e"></div></div>
+  <p>期末現金餘額在 2011-2021 這 11 年間大致在 16～30 億之間反覆震盪，沒有明確的長期上升或下降趨勢；2022 年出現一次明顯跳升到 60.1 億（較前一年近乎翻倍），隨後 2023-2025 回落並穩定在 36～40 億的新水位，比 2011-2021 的區間明顯墊高，但也從高點回落了約三分之一。<br>
+  這個模式跟元太的「持續墊高」不同，比較像是「長期區間震盪＋一次性跳升後部分回吐」，2022 年那次大幅跳升的原因，還有 2023 年融資活動大幅流出（-67.2 億，是全期間最大的一次淨流出）背後的原因，都值得在第二、三步查證公司財報附註或法說會說明（例如是否有處分資產、發放特別股利、償還大額借款等一次性事件）。<br>
+  <b>個性標籤：「區間震盪、偶有大波動」型</b>——沒有長期侵蝕的警訊，但穩定性不如元太，信心程度中等。</p>
+  <div class="score-card" style="max-width:220px;"><div class="num">68</div><div class="label">規則六評分</div></div>
+
+  <h2>總評分與關卡建議</h2>
+  <div class="score-board">
+    <div class="score-card"><div class="num">72</div><div class="label">規則一 A趨勢</div></div>
+    <div class="score-card"><div class="num">78</div><div class="label">規則二 B紀律</div></div>
+    <div class="score-card"><div class="num">75</div><div class="label">規則三 投資效益</div></div>
+    <div class="score-card" style="border-left:4px solid var(--negv);"><div class="num" style="color:var(--negv);">60</div><div class="label">規則四 C合理性</div></div>
+    <div class="score-card" style="border-left:4px solid var(--posv);"><div class="num" style="color:var(--posv);">100</div><div class="label">規則五 A&gt;D</div></div>
+    <div class="score-card"><div class="num">68</div><div class="label">規則六 E穩定性</div></div>
+  </div>
+  <div class="callout">
+    <b>六項規則平均：約 75.5 分，屬「良好」等級（60–79%）。</b><br>
+    最嚴重警戒訊號（A為負＋B重度負值＋C為正或小幅負）在任何一個完整年度都未觸發，<b>現金流體質可以繼續看下去</b>，可以進入第二步（基本資訊查詢）。<br>
+    兩個值得留意的重點：(1) 規則四顯示帝寶比元太更常仰賴外部融資支應投資，是風格差異而非警訊，但投資時要認知這一點；(2) 2025 年 A 較 2024 年下滑約17%、期末現金餘額也連兩年從高點回落，建議在第二步查證這是短期波動還是趨勢轉折。
+  </div>
+
+  <div class="callout">
+    <b>關於 GitHub 版控：</b> 跟元太那份報告一樣，目前這個分析環境的網路存取是關閉的，我暫時無法執行 <span style="font-family:var(--mono)">git push</span>。這份報告會用檔案方式提供給你，你可以下載後自行上傳到你的 repo（跟元太那份分開放，不會混在同一個檔案裡）。
+  </div>
+</section>
+
+<section class="pad" id="step2">
+  <span class="progress-tag">【第 2 步／共 6 步：基本資訊查詢】</span>
+
+  <div class="callout">
+    <b>公司基本資料：</b>帝寶工業（6605，上市，汽車工業），主要產品為汽車車燈與汽車百貨零件，是台灣汽車零組件（車燈）龍頭廠商之一。實收資本額 16.58 億、已發行股數 1.66 億股、外資持股 13.83%、股東人數約 1.67 萬人。
+  </div>
+
+  <h3>股價快照（非即時報價，僅供參考）</h3>
+  <table>
+    <thead><tr><th>查詢時間點</th><th>收盤價</th><th>漲跌</th><th>本益比（同業平均）</th></tr></thead>
+    <tbody>
+      <tr><td>2026/07/23 13:30</td><td>133.0</td><td class="neg">-2.50（-1.85%）</td><td>10.16（36.49）</td></tr>
+    </tbody>
+  </table>
+  <div class="snap-note">📎 單一時間點的收盤快照，不是即時報價。正式交易請以你的看盤軟體/券商 App 即時報價為準。資料來源：<a href="https://tw.stock.yahoo.com/quote/6605.TW" style="color:var(--accent)">Yahoo股市（07/23）</a></div>
+
+  <h3>EPS（每股盈餘）</h3>
+  <div class="callout">
+    <b>2026 Q1 EPS 為 4.41 元，季減 14.04%、年減 12.5%</b>，2025 全年 EPS 為 13.97 元，近四季（TTM）EPS 約 13.34 元。近 1-2 年查證沒有發現股票分割或減資，EPS 基期一致。
+  </div>
+  <p>值得注意：EPS 年減的方向跟第一步規則一觀察到的「2025 年 A（營業現金流）較 2024 年下滑約 17%」互相呼應——不是單一年度的營運現金流波動，獲利面（EPS）也同步走弱，這代表第一步標記的「近一年喘息」很可能是真實的趨勢轉弱，不只是現金流時點的巧合，需要在後面步驟持續追蹤原因。</p>
+  <div class="snap-note">📎 資料來源：<a href="https://shop.nstock.tw/%E5%B8%9D%E5%AF%B6%E5%81%9A%E4%BB%80%E9%BA%BC.html" style="color:var(--accent)">nStock</a>、<a href="https://www.cnyes.com/twstock/6605/dividend/dividend" style="color:var(--accent)">鉅亨網</a></div>
+
+  <h3>股利與殖利率</h3>
+  <div class="callout">
+    帝寶<b>已連續 28 年發放股利，累計 110.06 元</b>，是六大規則裡規則五（獲利品質優秀）之外，另一個能建立信心的長期紀錄。但要留意最新一次（2025 年度，2026 年發放）現金股利<b>降到 6.5 元，較前一年（2024年度）的 9 元下滑約 28%</b>，除息日 2026/07/09，殖利率約 4.80～4.85%。股利下滑的方向跟前述 EPS、A 現金流同步走弱是一致的，不是股利政策突然轉趨保守，而是獲利基礎確實變薄了。
+  </div>
+  <div class="snap-note">📎 資料來源：<a href="https://tw.stock.yahoo.com/quote/6605.TW/dividend" style="color:var(--accent)">Yahoo股市 股利政策</a>、<a href="https://shop.nstock.tw/%E5%B8%9D%E5%AF%B6%E5%81%9A%E4%BB%80%E9%BA%BC.html" style="color:var(--accent)">nStock</a>（近5年平均殖利率兩來源略有差異，分別為3.21%與3.56%，可能統計區間不同，僅供參考）</div>
+
+  <h3>近期營收</h3>
+  <table>
+    <thead><tr><th>期別</th><th>營收</th><th>月增率</th><th>年增率</th></tr></thead>
+    <tbody>
+      <tr><td>2026年6月</td><td>15.99億</td><td>—</td><td class="pos">+4.45%</td></tr>
+      <tr><td>2026年5月</td><td>16.02億</td><td class="neg">-6.24%</td><td class="neg">-8.76%</td></tr>
+      <tr><td>2026年1-6月累計</td><td>96.42億</td><td>—</td><td class="neg">-3.37%</td></tr>
+      <tr><td>2025全年</td><td>194.19億</td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <p>上半年累計營收年減 3.37%，跟前面 EPS、股利同步走弱的訊號一致，是三個獨立指標共同指向同一個方向（獲利與營收都比去年同期弱）。6 月單月營收年增轉正（+4.45%）是近期少見的正面訊號，值得後續追蹤是否代表營運已經觸底回升，還是單月波動。</p>
+  <div class="snap-note">📎 資料來源：<a href="https://statementdog.com/analysis/6605/monthly-revenue" style="color:var(--accent)">財報狗（6月營收）</a>、<a href="https://winvest.tw/Stock/Symbol/Comment/6605" style="color:var(--accent)">Win投資（5月營收、累計數字）</a></div>
+
+  <h3>法說會日期與連結</h3>
+  <div class="callout">
+    最新一次法說會：<b>2026/06/24</b>，地點台北市松山區南京東路五段188號15樓會議室，備有中文與英文簡報。<br>
+    第三方彙整查詢頁面：<a href="https://www.cnyes.com/twstock/6605/company/profile" style="color:var(--accent)">鉅亨網 - 帝寶公司簡介（含法說會資訊）</a>
+  </div>
+  <div class="snap-note">📎 我目前沒有這場法說會簡報內容的逐字稿或摘要，如果你想深入討論法說會內容（例如營收走弱、獲利下滑的原因說明），第三步我會另外搜尋相關法說會報導或分析。</div>
+
+  <div class="callout">
+    <b>第二步小結：</b>帝寶是一檔股利政策穩健（連續28年配息）、獲利品質優秀（規則五100%通過）的傳產汽車零組件股，但目前正處於「營收、EPS、股利同步走弱」的階段，2025年獲利較2024年高峰明顯回落，2026年上半年營收仍年減，6月單月轉正是否代表觸底，是後續步驟需要重點追蹤的方向。
+  </div>
+</section>
+
+<section class="pad" id="step3">
+  <span class="progress-tag">【第 3 步／共 6 步：詢問是否深入討論法說會資料】</span>
+  <div class="callout">
+    先概略瀏覽一下帝寶最近的營運背景，這幾個方向可能都跟第二步觀察到的「營收獲利走弱」有關，也各自有不同的後續發展：
+    <ul style="margin:10px 0 4px; padding-left:20px;">
+      <li><b>美國關稅衝擊（2025年主因）</b>：美國對等關稅推升成本、壓抑買氣，前三季營收年減3.22%、營業利益年減17.38%，是 2025 年獲利下滑的主要原因之一</li>
+      <li><b>新台幣升值造成的匯損</b>：2025年第二季新台幣強升值造成 7.72 億匯損，業外損益由 2024 年賺 2.26 億轉為虧損 3.05 億</li>
+      <li><b>2026年5月的232關稅降稅利多</b>：美國非半導體232關稅優惠生效，車用零件股全面上漲，這可能是 6 月營收轉正（+4.45%）的原因之一</li>
+      <li><b>帝寶 vs 賓士車燈設計專利訴訟</b>：長年壓抑本益比評價的訴訟風險，近期因美國判例（LKQ v. GM）鬆動設計專利「顯而易見性」標準，市場評估帝寶勝算從「必敗」轉為「五五波」</li>
+      <li><b>轉型布局：車用電子部門＋泰國新廠</b>：帝寶規劃成立車用電子事業部門，發展 LED、AFS、ADB 等先進車燈，並赴泰國設廠（逾15公頃，分三期開發），意在往 OEM 高附加價值產品線移動、分散美國售後市場的關稅曝險</li>
+    </ul>
+    你想挑哪個方向深入聊聊？也可以直接跟我說你自己想問的問題。
+  </div>
+
+  <h3>深入討論：美國關稅衝擊與 232 降稅利多</h3>
+  <div class="callout">
+    <b>結論先講：</b>2025 年的獲利下滑，有相當一部分可以直接歸因於美國 232 關稅從無到有、稅率從 0% 跳升到 25%；2026 年 5 月的降稅（25%→15%）則是這個衝擊的部分反轉，很可能是 6 月營收轉正的原因之一，但目前只有一個月的數據，還需要更多月份確認是否是趨勢反轉。
+  </div>
+
+  <h4>1. 關稅怎麼來的：232條款的時間軸</h4>
+  <p>美國對進口汽車零件加徵關稅，源頭其實可以追溯到 2018 年川普政府啟動的「232條款」國家安全調查（認定進口汽車零件是否威脅美國國安）。這份調查報告 2019 年就完成，但一直沒有正式實施，直到 2025 年 3 月 26 日白宮發布總統文告重啟此案，正式宣布<b>自 2025 年 4 月 3 日起對進口汽車加徵 25% 關稅、5 月 3 日起對進口汽車零件加徵 25% 關稅</b>。帝寶身為對美出口比重超過 50% 的車燈廠，直接受到衝擊——時間點正好對上第二步看到的「2025 年前三季營收年減 3.22%、營業利益年減 17.38%」。</p>
+
+  <h4>2. 台灣的降稅談判：2026 年 5 月出現轉機</h4>
+  <p>2026 年 5 月 27 日（美東時間），美國政府公告台灣的「非半導體232關稅優惠措施」，<b>回溯自 2026 年 5 月 1 日生效，汽車零組件輸美稅率從 25%（含其他項目後實際稅率 26.71%）調降至 15%</b>。帝寶被 ETtoday 財經雲明確列在受惠名單中，同一天多檔汽車零組件股（含帝寶）出現漲停反應，顯示市場認為這是實質的成本減輕，不只是情緒性反彈。</p>
+
+  <h4>3. 對財務數字的影響：時間點可以互相對照</h4>
+  <table>
+    <thead><tr><th>時間</th><th>事件</th><th>對應財務數字</th></tr></thead>
+    <tbody>
+      <tr><td>2025/05/03</td><td>232關稅上路，稅率25%</td><td>2025前三季營收YoY -3.22%、營業利益YoY -17.38%</td></tr>
+      <tr><td>2025全年</td><td>關稅+匯損雙重打擊</td><td>EPS由2024年18.98元降至13.97元（-26.4%）</td></tr>
+      <tr><td>2026/05/01（回溯生效）</td><td>232關稅降至15%</td><td>2026年6月營收年增轉正+4.45%（5月仍為YoY-8.76%）</td></tr>
+    </tbody>
+  </table>
+  <p>6 月營收由負轉正，時間點跟降稅生效（追溯至5月）相當接近，但要老實說：<b>目前只有一個月的正成長數據</b>，營收本來就會有月度波動，還不能百分之百確定這就是降稅效益開始反映，也可能夾雜其他因素（例如客戶回補庫存、匯率變動、單月工作天數等）。建議後續追蹤 7-9 月營收是否延續正成長，會是更可靠的驗證訊號。</p>
+
+  <h4>4. 跟第一步/第二步分析的呼應</h4>
+  <p>這個關稅衝擊的故事，剛好可以完整解釋第二步觀察到的「營收、EPS、股利同步走弱」——不是帝寶本業競爭力出問題，而是外部關稅成本一次性推升，直接壓縮毛利率和營益率。如果 15% 的較低稅率能夠維持，理論上 2026 下半年到 2027 年的毛利率有機會逐步修復，這點會在第五步（前瞻本益比／EPS預估）評估法人是否已經反映這個修復預期。</p>
+
+  <div class="snap-note">📎 資料來源：<a href="https://www.trade.gov.tw/Pages/Detail.aspx?nodeID=1871&pid=800956" style="color:var(--accent)">經濟部國際貿易署（232關稅背景說明）</a>、<a href="https://news.cnyes.com/news/id/6471939" style="color:var(--accent)">鉅亨網（2026/05/28，降稅利多報導）</a>、<a href="https://finance.ettoday.net/news/3173380" style="color:var(--accent)">ETtoday財經雲（受惠名單，2026/05/27）</a>、<a href="https://tw.stock.yahoo.com/news/%E5%B8%9D%E5%AF%B6-%E5%A4%A7%E8%88%89%E8%BD%89%E6%94%BB%E5%85%88%E9%80%B2%E8%BB%8A%E7%87%88-%E8%A8%AD%E8%BB%8A%E7%94%A8%E9%9B%BB%E5%AD%90%E9%83%A8%E9%96%80-201000496.html" style="color:var(--accent)">Yahoo股市／時報資訊（前三季財報，2025年11月）</a>、<a href="https://www.cmoney.tw/forum/article/178002144" style="color:var(--accent)">CMoney論壇（2025全年EPS拆解，注意：此為個人投資人分析文章非官方數據，數字已與其他來源交叉核對）</a>。</div>
+</section>
+
+<section class="pad" id="step4">
+  <span class="progress-tag">【第 4 步／共 6 步：營收趨勢視覺化】</span>
+
+  <div class="callout">
+    <b>資料來源：</b>使用者提供之 Goodinfo 月營收截圖（2023/07～2026/06，共 36 期），下方取最近 12 期（2025/07～2026/06）視覺化。
+  </div>
+
+  <h3>近 12 期單月營收</h3>
+  <table>
+    <thead><tr><th>月份</th><th>單月營收(億)</th><th>月增%</th><th>年增%</th></tr></thead>
+    <tbody>
+      <tr><td>2025/07</td><td>13.91</td><td class="neg">-9.17</td><td class="neg">-17.1</td></tr>
+      <tr><td>2025/08</td><td>13.89</td><td class="neg">-0.08</td><td class="neg">-18.6</td></tr>
+      <tr><td>2025/09</td><td>16.2</td><td class="pos">+16.6</td><td class="neg">-3.18</td></tr>
+      <tr><td>2025/10</td><td>16.07</td><td class="neg">-0.81</td><td class="neg">-8.17</td></tr>
+      <tr><td>2025/11</td><td>16.26</td><td class="pos">+1.18</td><td class="neg">-1.06</td></tr>
+      <tr><td>2025/12</td><td>18.06</td><td class="pos">+11.1</td><td class="neg">-2.28</td></tr>
+      <tr><td>2026/01</td><td>16.29</td><td class="neg">-9.8</td><td class="neg">-4.4</td></tr>
+      <tr><td>2026/02</td><td>15.3</td><td class="neg">-6.07</td><td class="pos">+7.91</td></tr>
+      <tr><td>2026/03</td><td>15.74</td><td class="pos">+2.84</td><td class="neg">-14.3</td></tr>
+      <tr><td>2026/04</td><td>17.08</td><td class="pos">+8.53</td><td class="neg">-1.48</td></tr>
+      <tr><td>2026/05</td><td>16.02</td><td class="neg">-6.23</td><td class="neg">-8.75</td></tr>
+      <tr><td>2026/06</td><td>15.99</td><td class="neg">-0.14</td><td class="pos">+4.45</td></tr>
+    </tbody>
+  </table>
+
+  <div class="chart-wrap"><div id="chart-rev"></div></div>
+
+  <p>長條圖可以跟第三步的關稅時間軸直接對照著看：</p>
+  <ol style="padding-left:20px;">
+    <li><b>2025 年 7-8 月是年增率最差的兩個月</b>（-17.1%、-18.6%），正好是 232 關稅（5/3 上路）影響完整發酵到第三季的時候，跟第二步、第三步看到的「前三季營收年減、營益率下滑」時間點吻合。</li>
+    <li><b>2025 年 9 月到 2026 年 5 月，年增率大多維持在小個位數負值到中個位數負值之間波動</b>（-1%~-14%不等），只有 2026 年 2 月出現 +7.91% 的正值，但 2 月常受農曆春節工作天數影響，單月數字容易失真，不宜過度解讀為趨勢轉強。</li>
+    <li><b>2026 年 6 月年增率轉正（+4.45%）</b>，時間點跟 232 關稅降至 15%（5/1 追溯生效）相當接近，是這 12 個月裡除了 2 月異常值之外，唯一的正成長月份，值得留意但仍只是單月數據。</li>
+  </ol>
+  <p>累計來看，2026 年 1-6 月單月數字加總為 <b>96.42 億</b>，與第二步查到的官方累計數字完全吻合，交叉驗證沒有問題。整體而言，這張圖呈現的是「探底後緩步止穩」的輪廓，還沒有出現明確的加速回升，7-9 月的數字會是判斷降稅效益是否真正發酵的關鍵觀察期。</p>
+
+  <div class="snap-note">📎 資料來源：使用者提供之 Goodinfo 月營收截圖（2023/07～2026/06）。長條圖標色說明：<span style="color:var(--c-peak); font-weight:600;">米色＝近12期高峰（2025/12，18.06億）</span>、<span style="color:var(--c-trough); font-weight:600;">粉色＝近12期谷底（2025/08，13.89億）</span>。</div>
+</section>
+
+<section class="pad" id="step5">
+  <span class="progress-tag">【第 5 步／共 6 步：前瞻本益比／EPS 預估】</span>
+
+  <div class="callout warn">
+    <b>老實說：</b>我搜尋了多個財經網站，沒有找到帝寶公開的多家法人（FactSet等）共識 EPS 預估——這跟元太不同，帝寶是相對小型的傳產股，法人覆蓋率明顯較低。下面是我自己根據現有數字做的<b>粗略情境推算</b>，不是專業研究機構的正式預估，信心程度較低，僅供參考。
+  </div>
+
+  <h3>本人自行推算之 2026 年 EPS 情境（非法人共識）</h3>
+  <table>
+    <thead><tr><th>情境</th><th>假設</th><th>推算全年EPS</th></tr></thead>
+    <tbody>
+      <tr><td>保守情境</td><td>H2 維持H1的年減態勢，關稅降稅效益有限</td><td>約 11.5 元</td></tr>
+      <tr><td>中性情境</td><td>H2 溫和改善，接近打平去年同期</td><td>約 12.8 元</td></tr>
+      <tr><td>樂觀情境</td><td>降稅效益顯著發酵，H2 明顯優於H1</td><td>約 14.0 元</td></tr>
+    </tbody>
+  </table>
+  <p>推算基礎：2026 Q1 實際 EPS 4.41 元（已知），假設 Q2-Q4 依三種情境估算，非任何機構的正式財測，只是幫助你理解不同情境下的價格意涵。</p>
+
+  <h3>隱含前瞻本益比</h3>
+  <p>以 07/23 最新收盤價 133.0 元計算：</p>
+  <table>
+    <thead><tr><th>情境</th><th>股價</th><th>推算EPS</th><th>隱含本益比</th></tr></thead>
+    <tbody>
+      <tr><td>保守</td><td>133.0</td><td>11.5</td><td>11.6x</td></tr>
+      <tr><td>中性</td><td>133.0</td><td>12.8</td><td>10.4x</td></tr>
+      <tr><td>樂觀</td><td>133.0</td><td>14.0</td><td>9.5x</td></tr>
+    </tbody>
+  </table>
+  <p>目前股價對應近四季（TTM）EPS 的本益比約 10 倍，遠低於 Yahoo股市頁面顯示的同業平均 36.49 倍。這個落差非常大，需要謹慎解讀：一部分可能反映市場對帝寶近兩年獲利下滑、以及第三步提過的<b>賓士車燈專利訴訟長期壓抑評價</b>的疑慮，不完全是「便宜」的訊號，也可能是「同業平均」樣本裡混入了評價邏輯不同的公司，數字本身需要打折扣看待。</p>
+
+  <h3>目標本益比法（合理價可能落在哪）</h3>
+  <p>用<b>推算EPS × 假設合理倍數</b>反推目標價（以中性情境 EPS 12.8 元為基礎，設 3 組情境，倍數選擇比元太保守，因為帝寶是成熟傳產股而非成長股）：</p>
+  <table>
+    <thead><tr><th>假設本益比</th><th>推算目標價</th></tr></thead>
+    <tbody>
+      <tr><td>10倍</td><td>128 元</td></tr>
+      <tr><td>12倍</td><td>153.6 元</td></tr>
+      <tr><td>14倍</td><td>179.2 元</td></tr>
+    </tbody>
+  </table>
+  <p>目前股價 133 元剛好落在 10-12 倍區間內，不算明顯便宜也不算貴，比較像是市場對「獲利能否隨降稅回升」還沒有定論前的中性定價。</p>
+
+  <div class="snap-note">📎 上述所有 EPS 情境、隱含本益比、目標價推算<b>皆為本人根據公開已知數字自行試算</b>，非任何券商、投顧或 FactSet 等機構之正式預估，請務必以此角度看待這些數字的可信度。資料來源：<a href="https://tw.stock.yahoo.com/quote/6605.TW/technical-analysis" style="color:var(--accent)">Yahoo股市 技術分析（同業平均本益比）</a>。</div>
+</section>
+
+<section class="pad" id="step6">
+  <span class="progress-tag">【第 6 步／共 6 步：投資決策推理】</span>
+
+  <div class="callout warn">
+    <b>先聲明：</b>以下是我根據前五步分析做的推理與觀點，不是專業投資建議，我不是理財顧問或證券分析師，實際投資決策請自行判斷並承擔風險。
+  </div>
+
+  <h3>核心切入點：呼應第一步的現金流結論</h3>
+  <p>第一步的現金流盲測結論是「良好，且規則五（獲利品質）近乎滿分」：15 個完整年度 A 全數大於稅前淨利，帳實一致、幾乎沒有膨風，這是帝寶最值得信賴的財務特質。唯一需要認知的是規則四（60分）——帝寶比同類型公司更常仰賴外部融資支應投資，是風格差異不是警訊。這兩點放到現在的處境來看：<b>帝寶不是體質出問題，而是外部關稅環境衝擊了短期獲利</b>，這跟財務體質本身的評分是兩件事，不應該混為一談。</p>
+
+  <h3>若尚未持有：會不會進場？</h3>
+  <div class="callout">
+    <b>傾向：先觀察 7-9 月營收，不急著判斷。</b>目前股價對應的本益比（約10倍）明顯低於同業平均，理論上有安全邊際，但這個便宜有明確原因（近兩年獲利下滑＋專利訴訟不確定性），不是無緣無故的錯殺。是否值得進場，關鍵在於「降稅效益能否延續」這件事目前只有 6 月一個月的數據支持。
+  </div>
+  <p><b>具體觀察訊號（尚未發生，需要驗證）：</b></p>
+  <ul style="padding-left:20px;">
+    <li>2026 年 7-9 月營收年增率是否延續 6 月的正成長，而不是曇花一現的單月波動</li>
+    <li>下一次法說會（通常落在11月，說明Q3財報）是否揭露毛利率、營益率已經隨降稅回升</li>
+    <li>賓士車燈專利訴訟是否有新的法院判決或和解進展公布——這是影響本益比評價的長期變數，一旦落地（不論結果好壞），市場對帝寶的評價邏輯可能會出現一次性重估</li>
+  </ul>
+
+  <h3>若已經持有：續抱還是賣出？</h3>
+  <div class="callout">
+    <b>傾向：續抱觀察，股利政策的穩定性是重要的支撐。</b>連續28年配息的紀錄沒有中斷，即使今年股利從9元降到6.5元，仍維持在合理配發率，加上規則五顯示的優秀獲利品質，沒有立即賣出的急迫理由。
+  </div>
+  <p><b>具體觀察訊號（尚未發生，需要驗證）：</b></p>
+  <ul style="padding-left:20px;">
+    <li>若 7-9 月營收年增率再度轉負，且降幅擴大超過 -10%，可能代表 6 月的正成長只是單月波動，降稅效益沒有真正發酵，這時可以考慮重新檢視持股邏輯</li>
+    <li>2027年初公布的2026全年財報中，A是否維持大於稅前淨利D的優良品質（延續第一步規則五的紀錄），若這項優勢也開始弱化，會是比營收數字更需要留意的訊號</li>
+  </ul>
+
+  <div class="callout">
+    <b>總結：</b>帝寶是一檔「財務體質扎實（尤其獲利品質優秀）、股利政策穩健、但正處於外部關稅衝擊後修復期」的傳產股，故事能不能兌現，關鍵在於接下來 2-3 個月的營收數字能否確認降稅效益真的發酵，以及懸而未決的專利訴訟何時落地。跟元太一樣，這裡不建議現在立刻下定論，而是設定好上面這些具體條件，等答案揭曉再行動。
+  </div>
+</section>
+</main>
+
+<footer class="report-footer">
+  <span>報告版本 v4.0（完整六步驟）</span>
+  <span id="gen-time"></span>
+</footer>
+
+<script>
+  document.getElementById('gen-time').textContent = '生成時間：' + new Date().toLocaleString('zh-TW', {hour12:false});
+
+  const years = ["2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"];
+  const A = [17.1,28.9,26.9,35.9,28.9,27.8,29.2,38.4,34.5,39.3,35.9,42.2,50,49.9,41.3];
+  const B = [-22.3,-25.1,-37.4,-34.4,-31.7,-42.8,-37.9,-45.6,-23.4,-19.3,-17.5,-19.4,-7.37,-19.5,-19];
+  const C = [6.07,-5.1,15.1,1.73,3.24,8.06,15.5,3.26,-5.21,-27.8,-7.69,4.5,-67.2,-30.4,-24.8];
+  const D = [-5.43,12.8,16.8,20.9,19.5,16.4,13.6,12.6,7.45,7.74,14.4,23.9,32.1,40.7,29.2];
+  const E = [19.4,16,21.3,25.3,26.7,21.4,26.6,22.5,28.2,19.5,29.6,60.1,39.5,40.5,36.4];
+
+  const cfBody = document.getElementById('cashflow-table');
+  years.forEach((y,i)=>{
+    const tr = document.createElement('tr');
+    const cell = (v)=> `<td class="${v<0?'neg':'pos'}">${v}</td>`;
+    tr.innerHTML = `<td>${y}</td>${cell(A[i])}${cell(B[i])}${cell(C[i])}${cell(D[i])}${cell(E[i])}`;
+    cfBody.appendChild(tr);
+  });
+  const qtr = document.createElement('tr');
+  qtr.className='quarter-row';
+  qtr.innerHTML = `<td>26Q1（單季）</td><td>13.2</td><td class="neg">-7.13</td><td class="neg">-2.28</td><td>9.51</td><td>39.8</td>`;
+  cfBody.appendChild(qtr);
+
+  const r5Body = document.getElementById('rule5-table');
+  years.forEach((y,i)=>{
+    const pass = A[i] > D[i];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${y}</td><td>${A[i]}</td><td>${D[i]}</td><td class="${pass?'pass':'fail'}">${pass?'✓ 通過':'✗ 未通過'}</td>`;
+    r5Body.appendChild(tr);
+  });
+
+  function barChart(containerId, labels, data, unit){
+    const w = 860, h = 220, padL=36, padR=10, padT=14, padB=28;
+    const max = Math.max(...data), min = Math.min(...data, 0);
+    const range = max - min || 1;
+    const zeroY = padT + (max/range) * (h - padT - padB);
+    const bw = (w - padL - padR) / data.length;
+    const peakIdx = data.indexOf(max);
+    const troughIdx = data.indexOf(Math.min(...data));
+    let bars = '';
+    data.forEach((v,i)=>{
+      const barH = Math.abs(v)/range * (h - padT - padB);
+      const x = padL + i*bw + bw*0.16;
+      const bwActual = bw*0.68;
+      const y = v>=0 ? zeroY - barH : zeroY;
+      let fill = v<0 ? 'var(--negv)' : 'var(--posv)';
+      if(i===peakIdx) fill = 'var(--c-peak)';
+      if(i===troughIdx) fill = 'var(--c-trough)';
+      bars += `<rect x="${x}" y="${y}" width="${bwActual}" height="${Math.max(barH,1)}" fill="${fill}" rx="1"></rect>`;
+      bars += `<text x="${x+bwActual/2}" y="${v>=0? y-4 : y+barH+12}" font-size="9.5" fill="var(--ink-soft)" text-anchor="middle">${v}</text>`;
+      bars += `<text x="${x+bwActual/2}" y="${h-8}" font-size="9.5" fill="var(--ink-soft)" text-anchor="middle">${labels[i]}</text>`;
+    });
+    const svg = `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}">
+      <line x1="${padL}" y1="${zeroY}" x2="${w-padR}" y2="${zeroY}" stroke="var(--rule)" stroke-width="1"></line>
+      ${bars}
+    </svg>`;
+    document.getElementById(containerId).innerHTML = svg;
+  }
+
+  barChart('chart-a', years, A, '億');
+  barChart('chart-b', years, B, '億');
+  barChart('chart-e', years, E, '億');
+
+  function dualBarChart(containerId, labels, d1, d2){
+    const w = 880, h = 230, padL=36, padR=10, padT=14, padB=30;
+    const all = d1.concat(d2);
+    const max = Math.max(...all), min = Math.min(...all, 0);
+    const range = max-min || 1;
+    const zeroY = padT + (max/range)*(h-padT-padB);
+    const bw = (w-padL-padR)/labels.length;
+    let bars='';
+    labels.forEach((lab,i)=>{
+      const groupX = padL + i*bw;
+      [ [d1[i],'var(--accent)'], [d2[i],'var(--ink-soft)'] ].forEach(([v,color],j)=>{
+        const barH = Math.abs(v)/range*(h-padT-padB);
+        const x = groupX + bw*0.12 + j*(bw*0.38);
+        const y = v>=0 ? zeroY-barH : zeroY;
+        let fill = color;
+        if(j===1 && d1[i]<0 && v>0) fill = 'var(--negv)';
+        bars += `<rect x="${x}" y="${y}" width="${bw*0.34}" height="${Math.max(barH,1)}" fill="${fill}" rx="1"></rect>`;
+      });
+      bars += `<text x="${groupX+bw/2}" y="${h-10}" font-size="9.5" fill="var(--ink-soft)" text-anchor="middle">${lab}</text>`;
+    });
+    const svg = `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}">
+      <line x1="${padL}" y1="${zeroY}" x2="${w-padR}" y2="${zeroY}" stroke="var(--rule)" stroke-width="1"></line>
+      ${bars}
+    </svg>`;
+    document.getElementById(containerId).innerHTML = svg + `<div class="legend">
+      <span><span class="swatch" style="background:var(--accent)"></span>B 投資活動</span>
+      <span><span class="swatch" style="background:var(--ink-soft)"></span>C 融資活動</span>
+      <span><span class="swatch" style="background:var(--negv)"></span>疑似舉債支應投資年度</span>
+    </div>`;
+  }
+  dualBarChart('chart-bc', years, B, C);
+
+  // Step 4: revenue bar chart (last 12 months)
+  const revMonths = ["2025/07","2025/08","2025/09","2025/10","2025/11","2025/12","2026/01","2026/02","2026/03","2026/04","2026/05","2026/06"];
+  const revData = [13.91,13.89,16.2,16.07,16.26,18.06,16.29,15.3,15.74,17.08,16.02,15.99];
+  barChart('chart-rev', revMonths, revData, '億');
+
+  document.querySelectorAll('nav.stepnav a:not(.locked)').forEach(a=>{
+    a.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if(target){ target.scrollIntoView({behavior:'smooth', block:'start'}); }
+    });
+  });
+
+  const sections = document.querySelectorAll('main section.pad');
+  const navLinks = document.querySelectorAll('nav.stepnav a');
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        navLinks.forEach(l=>l.classList.remove('active'));
+        const link = document.querySelector(`nav.stepnav a[href="#${entry.target.id}"]`);
+        if(link && !link.classList.contains('locked')) link.classList.add('active');
+      }
+    });
+  }, {threshold:0.4});
+  sections.forEach(s=>observer.observe(s));
+</script>
+
+</body>
+</html>
