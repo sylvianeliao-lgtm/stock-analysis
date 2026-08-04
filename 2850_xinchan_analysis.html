@@ -232,13 +232,13 @@ tr.q-row td { background: #EFE8D7; font-style: italic; }
   <div class="eyebrow">台股個股初步分析 · 現金流優先框架</div>
   <h1>2850 新產<br><span style="font-size:0.5em; color:var(--brass-light); font-weight:500;">現金流量表六大規則分析（盲測階段）</span></h1>
   <p class="hero-sub">本報告依「現金流優先、基本面在後」原則進行。此階段刻意不查詢股價、EPS、產業地位或新聞背景，僅根據使用者提供的現金流量表原始數字做客觀判讀，避免先入為主。</p>
-  <nav class="stepnav">
-    <a href="#step1" class="active">① 現金流六大規則</a>
-    <a class="locked">② 基本資訊查詢</a>
-    <a class="locked">③ 法說會深入討論</a>
-    <a class="locked">④ 營收趨勢視覺化</a>
-    <a class="locked">⑤ 前瞻本益比／EPS</a>
-    <a class="locked">⑥ 投資決策推理</a>
+  <nav class="stepnav" id="stepnav">
+    <a href="#step1" class="navlink" data-step="step1">① 現金流六大規則</a>
+    <a href="#step2" class="navlink" data-step="step2">② 基本資訊查詢</a>
+    <a href="#step3" class="navlink" data-step="step3">③ 法說會深入討論</a>
+    <a href="#step4" class="navlink" data-step="step4">④ 營收趨勢視覺化</a>
+    <a href="#step5" class="navlink" data-step="step5">⑤ 前瞻本益比／EPS</a>
+    <a href="#step6" class="navlink" data-step="step6">⑥ 投資決策推理</a>
   </nav>
 </div>
 
@@ -648,6 +648,190 @@ tr.q-row td { background: #EFE8D7; font-style: italic; }
   </div>
 </section>
 
+<section id="step2">
+  <div class="step-badge">【第 2 步／共 6 步：基本資訊查詢】</div>
+  <h2>股價・獲利・股利・法說會</h2>
+  <div class="card">
+    <h3>股價快照</h3>
+    <p style="color:var(--muted); font-size:13px; margin-top:0;">不同來源查詢時間點不同，股價本身隨盤變動，以下並陳查詢當下的快照，不合併為區間。</p>
+    <table class="datatable">
+      <thead><tr><th>來源</th><th>查詢當下股價</th><th>漲跌</th><th>本益比</th></tr></thead>
+      <tbody>
+        <tr><td class="yr">CMoney</td><td class="num">161.00</td><td class="num pos">+4.00 (+2.55%)</td><td class="num">11.5</td></tr>
+        <tr><td class="yr">PChome</td><td class="num">161.00</td><td class="num pos">+4.00</td><td class="num muted">--</td></tr>
+        <tr><td class="yr">玩股網（2026/07/16收盤）</td><td class="num">145.00</td><td class="num neg">-2.50 (-1.69%)</td><td class="num">10.35</td></tr>
+      </tbody>
+    </table>
+    <p class="note" style="border-top:none; margin-top:8px; padding-top:0;">正式交易請以個人看盤軟體／券商App當下報價為準，以上僅供參考，非即時報價。</p>
+  </div>
+  <div class="card">
+    <h3>獲利與估值</h3>
+    <p><b>26Q1 EPS：3.99元</b>（季增4%、年增77%）｜2025全年EPS：12.28元</p>
+    <p>2026年6月營收：24.92億（月減2.58%、年增3.28%）｜上半年累計147.65億（年增14.4%）｜2025全年營收：215.62億元</p>
+  </div>
+  <div class="card">
+    <h3>股利政策</h3>
+    <p>2026/06/16除權息，現金股利<b>7.27元</b>，現金殖利率<b>4.91%</b>｜近5年平均現金股利5.03元，平均殖利率5.57%</p>
+  </div>
+  <div class="card">
+    <h3>法說會場次</h3>
+    <p>鉅亨網顯示時間 <b>2026/03/30</b>，永豐金證券線上法人說明會，備有中／英文簡報；Goodinfo另有公告訊息顯示 <b>05/29</b> 另一場受邀參加同券商線上法說會，兩者日期不一致，如實並陳，未能確認何者為最終場次，建議以官網投資人關係專區公告為準。</p>
+  </div>
+</section>
+
+<section id="step3">
+  <div class="step-badge">【第 3 步／共 6 步：法說會資料深入討論】</div>
+  <h2>四大方向重點整理</h2>
+  <div class="card">
+    <h3>① 工程險成長動能</h3>
+    <p>2025年第三季台灣產險市場中，車險占46.56%、商業火險14.33%、責任險12.78%，合計逾七成；<b>工程險市占提升至8.49%</b>，成長動能突出，與半導體廠房等工程建設需求相關。</p>
+  </div>
+  <div class="card">
+    <h3>② 核保利潤與同業比較</h3>
+    <p>2025年前三季稅後淨利26.74億元，EPS 8.46元（年增0.54元），獲利主要來自<b>優於預期的核保損益</b>與穩健投資收益，年化ROE達18.37%。市占率方面，新產為台灣第三大產險公司（約10.5%，2021年資料），僅次於富邦產物、國泰世紀產物。</p>
+  </div>
+  <div class="card">
+    <h3>③ 資產配置與投資收益</h3>
+    <p>資產配置逾半為固定收益商品，海外債僅占約8%，兩成股票配置以穩健收息公司為主。</p>
+  </div>
+  <div class="card">
+    <h3>④ 風險管控／內部優化</h3>
+    <p>2025上半年<b>RBC資本適足率391.84%</b>，遠高於法定200%門檻；信評獲中華信評「twAA+/穩定」、標普「A/Stable」，<b>AM Best由A上調至A+</b>。3Q理賠支出因颱風天災增加，已透過再保安排分散風險；未來聚焦透過內部流程與系統優化提升營運效率。</p>
+  </div>
+  <div class="note">資料來源備註：以上摘要整理自富果直送法說會重點備忘錄（2025/12/19場次）及鉅亨網、CMoney等財經媒體之公開報導，非本次搜尋逐字稿全文。</div>
+</section>
+
+<section id="step4">
+  <div class="step-badge">【第 4 步／共 6 步：營收趨勢視覺化】</div>
+  <h2>近12期月營收走勢</h2>
+  <div class="callout">
+    資料為<b>使用者提供之Goodinfo月營收走勢截圖</b>，取近12期（2025/07–2026/06）。其中 <b>2026年4月營收27.91億、年增64.6%</b> 為近12期最高點；<b>2025年9月17.8億</b>為最低點。整體呈現上半年逐步墊高的趨勢，尤其2026Q1（1–3月）與4月增幅明顯放大。
+  </div>
+  <div class="card">
+    <h3>單月合併營業收入（億元）</h3>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--green)"></span>單月營收</span>
+      <span><span class="dot" style="background:var(--peak)"></span>近12期最高（26/04）</span>
+      <span><span class="dot" style="background:var(--trough)"></span>近12期最低（25/09）</span>
+    </div>
+    <div class="chart-wrap"><svg viewBox="0 0 980 280" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace">
+<line x1="46" y1="234" x2="960" y2="234" stroke="#8a7a5c" stroke-width="1"/>
+<rect x="61.2" y="77.8" width="45.7" height="156.2" fill="#3F7D58" rx="2"/>
+<text x="84.1" y="71.8" font-size="10.5" text-anchor="middle" fill="#3a3226">20.76</text>
+<text x="84.1" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">25/07</text>
+<rect x="137.4" y="96.2" width="45.7" height="137.8" fill="#3F7D58" rx="2"/>
+<text x="160.2" y="90.2" font-size="10.5" text-anchor="middle" fill="#3a3226">18.32</text>
+<text x="160.2" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">25/08</text>
+<rect x="213.6" y="100.1" width="45.7" height="133.9" fill="#D98484" rx="2"/>
+<text x="236.4" y="94.1" font-size="10.5" text-anchor="middle" fill="#3a3226">17.8</text>
+<text x="236.4" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">25/09</text>
+<rect x="289.7" y="98.6" width="45.7" height="135.4" fill="#3F7D58" rx="2"/>
+<text x="312.6" y="92.6" font-size="10.5" text-anchor="middle" fill="#3a3226">18</text>
+<text x="312.6" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">25/10</text>
+<rect x="365.9" y="97.4" width="45.7" height="136.6" fill="#3F7D58" rx="2"/>
+<text x="388.8" y="91.4" font-size="10.5" text-anchor="middle" fill="#3a3226">18.15</text>
+<text x="388.8" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">25/11</text>
+<rect x="442.1" y="98.3" width="45.7" height="135.7" fill="#3F7D58" rx="2"/>
+<text x="464.9" y="92.3" font-size="10.5" text-anchor="middle" fill="#3a3226">18.04</text>
+<text x="464.9" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">25/12</text>
+<rect x="518.2" y="57.0" width="45.7" height="177.0" fill="#3F7D58" rx="2"/>
+<text x="541.1" y="51.0" font-size="10.5" text-anchor="middle" fill="#3a3226">23.52</text>
+<text x="541.1" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">26/01</text>
+<rect x="594.4" y="62.7" width="45.7" height="171.3" fill="#3F7D58" rx="2"/>
+<text x="617.3" y="56.7" font-size="10.5" text-anchor="middle" fill="#3a3226">22.76</text>
+<text x="617.3" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">26/02</text>
+<rect x="670.6" y="61.2" width="45.7" height="172.8" fill="#3F7D58" rx="2"/>
+<text x="693.4" y="55.2" font-size="10.5" text-anchor="middle" fill="#3a3226">22.96</text>
+<text x="693.4" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">26/03</text>
+<rect x="746.7" y="24.0" width="45.7" height="210.0" fill="#E8C97A" rx="2"/>
+<text x="769.6" y="18.0" font-size="10.5" text-anchor="middle" fill="#3a3226">27.91</text>
+<text x="769.6" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">26/04</text>
+<rect x="822.9" y="41.5" width="45.7" height="192.5" fill="#3F7D58" rx="2"/>
+<text x="845.8" y="35.5" font-size="10.5" text-anchor="middle" fill="#3a3226">25.58</text>
+<text x="845.8" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">26/05</text>
+<rect x="899.1" y="46.5" width="45.7" height="187.5" fill="#3F7D58" rx="2"/>
+<text x="921.9" y="40.5" font-size="10.5" text-anchor="middle" fill="#3a3226">24.92</text>
+<text x="921.9" y="252.0" font-size="10" text-anchor="middle" fill="#6b5f4a">26/06</text>
+</svg></div>
+    <table class="datatable" style="margin-top:18px;">
+      <thead><tr><th>月份</th><th>單月營收(億)</th><th>年增(%)</th></tr></thead>
+      <tbody>
+        <tr><td class="yr">2025/07</td><td class="num">20.76</td><td class="num pos">+12.2</td></tr>
+        <tr><td class="yr">2025/08</td><td class="num">18.32</td><td class="num pos">+6.86</td></tr>
+        <tr><td class="yr">2025/09</td><td class="num">17.8</td><td class="num pos">+1.15</td></tr>
+        <tr><td class="yr">2025/10</td><td class="num">18</td><td class="num pos">+2.74</td></tr>
+        <tr><td class="yr">2025/11</td><td class="num">18.15</td><td class="num pos">+4.38</td></tr>
+        <tr><td class="yr">2025/12</td><td class="num">18.04</td><td class="num pos">+4.79</td></tr>
+        <tr><td class="yr">2026/01</td><td class="num">23.52</td><td class="num pos">+5.39</td></tr>
+        <tr><td class="yr">2026/02</td><td class="num">22.76</td><td class="num pos">+6.91</td></tr>
+        <tr><td class="yr">2026/03</td><td class="num">22.96</td><td class="num pos">+18.8</td></tr>
+        <tr><td class="yr">2026/04</td><td class="num">27.91</td><td class="num pos">+64.6</td></tr>
+        <tr><td class="yr">2026/05</td><td class="num">25.58</td><td class="num pos">+2.09</td></tr>
+        <tr><td class="yr">2026/06</td><td class="num">24.92</td><td class="num pos">+3.27</td></tr>
+      </tbody>
+    </table>
+    <p class="note">2026年4月營收年增64.6%為近12期最大增幅，值得留意是否為一次性因素（如大型工程險保單入帳）或結構性成長，建議後續留意5–6月是否延續高檔或回落。單月與合併營業收入數字一致，顯示無重大子公司合併損益缺口。</p>
+  </div>
+  <div class="note">資料來源備註：以上月營收數字均為使用者提供之Goodinfo截圖，非本次搜尋所得。</div>
+</section>
+
+<section id="step5">
+  <div class="step-badge">【第 5 步／共 6 步：前瞻本益比／EPS 預估】</div>
+  <h2>三種情境下的本益比估算</h2>
+  <div class="callout warn">
+    <b>重要說明：</b>公開搜尋中未查到任何券商或法人機構的正式「2026年全年EPS預估」共識數字。以下三種情境為根據已公開財報數字自行推算的參考區間，<b>不構成任何投資建議或目標價</b>，僅供你自行判斷估值高低時參考。
+  </div>
+  <div class="card">
+    <h3>估算基礎</h3>
+    <p>採用近期查得之收盤價 <b>161元</b>（查詢當下快照，非即時報價，實際請以看盤軟體為準）。</p>
+    <table class="datatable">
+      <thead><tr><th>情境</th><th>EPS假設基礎</th><th>推算EPS(元)</th><th>推算本益比</th></tr></thead>
+      <tbody>
+        <tr><td class="yr">保守：全年持平</td><td class="num" style="text-align:left;">比照2025全年EPS</td><td class="num">12.28</td><td class="num">13.11 倍</td></tr>
+        <tr><td class="yr">中性：近四季實績</td><td class="num" style="text-align:left;">近四季(TTM)EPS實際數</td><td class="num">14.01</td><td class="num pass">11.49 倍</td></tr>
+        <tr><td class="yr">樂觀：Q1單季年化</td><td class="num" style="text-align:left;">26Q1 EPS×4（未考慮季節性）</td><td class="num">15.96</td><td class="num">10.09 倍</td></tr>
+      </tbody>
+    </table>
+    <p class="note">三種情境下本益比落在 <b>10.1～13.1倍</b>，均低於產險同業平均本益比（先前查得約16.7倍），估值相對不貴。<b>但「樂觀情境」直接將單季EPS乘以4屬粗略年化，保險業獲利具明顯季節性與一次性因子（例如天災理賠、大型工程險保單認列時點），實際全年數字可能明顯偏離，僅供參考上緣。</b></p>
+  </div>
+</section>
+
+<section id="step6">
+  <div class="step-badge">【第 6 步／共 6 步：投資決策推理】</div>
+  <h2>綜合六步驟的決策框架</h2>
+  <div class="callout">
+    以下彙整前五步的發現，分為「支持因素」與「觀察重點／風險」兩欄並陳，<b>不提供買賣建議或目標價</b>，僅供你自行綜合判斷。我不是投資顧問，最終決策請自行評估風險承受度並審慎判斷。
+  </div>
+  <div class="card">
+    <h3>支持因素</h3>
+    <table class="datatable" style="font-family:'Noto Sans TC',sans-serif;">
+      <tbody>
+        <tr><td class="yr" style="width:40%;">現金流總分過關</td><td style="text-align:left;">63.1%，達60%門檻，體質可繼續研究</td></tr>
+        <tr><td class="yr">融資紀律健康</td><td style="text-align:left;">C融資活動規則得分85，無舉債支應投資的警訊模式</td></tr>
+        <tr><td class="yr">核保表現優於預期</td><td style="text-align:left;">2025前三季ROE達18.37%，核保損益優於預期</td></tr>
+        <tr><td class="yr">風控指標健全</td><td style="text-align:left;">RBC 391.84%（法定200%），信評獲AM Best上調至A+</td></tr>
+        <tr><td class="yr">成長動能</td><td style="text-align:left;">工程險市占提升至8.49%，受惠半導體廠房建設需求</td></tr>
+        <tr><td class="yr">估值相對便宜</td><td style="text-align:left;">三情境本益比10.1～13.1倍，低於同業平均約16.7倍</td></tr>
+        <tr><td class="yr">股利穩定</td><td style="text-align:left;">已連續17年發放股利，近5年平均殖利率5.57%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>觀察重點／風險</h3>
+    <table class="datatable" style="font-family:'Noto Sans TC',sans-serif;">
+      <tbody>
+        <tr><td class="yr" style="width:40%;">現金流品質偏弱</td><td style="text-align:left;">規則五(A&gt;D)14年僅5年過關(35.7%)，尤其近三年+2025年皆未過關，帳面獲利常優於實際現金流入</td></tr>
+        <tr><td class="yr">2025年背離現象</td><td style="text-align:left;">稅前淨利創高47.1億，營業現金流卻僅1.26億，落差為14年最大，建議追問原因</td></tr>
+        <tr><td class="yr">2026年4月營收爆量</td><td style="text-align:left;">單月年增64.6%為近12期最大增幅，尚未確認是否為一次性大型保單入帳</td></tr>
+        <tr><td class="yr">EPS年化推估不可靠</td><td style="text-align:left;">保險業獲利季節性強，Q1單季×4年化僅供參考上緣，不宜當作全年預估依據</td></tr>
+        <tr><td class="yr">法說會場次資訊不一致</td><td style="text-align:left;">不同來源顯示03/30與05/29兩個不同日期，尚未確認何者為準</td></tr>
+        <tr><td class="yr">股價快照差異</td><td style="text-align:left;">查詢當下股價在145～161元間波動，非即時報價，交易前請自行確認</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">本報告所有數據來源已於各步驟逐一標註，涉及使用者提供的截圖資料與本次網路搜尋所得資料已明確區分。以上內容僅為資訊整理與框架呈現，不構成投資建議，不保證未來績效，投資有風險，請自行審慎評估。</div>
+</section>
+
 <div class="footer">
   <span>報告版本 v1.0 · 第 1 步／共 6 步</span>
   <span id="gen-time"></span>
@@ -656,6 +840,38 @@ tr.q-row td { background: #EFE8D7; font-style: italic; }
 
 <script>
 document.getElementById('gen-time').textContent = '生成時間：' + new Date().toLocaleString('zh-TW', {hour12:false});
+
+// stepnav: click -> smooth scroll, scroll -> active class via IntersectionObserver
+(function() {
+  var navLinks = document.querySelectorAll('.navlink[data-step]');
+  navLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = document.getElementById(link.dataset.step);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  var sections = Array.from(navLinks).map(function(l) {
+    return document.getElementById(l.dataset.step);
+  }).filter(Boolean);
+
+  if ('IntersectionObserver' in window && sections.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          navLinks.forEach(function(l) { l.classList.remove('active'); });
+          var activeLink = document.querySelector('.navlink[data-step="' + entry.target.id + '"]');
+          if (activeLink) activeLink.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+
+  // set initial active state
+  if (navLinks.length) navLinks[0].classList.add('active');
+})();
 </script>
 </body>
 </html>
