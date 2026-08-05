@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2603 長榮 — 個股初步分析報告</title>
+<style>
+:root{
+  --hull:#0C1820; --deck:#132630; --deck2:#183440; --rule:#25454F;
+  --ink:#E4EDF0; --dim:#8FA8B2;
+  --teal:#3FA795; --rust:#D25A3E; --signal:#E6B33C; --rose:#E0748F;
+  --band:rgba(230,179,60,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--hull);color:var(--ink);
+ font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+ font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px 90px}
+.num,.tag,.val,.xlab,.axlab,.unit{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+
+/* ---- hero：吃水線 ---- */
+header.hero{padding:60px 0 30px;position:relative;overflow:hidden}
+.eyebrow{font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.34em;
+ color:var(--signal);text-transform:uppercase;margin:0 0 14px}
+h1{margin:0;font-size:clamp(34px,6vw,60px);line-height:1.02;font-weight:800;letter-spacing:-.02em}
+h1 small{display:block;font-size:15px;font-weight:400;letter-spacing:.2em;color:var(--dim);margin-top:14px}
+.thesis{margin:26px 0 0;max-width:56ch;color:var(--dim);font-size:16px}
+.thesis b{color:var(--ink)}
+.hero-line{margin-top:34px;height:1px;background:linear-gradient(90deg,var(--signal),var(--rule) 40%,transparent)}
+
+/* ---- nav ---- */
+nav.stepnav{position:sticky;top:0;z-index:20;background:rgba(12,24,32,.93);
+ backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);margin-bottom:34px}
+nav.stepnav .inner{max-width:1080px;margin:0 auto;padding:9px 18px;display:flex;gap:6px;overflow-x:auto}
+.pad{flex:0 0 auto;border:1px solid var(--rule);background:transparent;color:var(--dim);
+ font:inherit;font-size:12.5px;padding:6px 13px;border-radius:2px;cursor:pointer;white-space:nowrap;
+ transition:background .18s,color .18s,border-color .18s}
+.pad:hover{color:var(--ink);border-color:var(--teal)}
+.pad:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.pad.active{background:var(--signal);border-color:var(--signal);color:#10202A;font-weight:700}
+.pad.locked{opacity:.38;cursor:not-allowed}
+.pad .n{font-family:ui-monospace,monospace;margin-right:6px;opacity:.75}
+
+/* ---- sections ---- */
+section{scroll-margin-top:64px;margin:0 0 54px}
+.steptag{font-family:ui-monospace,monospace;font-size:11.5px;letter-spacing:.22em;
+ color:var(--signal);border-left:3px solid var(--signal);padding-left:10px;margin-bottom:12px}
+h2{font-size:27px;margin:0 0 8px;font-weight:800;letter-spacing:-.01em}
+h3{font-size:16.5px;margin:34px 0 8px;font-weight:700}
+h3 .rn{font-family:ui-monospace,monospace;color:var(--signal);margin-right:9px;font-size:14px}
+p{margin:.55em 0}
+
+.keybox{border-left:5px solid var(--teal);background:var(--deck);padding:15px 18px;
+ border-radius:0 4px 4px 0;margin:16px 0 26px}
+.keybox.warn{border-left-color:var(--signal)}
+.keybox.stop{border-left-color:var(--rust)}
+.keybox p{margin:.3em 0}
+.negv{color:var(--rust)} .posv{color:var(--teal)}
+b.hi{color:var(--signal)}
+
+table{width:100%;border-collapse:collapse;margin:14px 0 6px;font-size:13.5px}
+caption{caption-side:top;text-align:left;color:var(--dim);font-size:12.5px;padding-bottom:7px}
+th,td{padding:7px 9px;border-bottom:1px solid var(--rule);text-align:left}
+thead th{color:var(--dim);font-weight:600;font-size:12px;letter-spacing:.06em;
+ border-bottom:1.5px solid var(--teal);white-space:nowrap}
+tbody th{font-family:ui-monospace,monospace;color:var(--ink);font-weight:600}
+td.num{text-align:right}
+td.big{font-size:17px;font-weight:700}
+td.mark{text-align:center;font-weight:700}
+td.mark.ok,.mark:not(.bad):not(.wait){color:var(--teal)}
+td.mark.bad{color:var(--rust)}
+td.mark.wait{color:var(--dim);font-size:12px;font-weight:400}
+tbody tr:hover{background:rgba(63,167,149,.06)}
+tr.qtr-row{opacity:.72} tr.qtr-row th small{display:block;font-size:10px;color:var(--dim)}
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);border-radius:4px;padding:4px 12px 8px;background:var(--deck)}
+.readnote{color:var(--dim);font-size:13px;margin:8px 0 0;padding-left:11px;border-left:2px solid var(--rule)}
+
+figure{margin:16px 0 4px;background:var(--deck);border:1px solid var(--rule);
+ border-radius:4px;padding:14px 10px 6px;overflow-x:auto}
+svg.chart{width:100%;min-width:640px;height:auto;display:block}
+.waterline{stroke:var(--signal);stroke-width:1.1;stroke-dasharray:5 4;opacity:.85}
+.bar.pos{fill:var(--teal)} .bar.neg{fill:var(--rust)}
+.bar.peak{fill:var(--signal)} .bar.trough{fill:var(--rose)}
+.bar.qtr{opacity:.45}
+.bar.sB{fill:#4E8FA8} .bar.sC{fill:#B77BC4}
+.flagband{fill:var(--band)}
+.val{font-size:9.5px;fill:var(--ink);opacity:.9} .val.vneg{fill:var(--rust)}
+.xlab{font-size:10px;fill:var(--dim)} .axlab{font-size:10px;fill:var(--signal)}
+.unit{font-size:9.5px;fill:var(--dim)}
+.legend{display:flex;gap:20px;flex-wrap:wrap;color:var(--dim);font-size:12px;padding:8px 4px 4px}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.sw.sB{background:#4E8FA8} .sw.sC{background:#B77BC4} .sw.swflag{background:var(--band);border:1px solid var(--signal)}
+
+.pill{font-size:11.5px;padding:2px 9px;border-radius:99px;border:1px solid currentColor}
+.p優秀{color:var(--teal)} .p良好{color:var(--signal)} .p需觀察{color:var(--rust)}
+.barcell{width:150px}
+.minibar{display:block;height:6px;background:linear-gradient(90deg,var(--teal),var(--signal));border-radius:99px}
+
+.total{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin:22px 0 6px;
+ border:1px solid var(--teal);border-radius:4px;padding:20px 24px;background:var(--deck2)}
+.total .n{font-family:ui-monospace,monospace;font-size:52px;font-weight:800;color:var(--teal);line-height:1}
+.total .t{font-size:15px;color:var(--dim)}
+
+.pending{border:1px dashed var(--rule);border-radius:4px;padding:26px;color:var(--dim);background:rgba(19,38,48,.5)}
+.pending h2{color:var(--dim)}
+.snap{margin-top:12px;font-size:12px;color:var(--dim);border-top:1px solid var(--rule);padding-top:9px}
+.snap a{color:var(--teal)}
+footer{border-top:1px solid var(--rule);padding-top:20px;color:var(--dim);font-size:12.5px}
+ul{padding-left:20px} li{margin:.3em 0}
+@media(max-width:640px){h1{font-size:32px} .wrap{padding:0 14px 60px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">TWSE 2603 ／ 現金流優先 · 基本面在後</p>
+  <h1>吃水線之下<small>長榮海運 2603 — 個股初步分析</small></h1>
+  <p class="thesis">一家公司真正的重量，看的不是甲板上堆了多高，而是<b>水面下沉了多深</b>。這份報告先把股價、產業地位、法說會話術全部收起來，只讀十七年的現金進出——<b>先判斷這艘船撐不撐得住，再談它要開去哪裡</b>。</p>
+  <div class="hero-line"></div>
+</header>
+</div>
+
+<nav class="stepnav" aria-label="分析步驟">
+  <div class="inner">
+    <button class="pad active" data-target="step1"><span class="n">01</span>現金流六大規則</button>
+    <button class="pad" data-target="step2"><span class="n">02</span>基本資訊</button>
+    <button class="pad" data-target="step3"><span class="n">03</span>法說會深入</button>
+    <button class="pad" data-target="step4"><span class="n">04</span>營收趨勢</button>
+    <button class="pad" data-target="step5"><span class="n">05</span>前瞻本益比</button>
+    <button class="pad" data-target="step6"><span class="n">06</span>投資決策</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ================= STEP 1 ================= -->
+<section id="step1">
+  <p class="steptag">第 1 步／共 6 步</p>
+  <h2>現金流量表六大規則分析（盲測）</h2>
+  <div class="keybox">
+    <p>總分 <b class="hi">74.3 分（良好）</b>，<b>現金流體質可以繼續看下去</b>。</p>
+    <p>最需要記住的一件事：這是一艘<b>吃水極深、但只在漲潮時才浮得起來</b>的船——2020 年前十一年幾乎年年靠融資補血，2020 後靠運價一次還清；<b class="negv">2023 年 A 轉負 −138 億</b>提醒週期本質從未消失。</p>
+  </div>
+  <p>本步驟未查詢股價、EPS、產業地位或任何新聞背景，僅依使用者提供的現金流量表截圖判讀，維持盲測狀態。26Q1 為單季數字，全程僅供參考、不列入計分。</p>
+
+  <h3>現金流量彙總（單位：億元）</h3>
+  <div class="tablewrap">
+  <table>
+    <caption>A 營業活動｜B 投資活動｜C 融資活動｜D 稅前淨利｜E 期末現金餘額；最右欄為規則五「A &gt; D」逐年判定</caption>
+    <thead><tr><th>年度</th><th>A 營業</th><th>B 投資</th><th>C 融資</th><th>D 稅前淨利</th><th>E 期末現金</th><th>A&gt;D</th></tr></thead>
+    <tbody><tr><th scope="row">2009</th><td class="num negv">-139</td><td class="num negv">-76.4</td><td class="num posv">55.2</td><td class="num negv">-129</td><td class="num">98.6</td><td class="mark">✕</td></tr><tr><th scope="row">2010</th><td class="num posv">262</td><td class="num negv">-119</td><td class="num negv">-36.3</td><td class="num posv">188</td><td class="num">197</td><td class="mark">✓</td></tr><tr><th scope="row">2011</th><td class="num negv">-6.71</td><td class="num negv">-95.6</td><td class="num posv">120</td><td class="num negv">-34.2</td><td class="num">230</td><td class="mark">✕</td></tr><tr><th scope="row">2012</th><td class="num posv">75.4</td><td class="num negv">-137</td><td class="num posv">167</td><td class="num posv">0.45</td><td class="num">320</td><td class="mark">✓</td></tr><tr><th scope="row">2013</th><td class="num posv">22.1</td><td class="num negv">-200</td><td class="num posv">190</td><td class="num negv">-15.9</td><td class="num">335</td><td class="mark">✓</td></tr><tr><th scope="row">2014</th><td class="num posv">112</td><td class="num negv">-153</td><td class="num posv">23.1</td><td class="num posv">32.1</td><td class="num">328</td><td class="mark">✓</td></tr><tr><th scope="row">2015</th><td class="num posv">52.2</td><td class="num negv">-139</td><td class="num posv">88.4</td><td class="num negv">-46.8</td><td class="num">328</td><td class="mark">✓</td></tr><tr><th scope="row">2016</th><td class="num negv">-7.38</td><td class="num negv">-34.4</td><td class="num posv">47.1</td><td class="num negv">-88.1</td><td class="num">344</td><td class="mark">✕</td></tr><tr><th scope="row">2017</th><td class="num posv">112</td><td class="num negv">-98.7</td><td class="num posv">38.7</td><td class="num posv">74.5</td><td class="num">381</td><td class="mark">✓</td></tr><tr><th scope="row">2018</th><td class="num posv">29.9</td><td class="num negv">-228</td><td class="num posv">219</td><td class="num posv">12</td><td class="num">358</td><td class="mark">✓</td></tr><tr><th scope="row">2019</th><td class="num posv">198</td><td class="num negv">-175</td><td class="num negv">-0.86</td><td class="num posv">7.79</td><td class="num">379</td><td class="mark">✓</td></tr><tr><th scope="row">2020</th><td class="num posv">519</td><td class="num negv">-329</td><td class="num negv">-111</td><td class="num posv">318</td><td class="num">441</td><td class="mark">✓</td></tr><tr><th scope="row">2021</th><td class="num posv">3,011</td><td class="num negv">-1,662</td><td class="num negv">-694</td><td class="num posv">2,882</td><td class="num">1,078</td><td class="mark">✓</td></tr><tr><th scope="row">2022</th><td class="num posv">4,224</td><td class="num posv">268</td><td class="num negv">-1,684</td><td class="num posv">3,994</td><td class="num">3,923</td><td class="mark">✓</td></tr><tr><th scope="row">2023</th><td class="num negv">-138</td><td class="num negv">-398</td><td class="num negv">-1,681</td><td class="num posv">642</td><td class="num">1,702</td><td class="mark">✕</td></tr><tr><th scope="row">2024</th><td class="num posv">1,923</td><td class="num negv">-807</td><td class="num negv">-326</td><td class="num posv">1,804</td><td class="num">2,534</td><td class="mark">✓</td></tr><tr><th scope="row">2025</th><td class="num posv">1,012</td><td class="num negv">-1,090</td><td class="num negv">-660</td><td class="num posv">829</td><td class="num">1,744</td><td class="mark">✓</td></tr><tr class="qtr-row"><th scope="row">26Q1<small>單季</small></th><td class="num posv">188</td><td class="num negv">-214</td><td class="num posv">82.3</td><td class="num posv">106</td><td class="num">1,835</td><td class="mark">—</td></tr></tbody>
+  </table>
+  </div>
+
+  <h3><span class="rn">R1</span>A 逐年成長趨勢 — 70 分</h3>
+  <figure><svg class="chart" viewBox="0 0 806 250" role="img" preserveAspectRatio="xMidYMid meet"><line class="waterline" x1="36" y1="209.9" x2="802" y2="209.9"/><text class="axlab" x="32" y="213.4" text-anchor="end">0</text><rect class="bar trough" x="46" y="209.9" width="34" height="6.1" rx="1"/><text class="val vneg" x="63.0" y="227.0" text-anchor="middle">-139</text><text class="xlab" x="63.0" y="240" text-anchor="middle">09</text><rect class="bar pos" x="88" y="198.5" width="34" height="11.4" rx="1"/><text class="val " x="105.0" y="193.5" text-anchor="middle">262</text><text class="xlab" x="105.0" y="240" text-anchor="middle">10</text><rect class="bar neg" x="130" y="209.9" width="34" height="1.2" rx="1"/><text class="val vneg" x="147.0" y="221.2" text-anchor="middle">-6.71</text><text class="xlab" x="147.0" y="240" text-anchor="middle">11</text><rect class="bar pos" x="172" y="206.7" width="34" height="3.3" rx="1"/><text class="val " x="189.0" y="201.7" text-anchor="middle">75.4</text><text class="xlab" x="189.0" y="240" text-anchor="middle">12</text><rect class="bar pos" x="214" y="209.0" width="34" height="1.2" rx="1"/><text class="val " x="231.0" y="204.0" text-anchor="middle">22.1</text><text class="xlab" x="231.0" y="240" text-anchor="middle">13</text><rect class="bar pos" x="256" y="205.1" width="34" height="4.9" rx="1"/><text class="val " x="273.0" y="200.1" text-anchor="middle">112</text><text class="xlab" x="273.0" y="240" text-anchor="middle">14</text><rect class="bar pos" x="298" y="207.7" width="34" height="2.3" rx="1"/><text class="val " x="315.0" y="202.7" text-anchor="middle">52.2</text><text class="xlab" x="315.0" y="240" text-anchor="middle">15</text><rect class="bar neg" x="340" y="209.9" width="34" height="1.2" rx="1"/><text class="val vneg" x="357.0" y="221.3" text-anchor="middle">-7.38</text><text class="xlab" x="357.0" y="240" text-anchor="middle">16</text><rect class="bar pos" x="382" y="205.1" width="34" height="4.9" rx="1"/><text class="val " x="399.0" y="200.1" text-anchor="middle">112</text><text class="xlab" x="399.0" y="240" text-anchor="middle">17</text><rect class="bar pos" x="424" y="208.6" width="34" height="1.3" rx="1"/><text class="val " x="441.0" y="203.6" text-anchor="middle">29.9</text><text class="xlab" x="441.0" y="240" text-anchor="middle">18</text><rect class="bar pos" x="466" y="201.3" width="34" height="8.6" rx="1"/><text class="val " x="483.0" y="196.3" text-anchor="middle">198</text><text class="xlab" x="483.0" y="240" text-anchor="middle">19</text><rect class="bar pos" x="508" y="187.3" width="34" height="22.6" rx="1"/><text class="val " x="525.0" y="182.3" text-anchor="middle">519</text><text class="xlab" x="525.0" y="240" text-anchor="middle">20</text><rect class="bar pos" x="550" y="78.8" width="34" height="131.1" rx="1"/><text class="val " x="567.0" y="73.8" text-anchor="middle">3,011</text><text class="xlab" x="567.0" y="240" text-anchor="middle">21</text><rect class="bar peak" x="592" y="26.0" width="34" height="183.9" rx="1"/><text class="val " x="609.0" y="21.0" text-anchor="middle">4,224</text><text class="xlab" x="609.0" y="240" text-anchor="middle">22</text><rect class="bar neg" x="634" y="209.9" width="34" height="6.0" rx="1"/><text class="val vneg" x="651.0" y="227.0" text-anchor="middle">-138</text><text class="xlab" x="651.0" y="240" text-anchor="middle">23</text><rect class="bar pos" x="676" y="126.2" width="34" height="83.7" rx="1"/><text class="val " x="693.0" y="121.2" text-anchor="middle">1,923</text><text class="xlab" x="693.0" y="240" text-anchor="middle">24</text><rect class="bar pos" x="718" y="165.9" width="34" height="44.1" rx="1"/><text class="val " x="735.0" y="160.9" text-anchor="middle">1,012</text><text class="xlab" x="735.0" y="240" text-anchor="middle">25</text><rect class="bar pos qtr" x="760" y="201.8" width="34" height="8.2" rx="1"/><text class="val " x="777.0" y="196.8" text-anchor="middle">188</text><text class="xlab" x="777.0" y="240" text-anchor="middle">26Q1</text><text class="unit" x="32" y="16" text-anchor="end">億元</text></svg><figcaption class="legend"><span><i class="sw" style="background:var(--signal)"></i>高峰 2022</span><span><i class="sw" style="background:var(--rose)"></i>谷底 2009</span><span><i class="sw" style="background:var(--teal)"></i>正值</span><span><i class="sw" style="background:var(--rust)"></i>負值</span></figcaption></figure>
+  <p class="readnote"><b>數字現象：</b>2009–2019 十一年間 A 長期停留在數十億至兩百億區間，2016 甚至為負；2020 起三級跳（519 → 3011 → <b class="hi">4224</b>），2023 驟然轉負 <b class="negv">−138</b>，2024 回到 1923、2025 再降至 1012。<b>個性標籤：</b>「潮汐型體質」——長期方向確實往上（結構性平台已從百億級升到千億級），但單一年度落差可達數千億，中長期趨勢是階梯式而非爬坡式。</p>
+
+  <h3><span class="rn">R2</span>B 投資紀律 — 75 分</h3>
+  <figure><svg class="chart" viewBox="0 0 806 250" role="img" preserveAspectRatio="xMidYMid meet"><line class="waterline" x1="36" y1="52.4" x2="802" y2="52.4"/><text class="axlab" x="32" y="55.9" text-anchor="end">0</text><rect class="bar neg" x="46" y="52.4" width="34" height="7.5" rx="1"/><text class="val vneg" x="63.0" y="70.9" text-anchor="middle">-76.4</text><text class="xlab" x="63.0" y="240" text-anchor="middle">09</text><rect class="bar neg" x="88" y="52.4" width="34" height="11.7" rx="1"/><text class="val vneg" x="105.0" y="75.1" text-anchor="middle">-119</text><text class="xlab" x="105.0" y="240" text-anchor="middle">10</text><rect class="bar neg" x="130" y="52.4" width="34" height="9.4" rx="1"/><text class="val vneg" x="147.0" y="72.8" text-anchor="middle">-95.6</text><text class="xlab" x="147.0" y="240" text-anchor="middle">11</text><rect class="bar neg" x="172" y="52.4" width="34" height="13.5" rx="1"/><text class="val vneg" x="189.0" y="76.9" text-anchor="middle">-137</text><text class="xlab" x="189.0" y="240" text-anchor="middle">12</text><rect class="bar neg" x="214" y="52.4" width="34" height="19.7" rx="1"/><text class="val vneg" x="231.0" y="83.1" text-anchor="middle">-200</text><text class="xlab" x="231.0" y="240" text-anchor="middle">13</text><rect class="bar neg" x="256" y="52.4" width="34" height="15.1" rx="1"/><text class="val vneg" x="273.0" y="78.4" text-anchor="middle">-153</text><text class="xlab" x="273.0" y="240" text-anchor="middle">14</text><rect class="bar neg" x="298" y="52.4" width="34" height="13.7" rx="1"/><text class="val vneg" x="315.0" y="77.1" text-anchor="middle">-139</text><text class="xlab" x="315.0" y="240" text-anchor="middle">15</text><rect class="bar neg" x="340" y="52.4" width="34" height="3.4" rx="1"/><text class="val vneg" x="357.0" y="66.8" text-anchor="middle">-34.4</text><text class="xlab" x="357.0" y="240" text-anchor="middle">16</text><rect class="bar neg" x="382" y="52.4" width="34" height="9.7" rx="1"/><text class="val vneg" x="399.0" y="73.1" text-anchor="middle">-98.7</text><text class="xlab" x="399.0" y="240" text-anchor="middle">17</text><rect class="bar neg" x="424" y="52.4" width="34" height="22.4" rx="1"/><text class="val vneg" x="441.0" y="85.8" text-anchor="middle">-228</text><text class="xlab" x="441.0" y="240" text-anchor="middle">18</text><rect class="bar neg" x="466" y="52.4" width="34" height="17.2" rx="1"/><text class="val vneg" x="483.0" y="80.6" text-anchor="middle">-175</text><text class="xlab" x="483.0" y="240" text-anchor="middle">19</text><rect class="bar neg" x="508" y="52.4" width="34" height="32.4" rx="1"/><text class="val vneg" x="525.0" y="95.8" text-anchor="middle">-329</text><text class="xlab" x="525.0" y="240" text-anchor="middle">20</text><rect class="bar trough" x="550" y="52.4" width="34" height="163.6" rx="1"/><text class="val vneg" x="567.0" y="227.0" text-anchor="middle">-1,662</text><text class="xlab" x="567.0" y="240" text-anchor="middle">21</text><rect class="bar peak" x="592" y="26.0" width="34" height="26.4" rx="1"/><text class="val " x="609.0" y="21.0" text-anchor="middle">268</text><text class="xlab" x="609.0" y="240" text-anchor="middle">22</text><rect class="bar neg" x="634" y="52.4" width="34" height="39.2" rx="1"/><text class="val vneg" x="651.0" y="102.6" text-anchor="middle">-398</text><text class="xlab" x="651.0" y="240" text-anchor="middle">23</text><rect class="bar neg" x="676" y="52.4" width="34" height="79.4" rx="1"/><text class="val vneg" x="693.0" y="142.8" text-anchor="middle">-807</text><text class="xlab" x="693.0" y="240" text-anchor="middle">24</text><rect class="bar neg" x="718" y="52.4" width="34" height="107.3" rx="1"/><text class="val vneg" x="735.0" y="170.7" text-anchor="middle">-1,090</text><text class="xlab" x="735.0" y="240" text-anchor="middle">25</text><rect class="bar neg qtr" x="760" y="52.4" width="34" height="21.1" rx="1"/><text class="val vneg" x="777.0" y="84.5" text-anchor="middle">-214</text><text class="xlab" x="777.0" y="240" text-anchor="middle">26Q1</text><text class="unit" x="32" y="16" text-anchor="end">億元</text></svg><figcaption class="legend"><span><i class="sw" style="background:var(--signal)"></i>唯一正值 2022</span><span><i class="sw" style="background:var(--rose)"></i>投資最重 2021</span></figcaption></figure>
+  <p class="readnote"><b>數字現象：</b>十七年中十六年 B 為負，代表持續投入；規模隨獲利同步放大，2021 年 <b class="negv">−1662</b> 為歷史最重，2025 年 <b class="negv">−1090</b> 已逼近該年 A（1012），|B| 略大於 A。<b>個性標籤：</b>「賺多少造多少的造船廠思維」。航運屬資本密集產業，B 持續負值與 |B|&gt;A 屬常態，不過度扣分；值得肯定的是重投資年度多落在手頭寬裕時，而非現金最緊的 2009–2016。<b>提醒：</b>此判讀僅用 B 總額，尚未看到細項；真正的資本支出應檢視「固定資產（增加）減少」，其餘可能只是金融資產買賣，建議後續補上細項再確認。</p>
+
+  <h3><span class="rn">R3</span>B 投資效益 — 70 分</h3>
+  <div class="tablewrap">
+  <table>
+    <caption>核心對照指標為 A（營業現金流），非 D；效果需 1–2 年發酵，故採「投資年度 vs 隔年 A」時間錯位對照</caption>
+    <thead><tr><th>投資年度</th><th>當年 B</th><th>當年 A</th><th>隔年</th><th>隔年 A</th><th>轉化</th></tr></thead>
+    <tbody><tr><th scope="row">2013</th><td class="num negv">-200</td><td class="num">22.1</td><td class="num">2014</td><td class="num">112</td><td class="mark ok">✓</td></tr><tr><th scope="row">2015</th><td class="num negv">-139</td><td class="num">52.2</td><td class="num">2016</td><td class="num">-7.38</td><td class="mark bad">✕</td></tr><tr><th scope="row">2018</th><td class="num negv">-228</td><td class="num">29.9</td><td class="num">2019</td><td class="num">198</td><td class="mark ok">✓</td></tr><tr><th scope="row">2020</th><td class="num negv">-329</td><td class="num">519</td><td class="num">2021</td><td class="num">3,011</td><td class="mark ok">✓</td></tr><tr><th scope="row">2021</th><td class="num negv">-1,662</td><td class="num">3,011</td><td class="num">2022</td><td class="num">4,224</td><td class="mark ok">✓</td></tr><tr><th scope="row">2023</th><td class="num negv">-398</td><td class="num">-138</td><td class="num">2024</td><td class="num">1,923</td><td class="mark ok">✓</td></tr><tr><th scope="row">2024</th><td class="num negv">-807</td><td class="num">1,923</td><td class="num">2025</td><td class="num">1,012</td><td class="mark bad">✕</td></tr><tr><th scope="row">2025</th><td class="num negv">-1,090</td><td class="num">1,012</td><td class="num">2026</td><td class="num">尚未揭曉</td><td class="mark wait">待驗證</td></tr></tbody>
+  </table>
+  </div>
+  <p class="readnote"><b>數字現象：</b>七次可驗證的重投資中，五次隔年 A 明顯回升（2013、2018、2020、2021、2023），兩次未見效（2015、2024）。<b>個性標籤：</b>介於「敢衝且有實力」與「老將自費特訓」之間——轉化率約七成看似不錯，但誠實地說，2021→2022、2023→2024 的 A 暴增主因是<b>運價循環</b>而非船隊擴張的直接產出，投資與造血之間的因果並不乾淨，這是給不到 80 分的原因。</p>
+
+  <h3><span class="rn">R4</span>C 融資合理性 — 70 分</h3>
+  <figure><svg class="chart" viewBox="0 0 794 270" role="img" preserveAspectRatio="xMidYMid meet"><rect class="flagband" x="42" y="22" width="40" height="222" rx="2"/><rect class="flagband" x="130" y="22" width="40" height="222" rx="2"/><rect class="flagband" x="174" y="22" width="40" height="222" rx="2"/><rect class="flagband" x="218" y="22" width="40" height="222" rx="2"/><rect class="flagband" x="262" y="22" width="40" height="222" rx="2"/><rect class="flagband" x="306" y="22" width="40" height="222" rx="2"/><rect class="flagband" x="350" y="22" width="40" height="222" rx="2"/><rect class="flagband" x="394" y="22" width="40" height="222" rx="2"/><rect class="flagband" x="438" y="22" width="40" height="222" rx="2"/><line class="waterline" x1="36" y1="58.3" x2="790" y2="58.3"/><rect class="bar sB" x="46" y="58.3" width="15" height="8.1" rx="1"/><rect class="bar sC" x="63" y="52.5" width="15" height="5.8" rx="1"/><text class="xlab" x="62.0" y="260" text-anchor="middle">09</text><rect class="bar sB" x="90" y="58.3" width="15" height="12.6" rx="1"/><rect class="bar sC" x="107" y="58.3" width="15" height="3.8" rx="1"/><text class="xlab" x="106.0" y="260" text-anchor="middle">10</text><rect class="bar sB" x="134" y="58.3" width="15" height="10.1" rx="1"/><rect class="bar sC" x="151" y="45.6" width="15" height="12.7" rx="1"/><text class="xlab" x="150.0" y="260" text-anchor="middle">11</text><rect class="bar sB" x="178" y="58.3" width="15" height="14.5" rx="1"/><rect class="bar sC" x="195" y="40.7" width="15" height="17.6" rx="1"/><text class="xlab" x="194.0" y="260" text-anchor="middle">12</text><rect class="bar sB" x="222" y="58.3" width="15" height="21.1" rx="1"/><rect class="bar sC" x="239" y="38.2" width="15" height="20.1" rx="1"/><text class="xlab" x="238.0" y="260" text-anchor="middle">13</text><rect class="bar sB" x="266" y="58.3" width="15" height="16.1" rx="1"/><rect class="bar sC" x="283" y="55.8" width="15" height="2.4" rx="1"/><text class="xlab" x="282.0" y="260" text-anchor="middle">14</text><rect class="bar sB" x="310" y="58.3" width="15" height="14.7" rx="1"/><rect class="bar sC" x="327" y="49.0" width="15" height="9.3" rx="1"/><text class="xlab" x="326.0" y="260" text-anchor="middle">15</text><rect class="bar sB" x="354" y="58.3" width="15" height="3.6" rx="1"/><rect class="bar sC" x="371" y="53.3" width="15" height="5.0" rx="1"/><text class="xlab" x="370.0" y="260" text-anchor="middle">16</text><rect class="bar sB" x="398" y="58.3" width="15" height="10.4" rx="1"/><rect class="bar sC" x="415" y="54.2" width="15" height="4.1" rx="1"/><text class="xlab" x="414.0" y="260" text-anchor="middle">17</text><rect class="bar sB" x="442" y="58.3" width="15" height="24.1" rx="1"/><rect class="bar sC" x="459" y="35.2" width="15" height="23.1" rx="1"/><text class="xlab" x="458.0" y="260" text-anchor="middle">18</text><rect class="bar sB" x="486" y="58.3" width="15" height="18.5" rx="1"/><rect class="bar sC" x="503" y="58.3" width="15" height="1.2" rx="1"/><text class="xlab" x="502.0" y="260" text-anchor="middle">19</text><rect class="bar sB" x="530" y="58.3" width="15" height="34.7" rx="1"/><rect class="bar sC" x="547" y="58.3" width="15" height="11.7" rx="1"/><text class="xlab" x="546.0" y="260" text-anchor="middle">20</text><rect class="bar sB" x="574" y="58.3" width="15" height="175.4" rx="1"/><rect class="bar sC" x="591" y="58.3" width="15" height="73.2" rx="1"/><text class="xlab" x="590.0" y="260" text-anchor="middle">21</text><rect class="bar sB" x="618" y="30.0" width="15" height="28.3" rx="1"/><rect class="bar sC" x="635" y="58.3" width="15" height="177.7" rx="1"/><text class="xlab" x="634.0" y="260" text-anchor="middle">22</text><rect class="bar sB" x="662" y="58.3" width="15" height="42.0" rx="1"/><rect class="bar sC" x="679" y="58.3" width="15" height="177.4" rx="1"/><text class="xlab" x="678.0" y="260" text-anchor="middle">23</text><rect class="bar sB" x="706" y="58.3" width="15" height="85.2" rx="1"/><rect class="bar sC" x="723" y="58.3" width="15" height="34.4" rx="1"/><text class="xlab" x="722.0" y="260" text-anchor="middle">24</text><rect class="bar sB" x="750" y="58.3" width="15" height="115.0" rx="1"/><rect class="bar sC" x="767" y="58.3" width="15" height="69.7" rx="1"/><text class="xlab" x="766.0" y="260" text-anchor="middle">25</text><text class="axlab" x="32" y="61.8" text-anchor="end">0</text><text class="unit" x="32" y="16" text-anchor="end">億元</text></svg><div class="legend"><span><i class="sw sB"></i>B 投資活動</span><span><i class="sw sC"></i>C 融資活動</span><span><i class="sw swflag"></i>底色＝該年 B 為負且 C 為正（借錢投資）</span></div></figure>
+  <p class="readnote"><b>數字現象：</b>2011–2018 有六個年度呈現「B 負值＋C 正值」的借錢投資組合（圖中底色標示），屬<b>重複出現的模式而非單一特例</b>。其中 <b class="negv">2009（A −139／C +55.2）、2011（A −6.71／C +120）、2016（A −7.38／C +47.1）</b>三年同時滿足「A 為負＋C 為正」——本業造血已經斷流、仍持續倚賴外部資金，屬最高警戒訊號。<b>轉折：</b>2019 年起 C 連續七年為負，2022 <b>−1684</b>、2023 <b>−1681</b> 兩年大規模淨還債，資金結構徹底翻轉。<b>個性標籤：</b>從「寅吃卯糧」畢業成「先還債再說話」，但畢業時間不到七年，週期一旦反轉是否會故態復萌，仍需觀察。</p>
+  <p class="readnote"><b>兩項尚未完成的查核，必須誠實標註：</b>① 目前只看得到 C 的<b>總額</b>，未取得短期借款／公司債／現金增資／發放股利等細項，因此無法判斷各年 C 為正究竟來自純舉債還是股權募資——風險排序尚不完整。② 年度加總的 C 會掩蓋單季槓桿高峰（例如全年 C 小幅為負，但某一季曾大幅舉債後又迅速償還），若後續取得法說會揭露的淨金融負債／EBITDA 等季度指標，應回頭比對。</p>
+
+  <h3><span class="rn">R5</span>A &gt; D 現金流品質 — 76 分</h3>
+  <p class="readnote"><b>判定方式：</b>嚴格二分法，不分程度高低。A 為負一律不通過；D 為負而 A 為正視為通過。結果 <b class="hi">13 / 17 年通過＝76.5%</b>，未通過為 <b class="negv">2009、2011、2016、2023</b> 四年，全部是 A 本身為負的年度。<b>個性標籤：</b>「不膨風」——只要本業有現金流進來，收現能力就穩定優於帳面獲利，沒有長期應收帳款灌水的跡象；扣分全部來自景氣谷底時本業直接失血，而非會計品質問題。</p>
+
+  <h3><span class="rn">R6</span>E 期末現金餘額穩定性 — 85 分</h3>
+  <figure><svg class="chart" viewBox="0 0 806 250" role="img" preserveAspectRatio="xMidYMid meet"><line class="waterline" x1="36" y1="216.0" x2="802" y2="216.0"/><text class="axlab" x="32" y="219.5" text-anchor="end">0</text><rect class="bar trough" x="46" y="211.2" width="34" height="4.8" rx="1"/><text class="val " x="63.0" y="206.2" text-anchor="middle">98.6</text><text class="xlab" x="63.0" y="240" text-anchor="middle">09</text><rect class="bar pos" x="88" y="206.5" width="34" height="9.5" rx="1"/><text class="val " x="105.0" y="201.5" text-anchor="middle">197</text><text class="xlab" x="105.0" y="240" text-anchor="middle">10</text><rect class="bar pos" x="130" y="204.9" width="34" height="11.1" rx="1"/><text class="val " x="147.0" y="199.9" text-anchor="middle">230</text><text class="xlab" x="147.0" y="240" text-anchor="middle">11</text><rect class="bar pos" x="172" y="200.5" width="34" height="15.5" rx="1"/><text class="val " x="189.0" y="195.5" text-anchor="middle">320</text><text class="xlab" x="189.0" y="240" text-anchor="middle">12</text><rect class="bar pos" x="214" y="199.8" width="34" height="16.2" rx="1"/><text class="val " x="231.0" y="194.8" text-anchor="middle">335</text><text class="xlab" x="231.0" y="240" text-anchor="middle">13</text><rect class="bar pos" x="256" y="200.1" width="34" height="15.9" rx="1"/><text class="val " x="273.0" y="195.1" text-anchor="middle">328</text><text class="xlab" x="273.0" y="240" text-anchor="middle">14</text><rect class="bar pos" x="298" y="200.1" width="34" height="15.9" rx="1"/><text class="val " x="315.0" y="195.1" text-anchor="middle">328</text><text class="xlab" x="315.0" y="240" text-anchor="middle">15</text><rect class="bar pos" x="340" y="199.3" width="34" height="16.7" rx="1"/><text class="val " x="357.0" y="194.3" text-anchor="middle">344</text><text class="xlab" x="357.0" y="240" text-anchor="middle">16</text><rect class="bar pos" x="382" y="197.5" width="34" height="18.5" rx="1"/><text class="val " x="399.0" y="192.5" text-anchor="middle">381</text><text class="xlab" x="399.0" y="240" text-anchor="middle">17</text><rect class="bar pos" x="424" y="198.7" width="34" height="17.3" rx="1"/><text class="val " x="441.0" y="193.7" text-anchor="middle">358</text><text class="xlab" x="441.0" y="240" text-anchor="middle">18</text><rect class="bar pos" x="466" y="197.6" width="34" height="18.4" rx="1"/><text class="val " x="483.0" y="192.6" text-anchor="middle">379</text><text class="xlab" x="483.0" y="240" text-anchor="middle">19</text><rect class="bar pos" x="508" y="194.6" width="34" height="21.4" rx="1"/><text class="val " x="525.0" y="189.6" text-anchor="middle">441</text><text class="xlab" x="525.0" y="240" text-anchor="middle">20</text><rect class="bar pos" x="550" y="163.8" width="34" height="52.2" rx="1"/><text class="val " x="567.0" y="158.8" text-anchor="middle">1,078</text><text class="xlab" x="567.0" y="240" text-anchor="middle">21</text><rect class="bar peak" x="592" y="26.0" width="34" height="190.0" rx="1"/><text class="val " x="609.0" y="21.0" text-anchor="middle">3,923</text><text class="xlab" x="609.0" y="240" text-anchor="middle">22</text><rect class="bar pos" x="634" y="133.6" width="34" height="82.4" rx="1"/><text class="val " x="651.0" y="128.6" text-anchor="middle">1,702</text><text class="xlab" x="651.0" y="240" text-anchor="middle">23</text><rect class="bar pos" x="676" y="93.3" width="34" height="122.7" rx="1"/><text class="val " x="693.0" y="88.3" text-anchor="middle">2,534</text><text class="xlab" x="693.0" y="240" text-anchor="middle">24</text><rect class="bar pos" x="718" y="131.5" width="34" height="84.5" rx="1"/><text class="val " x="735.0" y="126.5" text-anchor="middle">1,744</text><text class="xlab" x="735.0" y="240" text-anchor="middle">25</text><rect class="bar pos qtr" x="760" y="127.1" width="34" height="88.9" rx="1"/><text class="val " x="777.0" y="122.1" text-anchor="middle">1,835</text><text class="xlab" x="777.0" y="240" text-anchor="middle">26Q1</text><text class="unit" x="32" y="16" text-anchor="end">億元</text></svg><figcaption class="legend"><span><i class="sw" style="background:var(--signal)"></i>高峰 2022</span><span><i class="sw" style="background:var(--rose)"></i>谷底 2009</span></figcaption></figure>
+  <p class="readnote"><b>數字現象：</b>2009 年僅 98.6 億，2010–2019 十年橫盤於 200–400 億，2020 後躍升至 1078 → <b class="hi">3923</b>（2022 高峰）；其後 2023 回落至 1702（−57%）、2025 再降至 1744（−31%），26Q1 微幅回升至 1835。<b>個性標籤：</b>「金庫等級整個換代」。雖有兩次大幅回吐，但回吐後的水位仍是 2019 年的四倍以上，長期區間穩定且顯著墊高，屬六項中表現最強者。</p>
+  <p class="readnote"><b>後續核對提醒：</b>若之後取得官方法說會簡報或季報資產負債表的「現金及約當現金」，須與本表期末餘額互相核對。若同一時點出現落差，不會回頭更動本步驟已完成的盲測分數（那是依當時資料做出的獨立判斷），而會在後續步驟揭露兩者口徑差異，並以官方合併財報為準。</p>
+
+  <h3>總評分與關卡判斷</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>規則</th><th>項目</th><th>分數</th><th>等級</th><th></th></tr></thead>
+    <tbody><tr><th scope="row">規則一</th><td>A 逐年成長趨勢</td><td class="num big">70</td><td><span class="pill p良好">良好</span></td><td class="barcell"><span class="minibar" style="width:70%"></span></td></tr><tr><th scope="row">規則二</th><td>B 投資紀律</td><td class="num big">75</td><td><span class="pill p良好">良好</span></td><td class="barcell"><span class="minibar" style="width:75%"></span></td></tr><tr><th scope="row">規則三</th><td>B 投資效益</td><td class="num big">70</td><td><span class="pill p良好">良好</span></td><td class="barcell"><span class="minibar" style="width:70%"></span></td></tr><tr><th scope="row">規則四</th><td>C 融資合理性</td><td class="num big">70</td><td><span class="pill p良好">良好</span></td><td class="barcell"><span class="minibar" style="width:70%"></span></td></tr><tr><th scope="row">規則五</th><td>A > D 現金流品質</td><td class="num big">76</td><td><span class="pill p良好">良好</span></td><td class="barcell"><span class="minibar" style="width:76%"></span></td></tr><tr><th scope="row">規則六</th><td>E 現金餘額穩定性</td><td class="num big">85</td><td><span class="pill p優秀">優秀</span></td><td class="barcell"><span class="minibar" style="width:85%"></span></td></tr></tbody>
+  </table>
+  </div>
+  <div class="total"><span class="n">74.3</span>
+    <span class="t">六項平均 ／ 評級 <b class="hi">良好</b>（優秀 ≥80｜良好 60–79｜需觀察 &lt;60）<br>
+    ≥60 分且近六年未再出現「A 負＋B 重投資＋C 正」三重疊加訊號 → <b>通過關卡，可續看基本面</b></span></div>
+  <p class="snap">資料來源：<b>使用者提供之現金流量表截圖</b>（2009–2025 年度 ＋ 26Q1 單季），非本次搜尋所得。可供覆核之公開頁面：<a href="https://goodinfo.tw/tw/StockCashFlow.asp?STOCK_ID=2603">Goodinfo 2603 現金流量表</a>、<a href="https://www.wantgoo.com/stock/2603/financial-statements/cash-flow">Wantgoo 2603 現金流量表</a>。</p>
+</section>
+
+<!-- ================= STEP 2 ================= -->
+<section id="step2">
+  <p class="steptag">第 2 步／共 6 步</p>
+  <h2>基本資訊查詢</h2>
+  <div class="keybox warn">
+    <p>股價 <b class="hi">201 元</b>（昨收，非即時）；26Q1 稅後 EPS <b class="hi">3.84 元</b>。</p>
+    <p>三項來源落差已逐一揭露，<b>不逕自挑一個當標準答案</b>——其中 EPS 出現 3.84 與 0.44 兩個版本，相差近九倍。</p>
+  </div>
+  <div class="tablewrap">
+  <table>
+    <caption>查詢時間 2026-08-05 上午；即時報價類欄位僅為查詢當下之單一快照，正式交易請以券商 App 為準</caption>
+    <thead><tr><th>項目</th><th>數字</th><th>來源</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">昨收價</th><td>201 元（振幅 0%）</td><td><a href="https://www.cmoney.tw/forum/stock/2603">CMoney 股市爆料同學會</a></td></tr>
+      <tr><th scope="row">前次查得股價</th><td>206 元（7/24）</td><td><a href="https://winvest.tw/Stock/Symbol/CashFlow/2603">Winvest 2603</a></td></tr>
+      <tr><th scope="row">26Q1 EPS</th><td class="posv">3.84 元（連 2 季成長）</td><td><a href="https://statementdog.com/analysis/2603/eps">財報狗 2603 EPS</a></td></tr>
+      <tr><th scope="row">26Q1 EPS（另一版本）</th><td class="negv">0.44 元（增率顯示 undefined）</td><td><a href="https://www.wantgoo.com/stock/2603/financial-statements/eps">Wantgoo 2603 EPS</a></td></tr>
+      <tr><th scope="row">最近一次法說會</th><td>2026/04/24 永豐金證券法說會<br><small>（v1.0 誤植為 7/24，已訂正）</small></td><td><a href="https://tw.stock.yahoo.com/news/%E9%95%B7%E6%A6%AE%E4%BB%8A%E6%B3%95%E8%AA%AA%E6%9C%83-%E7%87%9F%E9%81%8B%E6%88%90%E6%9C%AC%E8%88%87%E9%95%B7%E7%B4%84%E8%A1%A8%E7%8F%BE%E5%BC%95%E9%97%9C%E6%B3%A8-025800441.html">Yahoo 股市新聞</a></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="readnote"><b>① EPS 矛盾的處理：</b>使用者提供的截圖顯示 26Q1 稅後淨利 83 億、平均股本 217 億、稅後 EPS 欄位為 3.84。以 83 ÷ 21.7 反推約 <b>3.8 元</b>（<b>推算數字</b>，非直接查得之公告值），與財報狗一致，故<b>傾向採信 3.84</b>；0.44 疑為該頁欄位抓取異常（同頁年增率、季增率皆顯示 undefined）。建議仍以公開資訊觀測站正式財報為最終依據。</p>
+  <p class="readnote"><b>② 股價差異：</b>206 元與 201 元是<b>不同時間點的快照，不是頁面顯示的區間</b>。</p>
+  <p class="readnote"><b>③ 股本重大變動警示：</b>截圖顯示平均股本由 2021 年 525 億、2022 年 384 億降至 2023 年後約 212–217 億，屬重大股本變動。跨年度比較 EPS、每股淨值時，必須先確認各期是否已回溯調整為一致基礎，否則年增率與本益比會嚴重失真。</p>
+  <p class="readnote"><b>④ 補充查得（v1.2 新增）：</b>26Q1 EPS 3.84 元為<b>季減約 3%、年減約 70%</b>；2025 全年 EPS <b>31.68 元</b>（與法說會揭露一致，可交叉驗證）。2026/06/17 除息，配發現金股利 <b>16 元</b>，換算殖利率約 7.26%。另 2026/07/08 盤中快照顯示股價 194.5 元、本益比 8.57、<b class="hi">股價淨值比 0.73</b>（低於淨值）。來源：<a href="https://winvest.tw/Stock/Symbol/Comment/2603">Win 投資 2603</a>、<a href="https://www.wantgoo.com/stock/2603">玩股網 2603</a>。</p>
+  <p class="snap">已查證：搜尋結果中一篇標題含「長榮海運(2603)」的文章，內文實為美股 Ingersoll Rand 的法說會數字（執行長 Vicente Reynal、營收 20 億美元、EPS 0.86 美元），屬標題與內容不符，<b>未採用</b>。</p>
+</section>
+
+<!-- ================= STEP 3 ================= -->
+<section id="step3">
+  <p class="steptag">第 3 步／共 6 步</p>
+  <h2>法說會深入討論</h2>
+  <div class="keybox stop">
+    <p><b>先訂正一項錯誤：</b>本報告 v1.0／v1.1 將最近一次法說會誤植為 <s>2026/07/24</s>，正確日期為 <b class="hi">2026/04/24</b>（受邀參加永豐金證券舉辦，地點張榮發基金會國際會議中心）。錯誤成因是搜尋快照僅顯示「今(24)日」而未帶年月，我未回頭核對發稿日期即採用。</p>
+    <p><b>核心矛盾：</b>公司對 Q2、Q3 樂觀（漲價＋旺季提早拉貨），但同期<b class="negv">油價突破 100 美元／桶、燃油佔營業成本 21%</b>——營收回升與獲利回升不是同一件事。</p>
+  </div>
+
+  <p><b>場次選擇說明：</b>2026/04/24 為目前資訊量最完整、且涵蓋 2026 年展望的場次。截至 2026/08/05 尚未查到 2026 年第二季財報後的新場次紀錄，因此以 4/24 為主要依據。</p>
+
+  <p class="readnote"><b>資料等級必須先講清楚：</b>我<b>沒有讀過官方簡報 PDF 原文</b>。MOPS 公開資訊觀測站的簡報連結經實測會被 robots.txt 擋下，無法解析。以下內容來自三類二手來源，可信度不同：① MoneyDJ 的<b>會前預告</b>（僅說明關注焦點，非會後結論）；② 第三方彙整網站「散戶鬥嘴鼓」的<b>AI 生成摘要</b>（該頁明確標示「以下內容由AI生成」，屬機器整理，非官方逐字稿）；③ CMoney 論壇的<b>網友與會筆記</b>（非官方紀錄）。請以此標準看待下列每一條。</p>
+
+  <h3>法說會揭露重點</h3>
+  <div class="tablewrap">
+  <table>
+    <caption>來源等級：AI摘要＝散戶鬥嘴鼓機器整理；網友筆記＝CMoney 論壇與會心得；會前預告＝MoneyDJ</caption>
+    <thead><tr><th>面向</th><th>內容</th><th>來源等級</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2025 財務</th><td>營收 3,790.68 億元、EBITDA 利率 32.28%、EPS 31.68 元</td><td>AI摘要</td></tr>
+      <tr><th scope="row">運能規模</th><td>集團總運能 197 萬 TEU、全球市佔 5.8%、第七大船隊；依在手新船訂單有望超越 ONE 升至第六</td><td>AI摘要／會前預告</td></tr>
+      <tr><th scope="row">擴張目標</th><td>運力增長計畫至 <b>2030 年達 265.4 萬 TEU</b></td><td>AI摘要</td></tr>
+      <tr><th scope="row">成本壓力</th><td>WTI 與 Brent 於 2026 年 4 月突破 <b class="negv">100 美元／桶</b>；燃油佔營業成本比重達 <b class="negv">21%</b>，侵蝕毛利率</td><td>AI摘要</td></tr>
+      <tr><th scope="row">成本優勢</th><td>約 8–9 成船隊具低燃油成本優勢，高油價時可用較低價油種完成運送，價差成為相對優勢</td><td>網友筆記</td></tr>
+      <tr><th scope="row">需求面</th><td>遠東－歐洲航線貨量 2025 年較 2024 年<b class="negv">減少 4.0%</b>；IMF 全球不確定性指數飆升</td><td>AI摘要</td></tr>
+      <tr><th scope="row">長約策略</th><td>歐洲與美線長約比例較去年下降；公司因看好現貨價格，不強求維持過往高長約比例，但已就成本上升與附加費重新議價，<b>整體不會比去年低</b></td><td>網友筆記</td></tr>
+      <tr><th scope="row">短期展望</th><td>對 <b>Q2、Q3 樂觀</b>：預期漲價與旺季提早拉貨</td><td>網友筆記</td></tr>
+      <tr><th scope="row">中長期</th><td>雙能源船隊佔比提升以降低碳排成本與政策風險；亞洲近洋、中東、紅海等區域航線擴張</td><td>AI摘要</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>與第 1、4 步的交叉驗證</h3>
+  <p class="readnote"><b>① 公司說的樂觀，事後被營收驗證了。</b>4/24 表示 Q2、Q3 看好漲價與提早拉貨；實際 2026 年 4、5、6 月營收為 313.6 / 346.6 / 391.4 億，連續三個月月增雙位數，方向一致。這是本次分析中<b>少數可事後驗證且成立</b>的管理層說法。</p>
+  <p class="readnote"><b>② 但「量增」不等於「利增」。</b>燃油佔營業成本 21%、油價破百，直接壓縮的正是第 1 步的 A（營業活動現金流）。26Q1 單季 A 為 188 億、稅前淨利 106 億，若油價維持高檔，第 1 步規則一「A 逐年趨勢」的觀察重點應放在 <b>2026 全年 A 能否守住 1,000 億</b>，而非只看營收。</p>
+  <p class="readnote"><b>③ 2030 年 265.4 萬 TEU 的擴張計畫，等於預告 B 將持續大幅負值。</b>從 197 萬擴至 265.4 萬 TEU＝運能增加約 35%（<b>推算數字</b>）。這與第 1 步規則二「賺多少造多少的造船廠思維」完全吻合，也意味著 2025 年 |B| 已逼近 A 的情況（−1090 vs 1012）短期內不會緩解。真正該追蹤的是規則三：這輪擴張的隔年 A 是否跟上。</p>
+  <p class="readnote"><b>④ 一個第 1 步無法看到、但已確定會發生的現金流出：</b>2026/06/17 除息，每股配發現金股利 16 元。以股本 217 億（約 21.7 億股）估算，現金股利支出約 <b>347 億元</b>（<b>推算數字</b>，非公告值）。這筆將直接反映在 2026 年的 C（融資活動現金流）為負，代表規則四所觀察到的「2019 年起持續淨還債／回饋股東」模式仍在延續。</p>
+
+  <p class="snap">來源：<a href="https://tw.stock.yahoo.com/news/%E9%95%B7%E6%A6%AE%E4%BB%8A%E6%B3%95%E8%AA%AA%E6%9C%83-%E7%87%9F%E9%81%8B%E6%88%90%E6%9C%AC%E8%88%87%E9%95%B7%E7%B4%84%E8%A1%A8%E7%8F%BE%E5%BC%95%E9%97%9C%E6%B3%A8-025800441.html">MoneyDJ／Yahoo 股市：長榮今法說會（2026-04-24 會前預告）</a>；<a href="https://poorstock.com/earningcall/2603">散戶鬥嘴鼓 2603 法說會頁（含 MOPS 官方場次資訊與 AI 生成摘要、簡報 PDF 與直播連結）</a>；<a href="https://social.cmoney.tw/forum/article/178427846">CMoney 論壇：與會心得筆記</a>；<a href="https://www.cmoney.tw/forum/article/178431427">CMoney 論壇：法說會心得紀錄</a>。官方簡報 PDF 請自行由散戶鬥嘴鼓頁面或公開資訊觀測站點開查看，<b>本報告未解析其原文</b>。</p>
+</section>
+
+<!-- ================= STEP 4 ================= -->
+<section id="step4">
+  <p class="steptag">第 4 步／共 6 步</p>
+  <h2>營收趨勢視覺化</h2>
+  <div class="keybox">
+    <p>月營收谷底落在 <b class="hi">2025/10 的 273.3 億</b>，此後連續八個月墊高，2026/06 回升至 <b class="hi">391.4 億</b>（近 12 個月最高）。</p>
+    <p>年增率已在 <b>2026/04 由負轉正</b>（−17.8% → +4.51% → +31.4% → +30%），但這主要是<b>低基期效應</b>——2026 上半年累計 1,917 億，年增仍為 <b class="negv">−2.43%</b>，尚未真正超越去年同期。</p>
+  </div>
+
+  <h3>近 12 個月單月營收</h3>
+  <figure><svg class="chart" viewBox="0 0 696 250" role="img" preserveAspectRatio="xMidYMid meet"><line class="waterline" x1="38" y1="216.0" x2="692" y2="216.0"/><text class="axlab" x="34" y="219.5" text-anchor="end">0</text><rect class="bar pos" x="48" y="54.6" width="40" height="161.4" rx="1"/><text class="val " x="68.0" y="49.6" text-anchor="middle">336.1</text><text class="xlab" x="68.0" y="240" text-anchor="middle">25/07</text><rect class="bar pos" x="102" y="57.7" width="40" height="158.3" rx="1"/><text class="val " x="122.0" y="52.7" text-anchor="middle">329.6</text><text class="xlab" x="122.0" y="240" text-anchor="middle">25/08</text><rect class="bar pos" x="156" y="71.3" width="40" height="144.7" rx="1"/><text class="val " x="176.0" y="66.3" text-anchor="middle">301.2</text><text class="xlab" x="176.0" y="240" text-anchor="middle">25/09</text><rect class="bar pos" x="210" y="84.7" width="40" height="131.3" rx="1"/><text class="val " x="230.0" y="79.7" text-anchor="middle">273.3</text><text class="xlab" x="230.0" y="240" text-anchor="middle">25/10</text><rect class="bar pos" x="264" y="83.3" width="40" height="132.7" rx="1"/><text class="val " x="284.0" y="78.3" text-anchor="middle">276.3</text><text class="xlab" x="284.0" y="240" text-anchor="middle">25/11</text><rect class="bar pos" x="318" y="68.5" width="40" height="147.5" rx="1"/><text class="val " x="338.0" y="63.5" text-anchor="middle">307.1</text><text class="xlab" x="338.0" y="240" text-anchor="middle">25/12</text><rect class="bar pos" x="372" y="62.8" width="40" height="153.2" rx="1"/><text class="val " x="392.0" y="57.8" text-anchor="middle">319.0</text><text class="xlab" x="392.0" y="240" text-anchor="middle">26/01</text><rect class="bar trough" x="426" y="85.6" width="40" height="130.4" rx="1"/><text class="val " x="446.0" y="80.6" text-anchor="middle">271.4</text><text class="xlab" x="446.0" y="240" text-anchor="middle">26/02</text><rect class="bar pos" x="480" y="83.8" width="40" height="132.2" rx="1"/><text class="val " x="500.0" y="78.8" text-anchor="middle">275.2</text><text class="xlab" x="500.0" y="240" text-anchor="middle">26/03</text><rect class="bar pos" x="534" y="65.4" width="40" height="150.6" rx="1"/><text class="val " x="554.0" y="60.4" text-anchor="middle">313.6</text><text class="xlab" x="554.0" y="240" text-anchor="middle">26/04</text><rect class="bar pos" x="588" y="49.5" width="40" height="166.5" rx="1"/><text class="val " x="608.0" y="44.5" text-anchor="middle">346.6</text><text class="xlab" x="608.0" y="240" text-anchor="middle">26/05</text><rect class="bar peak" x="642" y="28.0" width="40" height="188.0" rx="1"/><text class="val " x="662.0" y="23.0" text-anchor="middle">391.4</text><text class="xlab" x="662.0" y="240" text-anchor="middle">26/06</text><text class="unit" x="34" y="16" text-anchor="end">億元</text></svg><figcaption class="legend"><span><i class="sw" style="background:var(--signal)"></i>高峰 2026/06</span><span><i class="sw" style="background:var(--rose)"></i>谷底 2025/10</span></figcaption></figure>
+  <p class="readnote"><b>數字現象：</b>2025 下半年一路走弱至 10 月見底（273.3 億），11 月起緩步回升，2026 年 3 月後加速（275.2 → 313.6 → 346.6 → 391.4），四個月累積增幅逾 42%。營收曲線呈現典型的 <b>U 型觸底翻揚</b>。</p>
+
+  <h3>近 12 個月營收年增率</h3>
+  <figure><svg class="chart" viewBox="0 0 696 250" role="img" preserveAspectRatio="xMidYMid meet"><line class="waterline" x1="38" y1="112.2" x2="692" y2="112.2"/><text class="axlab" x="34" y="115.7" text-anchor="end">0</text><rect class="bar neg" x="48" y="112.2" width="40" height="102.4" rx="1"/><text class="val vneg" x="68.0" y="225.7" text-anchor="middle">-38.2%</text><text class="xlab" x="68.0" y="240" text-anchor="middle">25/07</text><rect class="bar trough" x="102" y="112.2" width="40" height="103.8" rx="1"/><text class="val vneg" x="122.0" y="227.0" text-anchor="middle">-38.7%</text><text class="xlab" x="122.0" y="240" text-anchor="middle">25/08</text><rect class="bar neg" x="156" y="112.2" width="40" height="87.2" rx="1"/><text class="val vneg" x="176.0" y="210.4" text-anchor="middle">-32.5%</text><text class="xlab" x="176.0" y="240" text-anchor="middle">25/09</text><rect class="bar neg" x="210" y="112.2" width="40" height="91.7" rx="1"/><text class="val vneg" x="230.0" y="214.9" text-anchor="middle">-34.2%</text><text class="xlab" x="230.0" y="240" text-anchor="middle">25/10</text><rect class="bar neg" x="264" y="112.2" width="40" height="62.8" rx="1"/><text class="val vneg" x="284.0" y="186.0" text-anchor="middle">-23.4%</text><text class="xlab" x="284.0" y="240" text-anchor="middle">25/11</text><rect class="bar neg" x="318" y="112.2" width="40" height="52.6" rx="1"/><text class="val vneg" x="338.0" y="175.8" text-anchor="middle">-19.6%</text><text class="xlab" x="338.0" y="240" text-anchor="middle">25/12</text><rect class="bar neg" x="372" y="112.2" width="40" height="65.7" rx="1"/><text class="val vneg" x="392.0" y="188.9" text-anchor="middle">-24.5%</text><text class="xlab" x="392.0" y="240" text-anchor="middle">26/01</text><rect class="bar neg" x="426" y="112.2" width="40" height="55.5" rx="1"/><text class="val vneg" x="446.0" y="178.7" text-anchor="middle">-20.7%</text><text class="xlab" x="446.0" y="240" text-anchor="middle">26/02</text><rect class="bar neg" x="480" y="112.2" width="40" height="47.7" rx="1"/><text class="val vneg" x="500.0" y="170.9" text-anchor="middle">-17.8%</text><text class="xlab" x="500.0" y="240" text-anchor="middle">26/03</text><rect class="bar pos" x="534" y="100.1" width="40" height="12.1" rx="1"/><text class="val " x="554.0" y="95.1" text-anchor="middle">4.51%</text><text class="xlab" x="554.0" y="240" text-anchor="middle">26/04</text><rect class="bar peak" x="588" y="28.0" width="40" height="84.2" rx="1"/><text class="val " x="608.0" y="23.0" text-anchor="middle">31.4%</text><text class="xlab" x="608.0" y="240" text-anchor="middle">26/05</text><rect class="bar pos" x="642" y="31.8" width="40" height="80.5" rx="1"/><text class="val " x="662.0" y="26.8" text-anchor="middle">30.0%</text><text class="xlab" x="662.0" y="240" text-anchor="middle">26/06</text><text class="unit" x="34" y="16" text-anchor="end">%</text></svg><figcaption class="legend"><span><i class="sw" style="background:var(--signal)"></i>最高 2026/05</span><span><i class="sw" style="background:var(--rose)"></i>最低 2025/08</span></figcaption></figure>
+  <p class="readnote"><b>數字現象：</b>年增率自 2025/08 的 <b class="negv">−38.7%</b> 谷底逐月收斂，2026/04 轉正，2026/05 達 +31.4%。<b>必須指出的陷阱：</b>2025 年同期正是衰退最深的月份（2025/05 營收僅 263.7 億、2025/06 為 301.1 億），基期偏低，因此 +30% 級距的年增率<b>不等於營運回到 2024 年水準</b>——2024/06 單月即達 423.5 億，仍高於今年 6 月的 391.4 億。</p>
+
+  <h3>明細與交叉核對</h3>
+  <div class="tablewrap">
+  <table>
+    <caption>單位：營收（億元）；月增、年增為原始截圖數字</caption>
+    <thead><tr><th>月份</th><th>單月營收</th><th>月增</th><th>年增</th></tr></thead>
+    <tbody><tr><th scope="row">2025/07</th><td class="num">336.1</td><td class="num posv">+11.60%</td><td class="num negv">-38.20%</td></tr><tr><th scope="row">2025/08</th><td class="num">329.6</td><td class="num negv">-1.92%</td><td class="num negv">-38.70%</td></tr><tr><th scope="row">2025/09</th><td class="num">301.2</td><td class="num negv">-8.60%</td><td class="num negv">-32.50%</td></tr><tr><th scope="row">2025/10</th><td class="num">273.3</td><td class="num negv">-9.26%</td><td class="num negv">-34.20%</td></tr><tr><th scope="row">2025/11</th><td class="num">276.3</td><td class="num posv">+1.10%</td><td class="num negv">-23.40%</td></tr><tr><th scope="row">2025/12</th><td class="num">307.1</td><td class="num posv">+11.10%</td><td class="num negv">-19.60%</td></tr><tr><th scope="row">2026/01</th><td class="num">319.0</td><td class="num posv">+3.88%</td><td class="num negv">-24.50%</td></tr><tr><th scope="row">2026/02</th><td class="num">271.4</td><td class="num negv">-14.90%</td><td class="num negv">-20.70%</td></tr><tr><th scope="row">2026/03</th><td class="num">275.2</td><td class="num posv">+1.41%</td><td class="num negv">-17.80%</td></tr><tr><th scope="row">2026/04</th><td class="num">313.6</td><td class="num posv">+13.90%</td><td class="num posv">+4.51%</td></tr><tr><th scope="row">2026/05</th><td class="num">346.6</td><td class="num posv">+10.50%</td><td class="num posv">+31.40%</td></tr><tr><th scope="row">2026/06</th><td class="num">391.4</td><td class="num posv">+12.90%</td><td class="num posv">+30.00%</td></tr></tbody>
+  </table>
+  </div>
+  <p class="readnote"><b>與第 1 步現金流資料的一致性核對：</b>2026 年 1–3 月營收合計 319 + 271.4 + 275.2 = <b>865.6 億</b>，與截圖累計欄完全吻合，且與 26Q1 財報期間一致（<b>推算數字</b>，用於驗證資料內部一致性）。<br>
+  <b>年度尺度：</b>2025 全年累計 3,790 億，年增 −18.2%；2024 全年 4,636 億，年增 +67.5%——這組數字直接呼應第 1 步「潮汐型體質」的判讀，營收本身就是運價循環的鏡像。</p>
+  <p class="readnote"><b>股價解讀訂正（v1.2）：</b>本報告 v1.1 曾將 2026/06 股價下跌 28.5 元（−13.38%）解讀為「市場不認同營收回升」。<b>這個判斷不成立</b>——長榮於 <b>2026/06/17 除息，每股配發現金股利 16 元</b>，該月跌幅中有 16 元屬除息造成的技術性缺口，並非市場賣壓。還原除息後，實際跌幅約 12.5 元（約 −5.8%，<b>推算數字</b>）。修正後的說法是：營收年增 +30% 之下股價仍小幅收黑，反映的是市場對<b>燃油成本與運價後續</b>的疑慮，而非全盤否定，程度遠比原先描述溫和。</p>
+  <p class="snap">資料來源：<b>使用者提供之月營收截圖</b>（2023/07–2026/06，含當月股價、單月與累計營收、月增與年增），非本次搜尋所得。可供覆核之公開頁面：<a href="https://goodinfo.tw/tw/ShowSaleMonChart.asp?STOCK_ID=2603">Goodinfo 2603 月營收走勢圖</a>；官方原始公告可於公開資訊觀測站查閱。</p>
+</section>
+
+<!-- ================= STEP 5 ================= -->
+<section id="step5">
+  <p class="steptag">第 5 步／共 6 步</p>
+  <h2>前瞻本益比／EPS 預估</h2>
+  <div class="keybox warn">
+    <p>兩份 FactSet 調查並陳：2026 EPS 中位數 <b class="hi">29.31 元</b>與 <b class="hi">24.3 元</b>，對應前瞻本益比約 <b>6.9 倍</b>與 <b>8.3 倍</b>。</p>
+    <p>最高與最低估值相差逾一倍（36.62 vs 16.31），代表<b>法人對 2026 年運價幾乎沒有共識</b>。</p>
+  </div>
+  <div class="tablewrap">
+  <table>
+    <caption>兩份調查的分析師人數與中位數皆不同，應為不同時間點的快照，非同一份資料的區間</caption>
+    <thead><tr><th>調查版本</th><th>分析師</th><th>2026 EPS 中位數</th><th>最高</th><th>最低</th><th>來源</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">版本 A</th><td class="num">9 位</td><td class="num posv">29.31（由 26 上修）</td><td class="num">36.62</td><td class="num">16.31</td><td><a href="https://www.sinotrade.com.tw/richclub/news/6a7133bbb17ee73678904bea">永豐金 RichClub</a>／<a href="https://news.cnyes.com/news/id/6557952">鉅亨網</a></td></tr>
+      <tr><th scope="row">版本 B</th><td class="num">10 位</td><td class="num posv">24.30（由 22.87 上修）</td><td class="num">32.42</td><td class="num">16.31</td><td><a href="https://today.line.me/tw/v3/article/LXzNXpa">LINE TODAY 轉載鉅亨速報</a></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>前瞻本益比（已知股價 201 元，反求隱含倍數）</h3>
+  <div class="tablewrap">
+  <table>
+    <caption>皆為推算數字，計算方式：201 ÷ 預估 EPS</caption>
+    <thead><tr><th>採用 EPS</th><th>16.31（最低）</th><th>24.30（版本 B）</th><th>29.31（版本 A）</th><th>36.62（最高）</th></tr></thead>
+    <tbody><tr><th scope="row">前瞻本益比</th><td class="num">12.3 倍</td><td class="num">8.3 倍</td><td class="num">6.9 倍</td><td class="num">5.5 倍</td></tr></tbody>
+  </table>
+  </div>
+
+  <h3>目標本益比法（已知倍數，反推目標價）</h3>
+  <p class="readnote">這與前瞻本益比<b>不是同一件事</b>：前者已知股價求倍數，後者已知倍數求價格。以下純屬<b>敏感度試算，不是預測</b>，且對「倍數怎麼選」高度敏感、沒有標準答案。航運為週期股，故採 6／8／10 倍情境，而非成長股慣用的 20–30 倍。</p>
+  <div class="tablewrap">
+  <table>
+    <caption>推算數字，計算方式：預估 EPS × 假設倍數（單位：元）</caption>
+    <thead><tr><th>假設倍數</th><th>用 24.30 元</th><th>用 29.31 元</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">6 倍</th><td class="num">146</td><td class="num">176</td></tr>
+      <tr><th scope="row">8 倍</th><td class="num">194</td><td class="num">234</td></tr>
+      <tr><th scope="row">10 倍</th><td class="num">243</td><td class="num">293</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="readnote"><b>不確定性揭露：</b>① 該公司 2022 年即出現過獲利自高點驟降的紀錄，法人預估在週期轉折點的準確度歷來不佳，上修不代表已落袋。② <b>週期股的低本益比常是高點訊號而非便宜訊號</b>——當 EPS 處於循環頂部，本益比自然被壓低，此處 6–8 倍恰好呼應第 1 步「潮汐型體質」的結論，需與運價位置一起看，不能單獨解讀。③ 未找到清楚的 2027 年（N+2）預估，不硬湊數字。</p>
+  <p class="snap">來源：<a href="https://www.sinotrade.com.tw/richclub/news/6a7133bbb17ee73678904bea">永豐金 RichClub</a>、<a href="https://news.cnyes.com/news/id/6557952">鉅亨網</a>、<a href="https://today.line.me/tw/v3/article/LXzNXpa">LINE TODAY</a>、<a href="https://www.stockfeel.com.tw/%E9%95%B7%E6%A6%AE-2603-%E6%B3%95%E8%AA%AA%E6%9C%83-%E8%B2%A1%E5%A0%B1/">股感 2022 Q4 法說會整理</a>。</p>
+</section>
+
+<!-- ================= STEP 6 ================= -->
+<section id="step6">
+  <p class="steptag">第 6 步／共 6 步</p>
+  <h2>投資決策推理</h2>
+  <div class="keybox stop">
+    <p><b>先聲明：</b>以下是依前五步資料所做的<b>推理與個人觀點，不是專業投資建議</b>；本報告作者不具理財顧問身分，也不了解你的資金狀況、持股成本與風險承受度。所有數字請自行覆核後再決定。</p>
+    <p><b>一句話結論：</b>這是一檔<b>體質已翻新、但循環位置不明</b>的股票——現金流過關（74.3 分）讓它值得留在名單上，卻不構成現在就加碼的理由。</p>
+  </div>
+
+  <h3>核心判斷：便宜，但便宜的原因要看清楚</h3>
+  <p class="readnote">目前股價淨值比 0.73（低於淨值）、前瞻本益比約 6.9–8.3 倍，數字看起來便宜。但第 1 步已經給過標籤——這是「潮汐型體質」。<b>週期股的低本益比經常出現在獲利循環的頂部，而不是底部</b>：當 EPS 被推到高點，本益比自然被壓低。真正的問題不是「幾倍便宜」，而是<b>現在的 EPS 站在潮汐的哪個位置</b>。</p>
+  <p class="readnote">而第 3 步揭露了一個關鍵：2026 年的運價回升，主要來自<b>地緣風險推高的風險溢價與供給被動收縮</b>，同時遠東－歐洲貨量還在減少 4.0%、IMF 下修全球成長。<b>價漲但需求沒漲</b>——這種結構的持續性，取決於戰事與航道，不取決於公司經營。這是我不會把它當成長股看待的主因。</p>
+
+  <h3>情境一：若尚未持有，會不會進場？</h3>
+  <p class="readnote"><b>我的推理是：不在這個價位建立主要部位，但值得列入待進場名單。</b>理由不是嫌貴，而是<b>時間點的資訊還沒到齊</b>——油價 4 月才突破 100 美元／桶，燃油佔營業成本 21%，這個衝擊在 26Q1 財報裡幾乎看不到，第一份完整承受高油價的財報還沒公布。在那之前買，等於是在對「成本能被運價吸收多少」下注，而不是在對已知事實下注。</p>
+  <p><b>進場前想看到的訊號（以下皆為尚未發生、可驗證的事件）：</b></p>
+  <ul>
+    <li><b>2026 Q2 財報</b>（預計 8 月中下旬公布）：單季營業活動現金流 A 是否仍大於稅前淨利 D——這是第 1 步規則五的延續判定。若 26Q2 的 A 反而低於 D，代表高油價已開始侵蝕收現能力，是最直接的退場理由。</li>
+    <li><b>26Q2 單季 A 能否守住 188 億</b>（26Q1 水準）：營收在 Q2 明顯回升（313.6 / 346.6 / 391.4 億），若 A 卻沒有同步走高，就是「量增而利不增」的證據。</li>
+    <li><b>2026 年 7、8 月營收</b>（8/10、9/10 公告）：年增率能否延續正值，且單月站穩 350 億以上——用來驗證第 3 步「旺季提早拉貨」的說法在 Q3 是否兌現，而不只是 Q2 的低基期效應。</li>
+    <li><b>下一次法說會對 2027 年長約的說法</b>：第 3 步顯示今年歐洲與美線長約比例已主動下降、改押現貨價格。這是雙面刃，運價下行時保護力更弱，值得聽公司如何解釋。</li>
+  </ul>
+  <p class="readnote"><b>若上述前兩項成立</b>（Q2 的 A 大於 D 且未低於 188 億），我會認為高油價已被運價吸收，此時才是相對合理的分批進場點，而非現在。</p>
+
+  <h3>情境二：若已經持有，會續抱還是賣出？</h3>
+  <p class="readnote"><b>我的推理是：續抱，但把觀察密度提高，並預先設好減碼條件。</b>續抱的依據全部來自第 1 步，不是股價：期末現金餘額 1,835 億（26Q1）是 2019 年的四倍以上；C（融資活動）自 2019 年起連續七年為負，公司持續淨還債與回饋股東；規則五顯示只要本業有現金流進來，收現品質就穩定優於帳面獲利。<b>這是一家撐得住一次循環下行的公司</b>——2023 年 A 一度為 −138 億時它沒有倒下，反而在同年大規模還債 1,681 億。</p>
+  <p><b>會讓我減碼的訊號（同樣皆為尚未發生的事件，任一出現即檢討）：</b></p>
+  <ul>
+    <li><b>任一季 A 轉為負值</b>：第 1 步四次不通過（2009、2011、2016、2023）全部是 A 為負的年度，這是這家公司唯一真正的失血點。</li>
+    <li><b>C 由負轉正、同時 B 維持大幅負值</b>：這正是規則四定義的「寅吃卯糧」模式。公司已經畢業七年，一旦重回借錢投資，代表本業造血不足以支應 2030 年 265.4 萬 TEU 的擴張計畫。若再疊加 A 為負，就是三重疊加的最高警戒訊號，屆時我不會續抱。</li>
+    <li><b>連續兩個月營收年增再度轉負，且單月跌破 300 億</b>：對照 2025 年的下行段（最低 273.3 億），這代表這輪回升只是風險溢價的短暫反彈。</li>
+    <li><b>2026 年報揭露的融資活動細項出現新增舉債</b>：第 1 步規則四留下的未解問題——目前只看得到 C 的總額，拆不開資金來源。年報是第一次能真正驗證的機會。</li>
+  </ul>
+
+  <h3>兩件我沒有把握、必須說出來的事</h3>
+  <p class="readnote">① 第 3 步的法說會內容我<b>沒有讀到官方簡報原文</b>，全部來自 AI 生成摘要與網友筆記，其中的數字（燃油佔比 21%、貨量減 4.0%、2030 年 265.4 萬 TEU）我無法逐項向官方文件核實，請自行點開簡報確認後再作為決策依據。<br>
+  ② 法人 2026 年 EPS 預估最高 36.62、最低 16.31，相差逾一倍。<b>當專業機構的共識帶寬這麼寬，任何以單一目標價為基礎的決策都很脆弱</b>——包括本報告第 5 步的目標本益比試算在內，那只是敏感度演算，不是預測。</p>
+  <p class="snap">本節為依前五步資料所做的推理，非投資建議。所有引用數字之來源已列於第 1–5 步各段落下方。</p>
+</section>
+
+<footer>
+  <p><b>報告版本 v2.0</b>｜生成時間 2026-08-05 03:15｜六步驟全數完成；含 v1.2 訂正兩處（法說會日期、除息對股價的影響）</p>
+  <p>現金流量表數據為<b>使用者提供之截圖</b>，非本次搜尋所得。股價、EPS、法人預估等市場數據來源已逐筆附連結於各段落下方。標示「推算數字」者為依已知數字計算而得，非直接查得之公告值。</p>
+  <p>本報告為財務數據整理與推理，非投資建議；作者非理財顧問。</p>
+</footer>
+</div>
+
+<script>
+(function(){
+  var pads = Array.prototype.slice.call(document.querySelectorAll('.pad'));
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  pads.forEach(function(p){
+    p.addEventListener('click', function(){
+      if (p.classList.contains('locked')) return;
+      var el = document.getElementById(p.dataset.target);
+      if (!el) return;
+      el.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block: 'start'});
+    });
+  });
+  function setActive(id){
+    pads.forEach(function(p){ p.classList.toggle('active', p.dataset.target === id); });
+  }
+  var secs = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      var best = null;
+      entries.forEach(function(e){
+        if (e.isIntersecting && (!best || e.intersectionRatio > best.intersectionRatio)) best = e;
+      });
+      if (best) setActive(best.target.id);
+    }, {rootMargin: '-15% 0px -65% 0px', threshold: [0, .25, .5, 1]});
+    secs.forEach(function(s){ io.observe(s); });
+  } else {
+    window.addEventListener('scroll', function(){
+      var cur = secs[0];
+      secs.forEach(function(s){ if (s.getBoundingClientRect().top <= 120) cur = s; });
+      setActive(cur.id);
+    }, {passive:true});
+  }
+})();
+</script>
+</body>
+</html>
