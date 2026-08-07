@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寶雅 (5904) 個股初步分析報告</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3 { color: #2c3e50; }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* 導覽列樣式 */
+        .stepnav {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            z-index: 1000;
+            margin-bottom: 30px;
+        }
+        .stepnav a {
+            text-decoration: none;
+            color: #7f8c8d;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .stepnav a:hover { background-color: #f1f2f6; }
+        .stepnav a.active {
+            background-color: #0056b3;
+            color: #fff;
+        }
+
+        /* 區塊與表格樣式 */
+        section {
+            background: #fff;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            scroll-margin-top: 80px;
+        }
+        .highlight-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0056b3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th { background-color: #f4f6f7; color: #333; }
+        .negv { color: #e74c3c; font-weight: bold; }
+        .posv { color: #27ae60; font-weight: bold; }
+        
+        .footer { text-align: center; font-size: 12px; color: #7f8c8d; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>寶雅 (5904) 個股初步分析報告</h1>
+        <p>報告生成時間：2026-08-06 | 評級：<strong>優秀等級 (GARP 成長股)</strong></p>
+    </div>
+
+    <nav class="stepnav">
+        <a href="#step1" class="active">1. 現金流盲測</a>
+        <a href="#step2">2. 基本資訊</a>
+        <a href="#step3">3. 法說會解析</a>
+        <a href="#step4">4. 營收視覺化</a>
+        <a href="#step5">5. 前瞻估值</a>
+        <a href="#step6">6. 投資決策</a>
+    </nav>
+
+    <!-- 第 1 步：現金流盲測 -->
+    <section id="step1">
+        <h2>【第 1 步】現金流量表六大規則分析</h2>
+        <div class="highlight-box">
+            <strong>💡 重點摘要：</strong><br>
+            現金流體質獲得 <strong>99 分（優秀級）</strong>！本業造血能力強勁且逐年成長，資本支出控制得當，無借錢投資或獲利灌水疑慮。<strong>現金流盲測關卡完美通過</strong>，具備極佳的財務防禦力。
+        </div>
+        
+        <table>
+            <tr>
+                <th>項目代號</th>
+                <th>財務指標 (億元)</th>
+                <th>2021</th>
+                <th>2022</th>
+                <th>2023</th>
+                <th>2024</th>
+                <th>2025</th>
+                <th>26Q2 (參考)</th>
+            </tr>
+            <tr>
+                <td><strong>A</strong></td>
+                <td>營業活動現金流量</td>
+                <td class="posv">39.6</td>
+                <td class="posv">45.9</td>
+                <td class="posv">48.0</td>
+                <td class="posv">53.7</td>
+                <td class="posv">59.0</td>
+                <td>33.6</td>
+            </tr>
+            <tr>
+                <td><strong>B</strong></td>
+                <td>投資活動現金流量</td>
+                <td class="negv">-9.33</td>
+                <td class="negv">-5.96</td>
+                <td class="negv">-10.9</td>
+                <td class="negv">-13.2</td>
+                <td class="negv">-11.5</td>
+                <td>-8.37</td>
+            </tr>
+            <tr>
+                <td><strong>C</strong></td>
+                <td>融資活動現金流量</td>
+                <td class="negv">-18.9</td>
+                <td class="negv">-42.7</td>
+                <td class="negv">-43.0</td>
+                <td class="negv">-32.1</td>
+                <td class="negv">-39.1</td>
+                <td>-9.10</td>
+            </tr>
+            <tr>
+                <td><strong>D</strong></td>
+                <td>稅前淨利</td>
+                <td>23.0</td>
+                <td>25.9</td>
+                <td>31.5</td>
+                <td>35.1</td>
+                <td>39.2</td>
+                <td>23.2</td>
+            </tr>
+            <tr>
+                <td><strong>E</strong></td>
+                <td>期末現金餘額</td>
+                <td>28.6</td>
+                <td>25.9</td>
+                <td>19.9</td>
+                <td>28.3</td>
+                <td>36.7</td>
+                <td>52.9</td>
+            </tr>
+        </table>
+        
+        <ul>
+            <li><strong>規則一 (A 逐年成長)</strong>：連續 5 年遞增至 59.0 億。「穩定造血金雞母」 (100分)</li>
+            <li><strong>規則二 (B 投資紀律)</strong>：投資控制在營業現金流的 15%~25%。「量力而為的擴張者」 (100分)</li>
+            <li><strong>規則三 (B 投資效益)</strong>：投入資本穩定轉化為現金流與淨利成長。「實力派特訓員」 (100分)</li>
+            <li><strong>規則四 (C 融資合理性)</strong>：無借錢擴張，長年高額負值配息還款。「豪爽回饋的大戶」 (100分)</li>
+            <li><strong>規則五 (A > D 品質)</strong>：5 年 A 皆大於 D，100% 通過。「純金級獲利」 (100分)</li>
+            <li><strong>規則六 (E 餘額穩定性)</strong>：中長期現金準備充足，穩定回升。「金庫充實」 (95分)</li>
+        </ul>
+        <p><em>* 資料來源：使用者提供之 Goodinfo 截圖。</em></p>
+    </section>
+
+    <!-- 第 2 步：基本資訊 -->
+    <section id="step2">
+        <h2>【第 2 步】基本資訊查詢</h2>
+        <div class="highlight-box">
+            <strong>⚠️ 股本變動與估值警示：</strong><br>
+            寶雅目前正進行 <strong>「1 拆 10」股票分割</strong>，處於停止交易期間，新股將於 2026/08/10 恢復交易。外部網站計算之本益比（>200倍）因分割邏輯失準，還原實際本益比約為 <strong>20.7倍</strong>。
+        </div>
+        <ul>
+            <li><strong>股價狀態</strong>：停牌前收盤 720 元；8/10 恢復交易參考價預估約 72 元。</li>
+            <li><strong>獲利表現</strong>：2025 年全年 EPS <strong>29.54 元</strong>（創高）；2026 Q1 單季 EPS <strong>9.3 元</strong>。</li>
+            <li><strong>營收動能</strong>：2026 上半年營收達 140.27 億元，年增率 <strong>+13.67%</strong>。</li>
+        </ul>
+    </section>
+
+    <!-- 第 3 步：法說會解析 -->
+    <section id="step3">
+        <h2>【第 3 步】法說會資料討論</h2>
+        <div class="highlight-box">
+            <strong>💡 法說會核心重點：</strong><br>
+            高毛利 <strong>POYA Beauty 升級店型</strong>發揮強大效益，目標於 2028 年總店數達 620 店，且 Beauty 店型佔比將過半達 <strong>51%</strong>。
+        </div>
+        <ul>
+            <li><strong>獲利擴張</strong>：1Q26 營益率上升至 17.3%、淨利率擴張至 14.0%。</li>
+            <li><strong>產品組合</strong>：美妝(20%)、保養(15%)、洗沐(13%)均維持雙位數成長。</li>
+            <li><strong>自有品牌與電商</strong>：自有品牌(PB)營收佔比提升至 3.7%；電商(EC)佔比達 2.4%。</li>
+            <li><strong>基礎建設</strong>：北中南三大物流中心建置完畢，總支援容量高達 617 店。</li>
+        </ul>
+        <p><em>* 資料來源：受邀參加花旗證券論壇法說會官方簡報 (1Q26)。</em></p>
+    </section>
+
+    <!-- 第 4 步：營收視覺化 -->
+    <section id="step4">
+        <h2>【第 4 步】營收趨勢視覺化</h2>
+        <div class="highlight-box">
+            <strong>💡 營收動能：</strong><br>
+            近一年營收維持穩健的高基期，<strong>2026 上半年單月幾乎全數維持雙位數年成長 (YoY)</strong>。5月營收更創下區間高峰 24.39 億。
+        </div>
+        
+        <svg width="100%" height="320" viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg" style="background:#fff; border-radius:8px; border:1px solid #e0e0e0;">
+            <style>
+                .bar { fill: #4a90e2; }
+                .bar-peak { fill: #f5deb3; } 
+                .bar-trough { fill: #ffb6c1; } 
+                .label { font-family: sans-serif; font-size: 12px; fill: #333; text-anchor: middle; }
+                .axis { stroke: #ccc; stroke-width: 1; }
+                .grid { stroke: #eee; stroke-width: 1; stroke-dasharray: 4; }
+            </style>
+            <text x="400" y="30" style="font-family: sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle;">寶雅 (5904) 近 12 個月營收趨勢 (億元)</text>
+            
+            <line x1="50" y1="260" x2="750" y2="260" class="axis"/>
+            <text x="40" y="264" class="label" style="text-anchor: end;">0</text>
+            <line x1="50" y1="180" x2="750" y2="180" class="grid"/>
+            <text x="40" y="184" class="label" style="text-anchor: end;">10</text>
+            <line x1="50" y1="100" x2="750" y2="100" class="grid"/>
+            <text x="40" y="104" class="label" style="text-anchor: end;">20</text>
+            <line x1="50" y1="60" x2="750" y2="60" class="grid"/>
+            <text x="40" y="64" class="label" style="text-anchor: end;">25</text>
+            
+            <!-- Bars -->
+            <rect x="70" y="94.2" width="30" height="165.8" class="bar-trough"/>
+            <text x="85" y="89" class="label">20.73</text><text x="85" y="278" class="label">25/07</text>
+            
+            <rect x="125" y="81.2" width="30" height="178.8" class="bar"/>
+            <text x="140" y="76" class="label">22.35</text><text x="140" y="278" class="label">25/08</text>
+            
+            <rect x="180" y="92.6" width="30" height="167.4" class="bar"/>
+            <text x="195" y="87" class="label">20.93</text><text x="195" y="278" class="label">25/09</text>
+
+            <rect x="235" y="88.2" width="30" height="171.8" class="bar"/>
+            <text x="250" y="83" class="label">21.47</text><text x="250" y="278" class="label">25/10</text>
+            
+            <rect x="290" y="85.9" width="30" height="174.1" class="bar"/>
+            <text x="305" y="81" class="label">21.76</text><text x="305" y="278" class="label">25/11</text>
+            
+            <rect x="345" y="79.6" width="30" height="180.4" class="bar"/>
+            <text x="360" y="74" class="label">22.55</text><text x="360" y="278" class="label">25/12</text>
+            
+            <rect x="400" y="70.0" width="30" height="190.0" class="bar"/>
+            <text x="415" y="65" class="label">23.75</text><text x="415" y="278" class="label">26/01</text>
+            
+            <rect x="455" y="66.9" width="30" height="193.1" class="bar"/>
+            <text x="470" y="62" class="label">24.14</text><text x="470" y="278" class="label">26/02</text>
+
+            <rect x="510" y="75.5" width="30" height="184.5" class="bar"/>
+            <text x="525" y="70" class="label">23.06</text><text x="525" y="278" class="label">26/03</text>
+            
+            <rect x="565" y="80.2" width="30" height="179.8" class="bar"/>
+            <text x="580" y="75" class="label">22.48</text><text x="580" y="278" class="label">26/04</text>
+            
+            <rect x="620" y="64.9" width="30" height="195.1" class="bar-peak"/>
+            <text x="635" y="60" class="label">24.39</text><text x="635" y="278" class="label">26/05</text>
+            
+            <rect x="675" y="80.3" width="30" height="179.7" class="bar"/>
+            <text x="690" y="75" class="label">22.46</text><text x="690" y="278" class="label">26/06</text>
+        </svg>
+    </section>
+
+    <!-- 第 5 步：前瞻估值 -->
+    <section id="step5">
+        <h2>【第 5 步】前瞻本益比／EPS 預估</h2>
+        <p>市場法人預估寶雅 2026 全年 EPS (分割前基期) 約落於 <strong>32～35 元</strong> 區間。以停牌前價格 720 元推估，目前隱含前瞻本益比約為 <strong>20.5～22.5 倍</strong>，處於歷史常態區間的中下緣。</p>
+        <table>
+            <tr>
+                <th>假設情境</th>
+                <th>目標本益比倍數</th>
+                <th>對應合理價 (分割後新股)</th>
+                <th>說明</th>
+            </tr>
+            <tr>
+                <td>保守情境</td>
+                <td>20 倍</td>
+                <td><strong>67.0 元</strong></td>
+                <td>市場情緒保守，防禦型估值</td>
+            </tr>
+            <tr>
+                <td>合理中值</td>
+                <td>22.5 倍</td>
+                <td><strong>75.3 元</strong></td>
+                <td>貼近歷史常態均值</td>
+            </tr>
+            <tr>
+                <td>樂觀情境</td>
+                <td>25 倍</td>
+                <td><strong>83.7 元</strong></td>
+                <td>展店超預期，給予溢價</td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- 第 6 步：投資決策 -->
+    <section id="step6">
+        <h2>【第 6 步】投資決策推理</h2>
+        <div class="highlight-box">
+            <strong>綜合判定：具備 GARP（合理價格成長股）吸引力。</strong><br>
+            完全由充沛營業現金流支撐的無痛擴張，未依賴外部舉債，財務底盤極度穩固。
+        </div>
+        <ul>
+            <li><strong>尚未持有者 (伺機進場)</strong>：新股於 2026/08/10 恢復交易，流動性紅利釋放。觀察 Q3 傳統旺季(7、8月)單月營收 YoY 是否站穩 <strong>+10%</strong> 作為右側進場確認訊號。</li>
+            <li><strong>已持有者 (安心續抱)</strong>：基本面擴張在軌道上。未來需監控的停損/減碼訊號為：(1) 毛利率連續兩季跌破 <strong>43%</strong>；(2) 財報單季「營業活動現金流量(A)轉負」。</li>
+        </ul>
+    </section>
+
+    <div class="footer">
+        本報告依據現金流量盲測與市場公開資訊推演，非專業理財建議。
+    </div>
+
+    <script>
+        // 平滑捲動與 IntersectionObserver 自動高亮導覽列選單
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.stepnav a');
+            const sections = document.querySelectorAll('section');
+
+            // 點擊平滑跳轉
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // 滾動偵測
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -60% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => observer.observe(section));
+        });
+    </script>
+</body>
+</html>
