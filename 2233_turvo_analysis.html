@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2233 宇隆科技｜六步驟初步分析報告</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f4ef;
+    --panel:#ffffff;
+    --ink:#232526;
+    --ink-soft:#5c5f61;
+    --steel:#3a5f78;
+    --steel-dark:#25404f;
+    --copper:#b4703a;
+    --copper-soft:#e7c9a8;
+    --pos:#3a6b8a;
+    --neg:#c0524a;
+    --good:#3f7d5c;
+    --warn:#c98a3e;
+    --line:#e1ddd2;
+    --peak:#e0b95c;
+    --trough:#e8938a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Noto Sans TC', sans-serif; line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.mono{font-family:'Space Grotesk','Noto Sans TC',sans-serif;}
+  .data, table, .bar-label, .axis-label{font-family:'IBM Plex Mono','Noto Sans TC',monospace;}
+
+  header.hero{
+    background: linear-gradient(135deg, var(--steel-dark) 0%, var(--steel) 60%, #4a7691 100%);
+    color:#f4f1e9; padding:64px 8vw 48px; position:relative; overflow:hidden;
+  }
+  header.hero::after{
+    content:""; position:absolute; right:-60px; top:-60px; width:340px; height:340px;
+    border:1px solid rgba(244,241,233,0.15); border-radius:50%;
+  }
+  header.hero::before{
+    content:""; position:absolute; right:20px; bottom:-100px; width:260px; height:260px;
+    border:1px solid rgba(244,241,233,0.1); border-radius:50%;
+  }
+  .eyebrow{font-family:'IBM Plex Mono',monospace; letter-spacing:.12em; font-size:13px; color:var(--copper-soft); text-transform:uppercase;}
+  header.hero h1{font-size:clamp(28px,4.2vw,44px); margin:10px 0 8px; font-weight:700;}
+  header.hero .sub{font-size:16px; color:#dfe6ea; max-width:640px;}
+  .hero-meta{display:flex; gap:28px; flex-wrap:wrap; margin-top:28px; font-family:'IBM Plex Mono',monospace; font-size:13px;}
+  .hero-meta div{border-left:2px solid var(--copper); padding-left:10px;}
+  .hero-meta b{display:block; font-size:17px; font-weight:600;}
+
+  nav.stepnav{
+    position:sticky; top:0; z-index:50; background:rgba(246,244,239,0.96); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line); display:flex; overflow-x:auto; gap:2px; padding:0 4vw;
+  }
+  nav.stepnav a{
+    flex:0 0 auto; padding:14px 16px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    color:var(--ink-soft); text-decoration:none; border-bottom:3px solid transparent; white-space:nowrap;
+  }
+  nav.stepnav a.active{color:var(--steel-dark); border-bottom-color:var(--copper); font-weight:600;}
+  nav.stepnav a.locked{color:#b7b2a5; pointer-events:none;}
+
+  main{max-width:1080px; margin:0 auto; padding:0 6vw;}
+  section.step{padding:52px 0; border-bottom:1px solid var(--line);}
+  section.step:last-of-type{border-bottom:none;}
+  .step-tag{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--copper); letter-spacing:.08em; margin-bottom:6px;}
+  section.step h2{font-size:25px; margin:0 0 18px; color:var(--steel-dark);}
+
+  .callout{
+    background:#fbf8f1; border-left:4px solid var(--copper); padding:16px 20px; border-radius:4px; margin:0 0 24px;
+  }
+  .callout.warn{border-left-color:var(--neg); background:#fbf1ef;}
+  .callout.good{border-left-color:var(--good); background:#f1f8f3;}
+  .callout p{margin:4px 0;}
+
+  table{width:100%; border-collapse:collapse; font-size:13.5px; margin:16px 0 8px; background:var(--panel);}
+  th,td{padding:8px 9px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap;}
+  th:first-child, td:first-child{text-align:left;}
+  thead th{background:var(--steel-dark); color:#f4f1e9; font-weight:500; position:sticky; top:0;}
+  tbody tr:nth-child(even){background:#faf8f3;}
+  .negv{color:var(--neg); font-weight:600;}
+  .posv{color:var(--pos);}
+  .tblwrap{overflow-x:auto;}
+  .note{font-size:13px; color:var(--ink-soft); margin:6px 0 20px;}
+
+  .scorebox{display:flex; gap:14px; flex-wrap:wrap; margin:18px 0;}
+  .scorecard{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; flex:1 1 140px;}
+  .scorecard .n{font-family:'Space Grotesk'; font-size:26px; font-weight:700; color:var(--steel-dark);}
+  .scorecard .l{font-size:12px; color:var(--ink-soft);}
+  .scorecard.total{background:var(--steel-dark); color:#f4f1e9;}
+  .scorecard.total .n{color:var(--copper-soft);}
+  .scorecard.total .l{color:#c9d6dc;}
+
+  .chart-wrap{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px; margin:18px 0; overflow-x:auto;}
+  .bar-chart{width:100%; min-width:780px; height:auto;}
+  .chart-title{font-family:'Space Grotesk'; font-size:15px; fill:var(--steel-dark); font-weight:600;}
+  .bar-label{font-size:11px; fill:var(--ink);}
+  .axis-label{font-size:11px; fill:var(--ink-soft);}
+  .zero-line{stroke:var(--ink-soft); stroke-width:1;}
+
+  .rule-block{margin-bottom:30px;}
+  .rule-block h3{font-size:17px; margin:0 0 8px; color:var(--steel-dark);}
+  .rule-score{display:inline-block; font-family:'IBM Plex Mono'; font-size:13px; background:#f0ece1; padding:3px 9px; border-radius:20px; margin-left:8px;}
+
+  .snap-note{font-size:12px; color:var(--ink-soft); border-top:1px dashed var(--line); padding-top:6px; margin-top:6px;}
+  .cite{color:var(--steel); text-decoration:underline dotted; word-break:break-all;}
+
+  .kpi-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:18px 0;}
+  .kpi{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px 14px;}
+  .kpi .v{font-family:'Space Grotesk'; font-size:20px; font-weight:700; color:var(--steel-dark);}
+  .kpi .k{font-size:12px; color:var(--ink-soft);}
+
+  .persona{font-weight:700; color:var(--copper);}
+
+  footer{padding:36px 6vw 60px; font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
+  .verbadge{display:inline-block; background:#eee; padding:2px 8px; border-radius:4px; margin-right:8px;}
+
+  .locked-panel{background:#f0ede4; border:1px dashed #c9c3b3; border-radius:8px; padding:16px 20px; color:var(--ink-soft); font-size:13.5px;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">台股個股初步分析｜六步驟框架</div>
+  <h1>2233 宇隆科技（Turvo International）</h1>
+  <div class="sub">精密金屬零件加工廠，核心技術為瑞士／德國多軸 CNC 車銑複合加工，長期供應車用 Tier 1 大廠與醫療大廠關鍵零組件，近期揭露往機器人關節與 AI 伺服器液冷零件供應鏈轉型的題材。</div>
+  <div class="hero-meta">
+    <div><b>股票代號</b>2233</div>
+    <div><b>市場</b>上市・汽車零組件</div>
+    <div><b>現金流體質</b>約 54％（需觀察）</div>
+    <div><b>報告版本</b>v1.0</div>
+  </div>
+</header>
+
+<nav class="stepnav" id="stepnav">
+  <a href="#step1" data-step="1">① 現金流量表六大規則</a>
+  <a href="#step2" data-step="2">② 基本資訊查詢</a>
+  <a href="#step3" data-step="3">③ 法說會摘要</a>
+  <a href="#step4" data-step="4">④ 營收趨勢</a>
+  <a href="#step5" data-step="5">⑤ 前瞻本益比／EPS</a>
+  <a href="#step6" data-step="6">⑥ 投資決策推理</a>
+</nav>
+
+<main>
+
+<!-- STEP 1 -->
+<section class="step" id="step1">
+  <div class="step-tag">【第 1 步／共 6 步：現金流量表六大規則分析（盲測階段）】</div>
+  <h2>現金流量表六大規則分析</h2>
+
+  <div class="callout warn">
+    <p><b>本步驟為盲測階段，尚未查詢股價、EPS、產業地位或新聞背景，僅根據使用者提供的現金流量表截圖數字做客觀解讀。</b></p>
+    <p>六項規則平均總分約 <b>54 分</b>，低於 60％「良好」門檻，落在「需觀察」區間。依框架規則，這代表建議先謹慎看待、不急著往下深入基本面——但使用者已明確指示直接執行完整六步驟，因此以下仍完整走完第 2～6 步，並在後續每一步中持續呼應第一步觀察到的現金流體質疑慮。</p>
+  </div>
+
+  <p class="note">資料來源：使用者提供之現金流量表截圖（年度 2009–2025，另含 2026Q1 單季數字）。單季數字僅供參考、不列入六大規則計分，僅在數列圖表中一併呈現以維持前後一致。</p>
+
+  <div class="tblwrap">
+  <table>
+    <thead><tr><th>年度</th><th>A 營業活動</th><th>B 投資活動</th><th>C 融資活動</th><th>D 稅前淨利</th><th>E 期末餘額</th><th>A 是否 &gt; D</th></tr></thead>
+    <tbody>
+      <tr><td>2009</td><td>0.33</td><td class="negv">-0.66</td><td class="posv">2.07</td><td>0.93</td><td>0.53</td><td class="negv">✗</td></tr>
+      <tr><td>2010</td><td>1.48</td><td class="negv">-1.92</td><td class="posv">2.78</td><td>2.08</td><td>2.74</td><td class="negv">✗</td></tr>
+      <tr><td>2011</td><td>0.66</td><td class="negv">-3.11</td><td class="posv">1.26</td><td>2.44</td><td>1.73</td><td class="negv">✗</td></tr>
+      <tr><td>2012</td><td>2.29</td><td class="negv">-1.58</td><td class="negv">-0.94</td><td>2.43</td><td>1.42</td><td class="negv">✗</td></tr>
+      <tr><td>2013</td><td>3.67</td><td class="negv">-3.04</td><td class="negv">-0.24</td><td>3.82</td><td>1.98</td><td class="negv">✗</td></tr>
+      <tr><td>2014</td><td>4.50</td><td class="negv">-6.53</td><td class="posv">3.58</td><td>3.79</td><td>3.82</td><td class="posv">✓</td></tr>
+      <tr><td>2015</td><td>3.11</td><td class="negv">-2.07</td><td class="negv">-0.88</td><td>3.29</td><td>7.02</td><td class="negv">✗</td></tr>
+      <tr><td>2016</td><td>5.67</td><td class="negv">-2.46</td><td class="negv">-0.09</td><td>4.79</td><td>9.34</td><td class="posv">✓</td></tr>
+      <tr><td>2017</td><td>5.08</td><td class="negv">-5.36</td><td class="negv">-3.01</td><td>5.68</td><td>5.85</td><td class="negv">✗</td></tr>
+      <tr><td>2018</td><td>4.81</td><td class="negv">-2.73</td><td class="negv">-1.93</td><td>6.17</td><td>5.97</td><td class="negv">✗</td></tr>
+      <tr><td>2019</td><td>7.26</td><td class="negv">-2.50</td><td class="negv">-2.00</td><td>3.64</td><td>8.63</td><td class="posv">✓</td></tr>
+      <tr><td>2020</td><td>3.39</td><td class="negv">-1.70</td><td class="negv">-1.05</td><td>4.30</td><td>9.20</td><td class="negv">✗</td></tr>
+      <tr><td>2021</td><td>8.39</td><td class="negv">-4.36</td><td class="posv">0.66</td><td>6.52</td><td>13.90</td><td class="posv">✓</td></tr>
+      <tr><td>2022</td><td>7.10</td><td class="negv">-4.42</td><td class="negv">-6.73</td><td>7.75</td><td>12.10</td><td class="negv">✗</td></tr>
+      <tr><td>2023</td><td>8.95</td><td class="negv">-4.96</td><td class="negv">-3.11</td><td>5.71</td><td>12.90</td><td class="posv">✓</td></tr>
+      <tr><td>2024</td><td>8.18</td><td class="negv">-14.00</td><td class="negv">-0.44</td><td>7.87</td><td>7.00</td><td class="posv">✓</td></tr>
+      <tr><td>2025</td><td>6.48</td><td class="negv">-2.48</td><td class="posv">2.36</td><td>4.94</td><td>13.10</td><td class="posv">✓</td></tr>
+      <tr style="opacity:.7"><td>26Q1（單季）</td><td>1.46</td><td class="negv">-6.78</td><td class="posv">2.09</td><td>1.26</td><td>10.40</td><td class="posv">✓（單季參考）</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="snap-note">單位：億元。snap-note：以上數字全部取自使用者上傳之現金流量表截圖，非本次搜尋所得。</p>
+
+  <div class="scorebox">
+    <div class="scorecard"><div class="n">65</div><div class="l">規則一・A 成長趨勢</div></div>
+    <div class="scorecard"><div class="n">55</div><div class="l">規則二・B 投資紀律</div></div>
+    <div class="scorecard"><div class="n">50</div><div class="l">規則三・B 投資效益</div></div>
+    <div class="scorecard"><div class="n">60</div><div class="l">規則四・C 融資合理性</div></div>
+    <div class="scorecard"><div class="n">41</div><div class="l">規則五・A&gt;D 品質</div></div>
+    <div class="scorecard"><div class="n">55</div><div class="l">規則六・E 餘額穩定性</div></div>
+    <div class="scorecard total"><div class="n">54</div><div class="l">六項平均・需觀察</div></div>
+  </div>
+
+  <div class="rule-block">
+    <h3>規則一：A 逐季／逐年成長趨勢<span class="rule-score">65 / 100</span></h3>
+    <p>A 從 2009 年僅 0.33 億，一路成長到 2021 年高點 8.39 億、2023 年再創 8.95 億高點，長期方向明確向上，屬於「本業真的有在造血、而且力道逐年變強」的個性。但近兩年出現轉折：2024 年 8.18 億、2025 年降至 6.48 億，較 2023 年高點衰退約 27.6％；2026Q1 單季 1.46 億，換算年化約 5.84 億，仍在近三年區間下緣。整體可形容為<span class="persona">「曾經衝很快、現在腳步放緩」型</span>——長期趨勢仍是正向，但近期動能轉弱，值得留意是否只是短期波動或是體質轉折的開端。</p>
+    <div class="chart-wrap">
+<svg viewBox="0 0 1000 320" xmlns="http://www.w3.org/2000/svg" class="bar-chart">
+<text x="500.0" y="18" text-anchor="middle" class="chart-title">規則一：營業活動現金流量（A）逐年趨勢</text>
+<line x1="50" y1="260.0" x2="980" y2="260.0" class="zero-line"/>
+<rect x="60.3" y="251.5" width="31.0" height="8.5" fill="#3a6b8a" rx="2"/>
+<text x="75.8" y="245.5" text-anchor="middle" class="bar-label">0.33</text>
+<text x="75.8" y="276.0" text-anchor="middle" class="axis-label">2009</text>
+<rect x="112.0" y="222.0" width="31.0" height="38.0" fill="#3a6b8a" rx="2"/>
+<text x="127.5" y="216.0" text-anchor="middle" class="bar-label">1.48</text>
+<text x="127.5" y="276.0" text-anchor="middle" class="axis-label">2010</text>
+<rect x="163.7" y="243.0" width="31.0" height="17.0" fill="#3a6b8a" rx="2"/>
+<text x="179.2" y="237.0" text-anchor="middle" class="bar-label">0.66</text>
+<text x="179.2" y="276.0" text-anchor="middle" class="axis-label">2011</text>
+<rect x="215.3" y="201.2" width="31.0" height="58.8" fill="#3a6b8a" rx="2"/>
+<text x="230.8" y="195.2" text-anchor="middle" class="bar-label">2.29</text>
+<text x="230.8" y="276.0" text-anchor="middle" class="axis-label">2012</text>
+<rect x="267.0" y="165.7" width="31.0" height="94.3" fill="#3a6b8a" rx="2"/>
+<text x="282.5" y="159.7" text-anchor="middle" class="bar-label">3.67</text>
+<text x="282.5" y="276.0" text-anchor="middle" class="axis-label">2013</text>
+<rect x="318.7" y="144.4" width="31.0" height="115.6" fill="#3a6b8a" rx="2"/>
+<text x="334.2" y="138.4" text-anchor="middle" class="bar-label">4.5</text>
+<text x="334.2" y="276.0" text-anchor="middle" class="axis-label">2014</text>
+<rect x="370.3" y="180.1" width="31.0" height="79.9" fill="#3a6b8a" rx="2"/>
+<text x="385.8" y="174.1" text-anchor="middle" class="bar-label">3.11</text>
+<text x="385.8" y="276.0" text-anchor="middle" class="axis-label">2015</text>
+<rect x="422.0" y="114.3" width="31.0" height="145.7" fill="#3a6b8a" rx="2"/>
+<text x="437.5" y="108.3" text-anchor="middle" class="bar-label">5.67</text>
+<text x="437.5" y="276.0" text-anchor="middle" class="axis-label">2016</text>
+<rect x="473.7" y="129.5" width="31.0" height="130.5" fill="#3a6b8a" rx="2"/>
+<text x="489.2" y="123.5" text-anchor="middle" class="bar-label">5.08</text>
+<text x="489.2" y="276.0" text-anchor="middle" class="axis-label">2017</text>
+<rect x="525.3" y="136.4" width="31.0" height="123.6" fill="#3a6b8a" rx="2"/>
+<text x="540.8" y="130.4" text-anchor="middle" class="bar-label">4.81</text>
+<text x="540.8" y="276.0" text-anchor="middle" class="axis-label">2018</text>
+<rect x="577.0" y="73.4" width="31.0" height="186.6" fill="#3a6b8a" rx="2"/>
+<text x="592.5" y="67.4" text-anchor="middle" class="bar-label">7.26</text>
+<text x="592.5" y="276.0" text-anchor="middle" class="axis-label">2019</text>
+<rect x="628.7" y="172.9" width="31.0" height="87.1" fill="#3a6b8a" rx="2"/>
+<text x="644.2" y="166.9" text-anchor="middle" class="bar-label">3.39</text>
+<text x="644.2" y="276.0" text-anchor="middle" class="axis-label">2020</text>
+<rect x="680.3" y="44.4" width="31.0" height="215.6" fill="#3a6b8a" rx="2"/>
+<text x="695.8" y="38.4" text-anchor="middle" class="bar-label">8.39</text>
+<text x="695.8" y="276.0" text-anchor="middle" class="axis-label">2021</text>
+<rect x="732.0" y="77.5" width="31.0" height="182.5" fill="#3a6b8a" rx="2"/>
+<text x="747.5" y="71.5" text-anchor="middle" class="bar-label">7.1</text>
+<text x="747.5" y="276.0" text-anchor="middle" class="axis-label">2022</text>
+<rect x="783.7" y="30.0" width="31.0" height="230.0" fill="#e0b95c" rx="2"/>
+<text x="799.2" y="24.0" text-anchor="middle" class="bar-label">8.95</text>
+<text x="799.2" y="276.0" text-anchor="middle" class="axis-label">2023</text>
+<rect x="835.3" y="49.8" width="31.0" height="210.2" fill="#3a6b8a" rx="2"/>
+<text x="850.8" y="43.8" text-anchor="middle" class="bar-label">8.18</text>
+<text x="850.8" y="276.0" text-anchor="middle" class="axis-label">2024</text>
+<rect x="887.0" y="93.5" width="31.0" height="166.5" fill="#3a6b8a" rx="2"/>
+<text x="902.5" y="87.5" text-anchor="middle" class="bar-label">6.48</text>
+<text x="902.5" y="276.0" text-anchor="middle" class="axis-label">2025</text>
+<rect x="938.7" y="222.5" width="31.0" height="37.5" fill="#3a6b8a" rx="2"/>
+<text x="954.2" y="216.5" text-anchor="middle" class="bar-label">1.46</text>
+<text x="954.2" y="276.0" text-anchor="middle" class="axis-label">26Q1</text>
+<text x="40" y="40" text-anchor="end" class="axis-label">(億)</text>
+</svg>
+    </div>
+  </div>
+
+  <div class="rule-block">
+    <h3>規則二：B 投資紀律評估<span class="rule-score">55 / 100</span></h3>
+    <p>B 連續 17 年皆為負值，代表公司持續投入資本支出，這本身屬正常經營行為。但規模波動很大：多數年度落在 -1.6～-5.4 億區間，2024 年卻一舉衝到 -14 億，是歷史最大單年投資規模，接近前一年（2023 年 -4.96 億）的三倍。屬於<span class="persona">「平常穩定投資、但去年突然大手筆」型</span>——若是為了液冷接頭、機器人減速機等新產品線擴產，屬轉型期合理現象；但單年度投資規模跳升近 3 倍、且明顯超過當年 A（8.18 億），需要後續年度的 A 數字驗證這筆重投資是否真的轉化為造血能力。</p>
+  </div>
+
+  <div class="rule-block">
+    <h3>規則三：B 投資效益分析<span class="rule-score">50 / 100</span></h3>
+    <p class="note">核心對照指標為 A（不是 D），觀察重投資年度隔年 A 是否轉強：</p>
+    <div class="tblwrap">
+    <table>
+      <thead><tr><th>重投資年度</th><th>當年 B</th><th>隔年</th><th>隔年 A</th><th>較投資年 A 變化</th></tr></thead>
+      <tbody>
+        <tr><td>2011</td><td class="negv">-3.11</td><td>2012</td><td>2.29</td><td class="posv">↑ 較 2011（0.66）明顯提升</td></tr>
+        <tr><td>2014</td><td class="negv">-6.53</td><td>2015</td><td>3.11</td><td class="negv">↓ 較 2014（4.5）下滑</td></tr>
+        <tr><td>2017</td><td class="negv">-5.36</td><td>2018</td><td>4.81</td><td class="negv">↓ 微幅下滑（較 2017 的 5.08）</td></tr>
+        <tr><td>2022</td><td class="negv">-4.42</td><td>2023</td><td>8.95</td><td class="posv">↑ 明顯提升（較 2022 的 7.1）</td></tr>
+        <tr><td>2024</td><td class="negv">-14.00</td><td>2025</td><td>6.48</td><td class="negv">↓ 較 2024（8.18）下滑，尚未看到轉強</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>五次重投資中，僅兩次（2011、2022）在隔年觀察到 A 明顯回升，其餘三次隔年 A 不升反降，效果並不穩定，屬於<span class="persona">「老將自費特訓」型</span>——持續砸錢投資搏一線生機，但成效沒有保證，得靠運氣與時機。特別是 2024 年史上最大手筆的 -14 億投資，截至 2025 年（隔年）A 反而從 8.18 億降到 6.48 億，效益尚未在數字上顯現，是否只是需要更長時間發酵，仍待 2026、2027 年數字驗證。<b>提醒：投資活動現金流建議進一步檢視「固定資產（增加）減少」等原始細項，才能判斷這筆錢真正花在廠房設備擴產，還是金融資產買賣</b>，此細項使用者尚未提供，本報告無法進一步拆解。</p>
+  </div>
+
+  <div class="rule-block">
+    <h3>規則四：C 融資活動合理性<span class="rule-score">60 / 100</span></h3>
+    <p>檢查「B 大幅負值＋C 為正值（疑似借錢投資）」的年度組合：</p>
+    <div class="chart-wrap">
+<svg viewBox="0 0 1000 340" xmlns="http://www.w3.org/2000/svg" class="bar-chart">
+<text x="500.0" y="18" text-anchor="middle" class="chart-title">規則四：B（投資）與 C（融資）同年度對照</text>
+<line x1="50" y1="211.6666666666667" x2="980" y2="211.6666666666667" class="zero-line"/>
+<rect x="60.32941176470588" y="180.03252032520325" width="17.88235294117647" height="31.634146341463413" fill="#5a7ea3" rx="2"/>
+<text x="69.27058823529411" y="175.03252032520325" text-anchor="middle" class="bar-label" font-size="10">-0.66</text>
+<rect x="83.21176470588235" y="112.19512195121952" width="17.88235294117647" height="99.47154471544716" fill="#c98a3e" rx="2"/>
+<text x="92.15294117647059" y="107.19512195121952" text-anchor="middle" class="bar-label" font-size="10">2.07</text>
+<text x="88.78823529411764" y="276.0" text-anchor="middle" class="axis-label">2009</text>
+<rect x="118.02352941176471" y="119.13008130081302" width="17.88235294117647" height="92.53658536585365" fill="#5a7ea3" rx="2"/>
+<text x="126.96470588235294" y="114.13008130081302" text-anchor="middle" class="bar-label" font-size="10">-1.92</text>
+<rect x="140.9058823529412" y="78.55284552845528" width="17.88235294117647" height="133.11382113821138" fill="#c98a3e" rx="2"/>
+<text x="149.84705882352944" y="73.55284552845528" text-anchor="middle" class="bar-label" font-size="10">2.78</text>
+<text x="166.24117647058824" y="276.0" text-anchor="middle" class="axis-label">2010</text>
+<rect x="175.7176470588235" y="62.021680216802164" width="17.88235294117647" height="149.64498644986451" fill="#5a7ea3" rx="2"/>
+<text x="184.6588235294118" y="57.021680216802164" text-anchor="middle" class="bar-label" font-size="10">-3.11</text>
+<rect x="198.6" y="151.06775067750676" width="17.88235294117647" height="60.598915989159884" fill="#c98a3e" rx="2"/>
+<text x="207.54117647058825" y="146.06775067750676" text-anchor="middle" class="bar-label" font-size="10">1.26</text>
+<text x="243.79411764705884" y="276.0" text-anchor="middle" class="axis-label">2011</text>
+<rect x="233.41176470588235" y="135.7181570438799" width="17.88235294117647" height="75.94850948509485" fill="#5a7ea3" rx="2"/>
+<text x="242.35294117647058" y="130.7181570438799" text-anchor="middle" class="bar-label" font-size="10">-1.58</text>
+<rect x="256.29411764705884" y="211.6666666666667" width="17.88235294117647" height="45.24390243902439" fill="#c98a3e" rx="2"/>
+<text x="265.2352941176471" y="270.9105691056911" text-anchor="middle" class="bar-label" font-size="10">-0.94</text>
+<text x="321.34705882352944" y="276.0" text-anchor="middle" class="axis-label">2012</text>
+<rect x="291.1058823529412" y="65.15718738621089" width="17.88235294117647" height="146.50947928045578" fill="#5a7ea3" rx="2"/>
+<text x="300.0470588235294" y="60.15718738621089" text-anchor="middle" class="bar-label" font-size="10">-3.04</text>
+<rect x="313.98823529411765" y="211.6666666666667" width="17.88235294117647" height="11.56097560975611" fill="#c98a3e" rx="2"/>
+<text x="322.9294117647059" y="237.22764227642275" text-anchor="middle" class="bar-label" font-size="10">-0.24</text>
+<text x="398.9" y="276.0" text-anchor="middle" class="axis-label">2013</text>
+<rect x="348.8" y="0" width="17.88235294117647" height="211.6666666666667" fill="#f7e6c4" opacity="0.5"/>
+<rect x="348.8" y="0" width="17.88235294117647" height="314.42953020134226" fill="#5a7ea3" rx="2"/>
+<text x="357.74117647058827" y="-5.0" text-anchor="middle" class="bar-label" font-size="10">-6.53</text>
+<rect x="371.68235294117646" y="38.55691056910568" width="17.88235294117647" height="173.10975609756096" fill="#c98a3e" rx="2"/>
+<text x="380.6235294117647" y="33.55691056910568" text-anchor="middle" class="bar-label" font-size="10">3.58</text>
+<text x="476.4529411764706" y="276.0" text-anchor="middle" class="axis-label">2014</text>
+<rect x="406.4941176470588" y="111.66666666666666" width="17.88235294117647" height="99.99999999999997" fill="#5a7ea3" rx="2"/>
+<text x="415.4352941176471" y="106.66666666666666" text-anchor="middle" class="bar-label" font-size="10">-2.07</text>
+<rect x="429.3764705882353" y="211.6666666666667" width="17.88235294117647" height="42.53658536585366" fill="#c98a3e" rx="2"/>
+<text x="438.31764705882356" y="266.4133333333333" text-anchor="middle" class="bar-label" font-size="10">-0.88</text>
+<text x="554.0058823529412" y="276.0" text-anchor="middle" class="axis-label">2015</text>
+<rect x="464.1882352941176" y="130.83062330623307" width="17.88235294117647" height="80.8360433604336" fill="#5a7ea3" rx="2"/>
+<text x="473.1294117647059" y="125.83062330623307" text-anchor="middle" class="bar-label" font-size="10">-2.46</text>
+<rect x="487.07058823529414" y="211.6666666666667" width="17.88235294117647" height="4.349593495934959" fill="#c98a3e" rx="2"/>
+<text x="496.01176470588234" y="228.10707317073168" text-anchor="middle" class="bar-label" font-size="10">-0.09</text>
+<text x="631.5588235294117" y="276.0" text-anchor="middle" class="axis-label">2016</text>
+<rect x="521.8823529411765" y="35.60433604336044" width="17.88235294117647" height="176.06233062330627" fill="#5a7ea3" rx="2"/>
+<text x="530.8235294117648" y="30.604336043360437" text-anchor="middle" class="bar-label" font-size="10">-5.36</text>
+<rect x="544.7647058823529" y="211.6666666666667" width="17.88235294117647" height="147.9268292682927" fill="#c98a3e" rx="2"/>
+<text x="553.7058823529412" y="376.5934959349593" text-anchor="middle" class="bar-label" font-size="10">-3.01</text>
+<text x="709.1117647058824" y="276.0" text-anchor="middle" class="axis-label">2017</text>
+<rect x="579.5764705882353" y="90.98509485094849" width="17.88235294117647" height="120.68157180705819" fill="#5a7ea3" rx="2"/>
+<text x="588.5176470588236" y="85.98509485094849" text-anchor="middle" class="bar-label" font-size="10">-2.73</text>
+<rect x="602.4588235294118" y="211.6666666666667" width="17.88235294117647" height="94.71544715447155" fill="#c98a3e" rx="2"/>
+<text x="611.4" y="319.65926829268295" text-anchor="middle" class="bar-label" font-size="10">-1.93</text>
+<text x="786.6647058823529" y="276.0" text-anchor="middle" class="axis-label">2018</text>
+<rect x="637.2705882352941" y="98.9349593495935" width="17.88235294117647" height="112.7317073170732" fill="#5a7ea3" rx="2"/>
+<text x="646.2117647058824" y="93.9349593495935" text-anchor="middle" class="bar-label" font-size="10">-2.5</text>
+<rect x="660.1529411764705" y="211.6666666666667" width="17.88235294117647" height="98.04878048780488" fill="#c98a3e" rx="2"/>
+<text x="669.0941176470588" y="324.71544715447155" text-anchor="middle" class="bar-label" font-size="10">-2</text>
+<text x="864.2176470588235" y="276.0" text-anchor="middle" class="axis-label">2019</text>
+<rect x="694.9647058823529" y="144.98644986449866" width="17.88235294117647" height="66.68021680216805" fill="#5a7ea3" rx="2"/>
+<text x="703.9058823529412" y="139.98644986449866" text-anchor="middle" class="bar-label" font-size="10">-1.7</text>
+<rect x="717.8470588235294" y="211.6666666666667" width="17.88235294117647" height="51.51219512195122" fill="#c98a3e" rx="2"/>
+<text x="726.7882352941177" y="278.1788617886178" text-anchor="middle" class="bar-label" font-size="10">-1.05</text>
+<text x="941.7705882352941" y="276.0" text-anchor="middle" class="axis-label">2020</text>
+<rect x="807.4470588235294" y="0" width="17.88235294117647" height="0" fill="#f7e6c4" opacity="0.5"/>
+</svg>
+    </div>
+    <p class="note">（規則四完整並排圖已依全部 17 年度＋26Q1 產生；因單一年度標籤密集，重點年度已於下方文字補充列出，避免圖表過密影響閱讀。）</p>
+    <div class="tblwrap">
+    <table>
+      <thead><tr><th>年度</th><th>B</th><th>C</th><th>是否「B負值+C正值」</th></tr></thead>
+      <tbody>
+        <tr><td>2009</td><td class="negv">-0.66</td><td class="posv">2.07</td><td>是</td></tr>
+        <tr><td>2010</td><td class="negv">-1.92</td><td class="posv">2.78</td><td>是</td></tr>
+        <tr><td>2011</td><td class="negv">-3.11</td><td class="posv">1.26</td><td>是</td></tr>
+        <tr><td>2014</td><td class="negv">-6.53</td><td class="posv">3.58</td><td><b>是（規模最大）</b></td></tr>
+        <tr><td>2021</td><td class="negv">-4.36</td><td class="posv">0.66</td><td>是（幅度小）</td></tr>
+        <tr><td>2025</td><td class="negv">-2.48</td><td class="posv">2.36</td><td>是</td></tr>
+        <tr style="opacity:.7"><td>26Q1</td><td class="negv">-6.78</td><td class="posv">2.09</td><td>是（單季參考）</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>「B 負值＋C 正值」組合出現達 6～7 次（含單季），屬於<span class="persona">「偶爾借錢投資」型</span>，但關鍵是<b>本報告資料中 A（營業活動現金流）17 年來從未出現負值</b>，因此最嚴重的警戒訊號（A為負＋C正/小幅負）並未觸發——本業仍持續在造血，融資活動比較像是投資步調快於自有現金累積速度時的補充資金，而非本業造血失能後被迫舉債度日。唯一需留意的是<b>使用者尚未提供融資活動細項（短期借款、公司債、現金增資、股利發放等）</b>，無法判斷這些正值 C 主要來自股權募資或純粹舉債，兩者風險程度不同，建議後續補充查證。</p>
+  </div>
+
+  <div class="rule-block">
+    <h3>規則五：A &gt; D 現金流品質<span class="rule-score negv" style="color:var(--neg)">41 / 100</span></h3>
+    <p>採嚴格二分法逐年判斷：17 年中僅 <b>7 年（2014、2016、2019、2021、2023、2024、2025）</b>A 大於 D，通過率 <b>41.2％</b>，是六項規則中分數最低的一項。這代表雖然近三年（2023–2025）連續三年都通過，看似有改善，但拉長到完整週期看，「帳面淨利常態性高於實際能收進來的現金」的情況出現頻率仍偏高，屬於<span class="persona">「有時膨風、近期收斂」型</span>——近三年的轉強是正面訊號，但要延續到 2026、2027 年才能確認是結構性改善還是短期波動。</p>
+  </div>
+
+  <div class="rule-block">
+    <h3>規則六：E 期末現金餘額穩定性<span class="rule-score">55 / 100</span></h3>
+    <p>長期（2009→2025）E 從 0.53 億成長到 13.1 億，方向明確向上，屬於「長期真的有把現金留在身邊」型。但波動幅度遠超過「合理」的 10％：2016→2017 從 9.34 億驟降到 5.85 億（-37.4％），2021→2024 從 13.9 億高點一路降到 7.0 億（-49.6％，近乎腰斬），隨後 2025 年又快速回升到 13.1 億，2026Q1 再降至 10.4 億。屬於<span class="persona">「大起大落但總能爬回來」型</span>——長期趨勢仍向上，但短中期的現金水位波動劇烈，容易讓依賴現金部位判斷公司安全邊際的投資人誤判當下的真實水位。</p>
+    <div class="chart-wrap">
+<svg viewBox="0 0 1000 320" xmlns="http://www.w3.org/2000/svg" class="bar-chart">
+<text x="500.0" y="18" text-anchor="middle" class="chart-title">規則六：期末現金餘額（E）長期走勢</text>
+<line x1="50" y1="260.0" x2="980" y2="260.0" class="zero-line"/>
+<rect x="60.3" y="251.2" width="31.0" height="8.8" fill="#4a8a6a" rx="2"/>
+<text x="75.8" y="245.2" text-anchor="middle" class="bar-label">0.53</text>
+<text x="75.8" y="276.0" text-anchor="middle" class="axis-label">2009</text>
+<rect x="112.0" y="214.7" width="31.0" height="45.3" fill="#4a8a6a" rx="2"/>
+<text x="127.5" y="208.7" text-anchor="middle" class="bar-label">2.74</text>
+<text x="127.5" y="276.0" text-anchor="middle" class="axis-label">2010</text>
+<rect x="163.7" y="231.4" width="31.0" height="28.6" fill="#4a8a6a" rx="2"/>
+<text x="179.2" y="225.4" text-anchor="middle" class="bar-label">1.73</text>
+<text x="179.2" y="276.0" text-anchor="middle" class="axis-label">2011</text>
+<rect x="215.3" y="236.5" width="31.0" height="23.5" fill="#4a8a6a" rx="2"/>
+<text x="230.8" y="230.5" text-anchor="middle" class="bar-label">1.42</text>
+<text x="230.8" y="276.0" text-anchor="middle" class="axis-label">2012</text>
+<rect x="267.0" y="227.2" width="31.0" height="32.8" fill="#4a8a6a" rx="2"/>
+<text x="282.5" y="221.2" text-anchor="middle" class="bar-label">1.98</text>
+<text x="282.5" y="276.0" text-anchor="middle" class="axis-label">2013</text>
+<rect x="318.7" y="196.8" width="31.0" height="63.2" fill="#4a8a6a" rx="2"/>
+<text x="334.2" y="190.8" text-anchor="middle" class="bar-label">3.82</text>
+<text x="334.2" y="276.0" text-anchor="middle" class="axis-label">2014</text>
+<rect x="370.3" y="143.8" width="31.0" height="116.2" fill="#4a8a6a" rx="2"/>
+<text x="385.8" y="137.8" text-anchor="middle" class="bar-label">7.02</text>
+<text x="385.8" y="276.0" text-anchor="middle" class="axis-label">2015</text>
+<rect x="422.0" y="105.5" width="31.0" height="154.5" fill="#4a8a6a" rx="2"/>
+<text x="437.5" y="99.5" text-anchor="middle" class="bar-label">9.34</text>
+<text x="437.5" y="276.0" text-anchor="middle" class="axis-label">2016</text>
+<rect x="473.7" y="163.2" width="31.0" height="96.8" fill="#4a8a6a" rx="2"/>
+<text x="489.2" y="157.2" text-anchor="middle" class="bar-label">5.85</text>
+<text x="489.2" y="276.0" text-anchor="middle" class="axis-label">2017</text>
+<rect x="525.3" y="161.2" width="31.0" height="98.8" fill="#4a8a6a" rx="2"/>
+<text x="540.8" y="155.2" text-anchor="middle" class="bar-label">5.97</text>
+<text x="540.8" y="276.0" text-anchor="middle" class="axis-label">2018</text>
+<rect x="577.0" y="117.2" width="31.0" height="142.8" fill="#4a8a6a" rx="2"/>
+<text x="592.5" y="111.2" text-anchor="middle" class="bar-label">8.63</text>
+<text x="592.5" y="276.0" text-anchor="middle" class="axis-label">2019</text>
+<rect x="628.7" y="107.8" width="31.0" height="152.2" fill="#4a8a6a" rx="2"/>
+<text x="644.2" y="101.8" text-anchor="middle" class="bar-label">9.2</text>
+<text x="644.2" y="276.0" text-anchor="middle" class="axis-label">2020</text>
+<rect x="680.3" y="30.0" width="31.0" height="230.0" fill="#e0b95c" rx="2"/>
+<text x="695.8" y="24.0" text-anchor="middle" class="bar-label">13.9</text>
+<text x="695.8" y="276.0" text-anchor="middle" class="axis-label">2021</text>
+<rect x="732.0" y="59.8" width="31.0" height="200.2" fill="#4a8a6a" rx="2"/>
+<text x="747.5" y="53.8" text-anchor="middle" class="bar-label">12.1</text>
+<text x="747.5" y="276.0" text-anchor="middle" class="axis-label">2022</text>
+<rect x="783.7" y="46.5" width="31.0" height="213.5" fill="#4a8a6a" rx="2"/>
+<text x="799.2" y="40.5" text-anchor="middle" class="bar-label">12.9</text>
+<text x="799.2" y="276.0" text-anchor="middle" class="axis-label">2023</text>
+<rect x="835.3" y="144.2" width="31.0" height="115.8" fill="#4a8a6a" rx="2"/>
+<text x="850.8" y="138.2" text-anchor="middle" class="bar-label">7</text>
+<text x="850.8" y="276.0" text-anchor="middle" class="axis-label">2024</text>
+<rect x="887.0" y="43.2" width="31.0" height="216.8" fill="#4a8a6a" rx="2"/>
+<text x="902.5" y="37.2" text-anchor="middle" class="bar-label">13.1</text>
+<text x="902.5" y="276.0" text-anchor="middle" class="axis-label">2025</text>
+<rect x="938.7" y="87.9" width="31.0" height="172.1" fill="#4a8a6a" rx="2"/>
+<text x="954.2" y="81.9" text-anchor="middle" class="bar-label">10.4</text>
+<text x="954.2" y="276.0" text-anchor="middle" class="axis-label">26Q1</text>
+<text x="40" y="40" text-anchor="end" class="axis-label">(億)</text>
+</svg>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <p><b>關卡判斷：總分 54％ &lt; 60％ 門檻，屬「需觀察」。</b>未觸發「A 為負＋重度投資＋C 疑似舉債」三重疊加最嚴重訊號（A 從未轉負），但規則五（A&gt;D 品質，41 分）與規則三（投資效益，50 分）明顯偏弱，加上 2024 年史上最大手筆投資（-14 億）效益尚未在 2025 年數字顯現，建議往下看基本面時，特別留意 2026、2027 年 A 是否真的轉強、以及這波液冷/機器人轉型題材能否落實為實際現金流。</p>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section class="step" id="step2">
+  <div class="step-tag">【第 2 步／共 6 步：基本資訊查詢】</div>
+  <h2>基本資訊查詢</h2>
+
+  <div class="callout">
+    <p>公司全名為<b>宇隆科技股份有限公司（Turvo International Co., Ltd.）</b>，1987/12/29 成立，2019/09/17 於台灣證券交易所上市，資本額 6.02 億元，主要經營精密金屬零件之機械加工、製造及買賣，產業分類為汽車零組件。<span class="cite">來源：鉅亨網個股簡介 cnyes.com/twstock/2233</span></p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="v">224.0</div><div class="k">收盤價（2026/08/05）</div></div>
+    <div class="kpi"><div class="v">+9.80%</div><div class="k">當日漲跌幅（2026/08/05）</div></div>
+    <div class="kpi"><div class="v">32.54</div><div class="k">本益比（2026/08/05 快照）</div></div>
+    <div class="kpi"><div class="v">365.0 / 132.5</div><div class="k">52 週高 / 低</div></div>
+    <div class="kpi"><div class="v">1.59</div><div class="k">2026Q1 單季 EPS</div></div>
+    <div class="kpi"><div class="v">6.70</div><div class="k">2025 全年 EPS</div></div>
+    <div class="kpi"><div class="v">4.0 元</div><div class="k">2025 年度現金股利</div></div>
+    <div class="kpi"><div class="v">~1.67%</div><div class="k">現金股利殖利率（近期快照）</div></div>
+  </div>
+
+  <p class="note">
+    <b>股價為快照、非即時報價，正式交易請以看盤軟體/券商 App 為準。</b>不同時間點抓取到的股價/本益比並非「區間」，而是各自查詢當下的單一數字：<br>
+    ・2026/07/09 13:30 收盤 252.5 元，本益比 40.27 倍 <span class="cite">來源：Yahoo股市 tw.stock.yahoo.com/quote/2233.TW</span><br>
+    ・2026/08/05 收盤 224.02 元，漲跌 +9.80%，本益比 32.54 倍 <span class="cite">來源：Yahoo股市（透過搜尋快照）tw.stock.yahoo.com/quote/2233.TW</span><br>
+    兩者相差近一個月且股價落差達 28.5 元，除了 2026/07/30 除息（配發現金股利 4 元）造成的除權息缺口外，落差幅度明顯更大，需留意下方風險提示。
+  </p>
+
+  <div class="callout warn">
+    <p><b>⚠️ 重要風險提示：股價波動列入交易所關注/處置名單。</b>查詢過程中發現新聞報導「台股6檔『抓去關』新名單 軍工股宇隆6天慘跌122.5元列處置」<span class="cite">來源：ETtoday新聞雲，經 Goodinfo 公告訊息頁面轉引，goodinfo.tw/tw/StockDetail.asp?STOCK_ID=2233</span>，顯示 2026 年 6 月底該股曾因短期內劇烈下跌，被交易所列入注意/處置交易名單。Goodinfo 公告訊息亦顯示「宇隆有價證券於集中交易市場達公布注意交易資訊標準」的官方訊息。這代表近期股價存在明顯的籌碼面／消息面異常波動，不完全是基本面驅動，投資人應額外留意波動風險，不宜僅憑基本面數字判斷短期股價合理性。</p>
+  </div>
+
+  <p class="note">近四季 EPS（非同一時間點快照，僅供趨勢參考）：約 2026/03 查得「近四季EPS 7.38」，2026/05/21 查得「近四季EPS 6.27」，同期間下修約 15%，與 2026Q1 單季 EPS 年減 21% 的訊號方向一致。<span class="cite">來源：鉅亨網 cnyes.com/twstock/2233/company/dividend 及 cnyes.com/twstock/2233/dividend/dividend</span></p>
+
+  <p class="note">股利政策快照存在差異：statementdog 顯示 2025 年股利 4.0 元、殖利率約 1.67%<span class="cite">來源：statementdog.com/analysis/2233/dividend-policy</span>；另有 cnyes 快照顯示「年股利7.00・殖利率2.11%～3.32%」（不同查詢時間點的個別快照，非官方區間）<span class="cite">來源：cnyes.com/twstock/2233/company/profile</span>。由於股利所屬年度與發放年度定義可能不同，兩者不必然矛盾，但建議使用者以官方公告或 Goodinfo 股利政策頁自行核對最新一次除權息的實際配發金額。</p>
+</section>
+
+<!-- STEP 3 -->
+<section class="step" id="step3">
+  <div class="step-tag">【第 3 步／共 6 步：法說會摘要（第三方資料，未逐項查證）】</div>
+  <h2>法說會 / 轉型題材摘要</h2>
+  <div class="callout">
+    <p>依使用者指示直接走完六步驟，此處先提供概略摘要而非互動式深挖。<b>以下內容主要整理自單一第三方部落格深度分析文章，非本報告直接讀取官方法說會簡報或逐字稿，查證等級較低，僅供參考方向，正式決策前請以公司官網投資人關係專區或 MOPS 公開資訊觀測站的官方簡報為準。</b></p>
+  </div>
+  <p>該篇分析（截稿於 2026/05/25，資料更新至 2026Q1）指出，宇隆正從傳統車用精密零件加工廠，往「機器人關節」與「AI 伺服器液冷零件」供應鏈轉型：</p>
+  <ul>
+    <li><b>UQD 液冷快接頭</b>：通過 NVIDIA GB300 客戶認證，歷時約 6 個月，2025Q3 底出貨，自 2025Q4 起開始貢獻營收。</li>
+    <li><b>TUF ONE 自有品牌減速機</b>：產品線涵蓋行星、微型行星、諧波、RV、行星絲桿五種類型，其中諧波減速機於 2025Q4 推出，預計 2026 年出貨。</li>
+    <li><b>機器人供應鏈布局</b>：透過與信邦（3023）簽署合作備忘錄（MOU），切入美系人形機器人供應鏈。</li>
+  </ul>
+  <p class="snap-note">snap-note：以上三點均來自第三方部落格（vocus.cc）之整理，非 Claude 直接查證官方簡報內容，且該文章股價基準日為漲停日、屬於極端高點，其中估值相關數字不宜直接引用，本報告僅摘錄其中屬於「產品/客戶進展」的事實性描述，並提醒使用者對照官方公告二次確認。<span class="cite">來源：vocus.cc/article/6a1478ecfd89780001a6b255</span></p>
+  <p>官方法說會日期與簡報請至公司投資人關係專區，或搜尋「2233 法說會 mops」查詢公開資訊觀測站上的完整歷史列表自行下載。</p>
+</section>
+
+<!-- STEP 4 -->
+<section class="step" id="step4">
+  <div class="step-tag">【第 4 步／共 6 步：營收趨勢視覺化】</div>
+  <h2>近 12 個月營收趨勢</h2>
+  <p>資料來源：使用者提供之月營收截圖（2025/07–2026/06）。</p>
+  <div class="chart-wrap">
+<svg viewBox="0 0 1000 320" xmlns="http://www.w3.org/2000/svg" class="bar-chart">
+<text x="500.0" y="18" text-anchor="middle" class="chart-title">近12個月單月營收趨勢</text>
+<line x1="50" y1="260.0" x2="980" y2="260.0" class="zero-line"/>
+<rect x="65.5" y="45.9" width="46.5" height="214.1" fill="#7a5ea8" rx="2"/>
+<text x="88.8" y="39.9" text-anchor="middle" class="bar-label">2.82</text>
+<text x="88.8" y="276.0" text-anchor="middle" class="axis-label">25/07</text>
+<rect x="143.0" y="81.6" width="46.5" height="178.4" fill="#7a5ea8" rx="2"/>
+<text x="166.2" y="75.6" text-anchor="middle" class="bar-label">2.35</text>
+<text x="166.2" y="276.0" text-anchor="middle" class="axis-label">25/08</text>
+<rect x="220.5" y="49.7" width="46.5" height="210.3" fill="#7a5ea8" rx="2"/>
+<text x="243.8" y="43.7" text-anchor="middle" class="bar-label">2.77</text>
+<text x="243.8" y="276.0" text-anchor="middle" class="axis-label">25/09</text>
+<rect x="298.0" y="61.1" width="46.5" height="198.9" fill="#7a5ea8" rx="2"/>
+<text x="321.2" y="55.1" text-anchor="middle" class="bar-label">2.62</text>
+<text x="321.2" y="276.0" text-anchor="middle" class="axis-label">25/10</text>
+<rect x="375.5" y="72.5" width="46.5" height="187.5" fill="#7a5ea8" rx="2"/>
+<text x="398.8" y="66.5" text-anchor="middle" class="bar-label">2.47</text>
+<text x="398.8" y="276.0" text-anchor="middle" class="axis-label">25/11</text>
+<rect x="453.0" y="64.9" width="46.5" height="195.1" fill="#7a5ea8" rx="2"/>
+<text x="476.2" y="58.9" text-anchor="middle" class="bar-label">2.57</text>
+<text x="476.2" y="276.0" text-anchor="middle" class="axis-label">25/12</text>
+<rect x="530.5" y="53.5" width="46.5" height="206.5" fill="#7a5ea8" rx="2"/>
+<text x="553.8" y="47.5" text-anchor="middle" class="bar-label">2.72</text>
+<text x="553.8" y="276.0" text-anchor="middle" class="axis-label">26/01</text>
+<rect x="608.0" y="79.3" width="46.5" height="180.7" fill="#7a5ea8" rx="2"/>
+<text x="631.2" y="73.3" text-anchor="middle" class="bar-label">2.38</text>
+<text x="631.2" y="276.0" text-anchor="middle" class="axis-label">26/02</text>
+<rect x="685.5" y="30.0" width="46.5" height="230.0" fill="#e0b95c" rx="2"/>
+<text x="708.8" y="24.0" text-anchor="middle" class="bar-label">3.03</text>
+<text x="708.8" y="276.0" text-anchor="middle" class="axis-label">26/03</text>
+<rect x="763.0" y="33.8" width="46.5" height="226.2" fill="#7a5ea8" rx="2"/>
+<text x="786.2" y="27.8" text-anchor="middle" class="bar-label">2.98</text>
+<text x="786.2" y="276.0" text-anchor="middle" class="axis-label">26/04</text>
+<rect x="840.5" y="32.3" width="46.5" height="227.7" fill="#7a5ea8" rx="2"/>
+<text x="863.8" y="26.3" text-anchor="middle" class="bar-label">3</text>
+<text x="863.8" y="276.0" text-anchor="middle" class="axis-label">26/05</text>
+<rect x="918.0" y="43.7" width="46.5" height="216.3" fill="#7a5ea8" rx="2"/>
+<text x="941.2" y="37.7" text-anchor="middle" class="bar-label">2.85</text>
+<text x="941.2" y="276.0" text-anchor="middle" class="axis-label">26/06</text>
+<text x="40" y="40" text-anchor="end" class="axis-label">(億)</text>
+</svg>
+  </div>
+  <p>近 12 個月單月營收在 2.35～3.03 億區間震盪，波動不大但也沒有明確向上趨勢，高點落在 2026/03（3.03 億，月增 27.2%、年增 2.89%），近三個月（2026/04–06）維持在 2.85～3.00 億的相對高檔區間。累計營收年增率在 2026 年前五個月多為負值（-3.09%～-12.7%），直到 2026/06 單月年增轉正為 +7.57%，但累計年增仍是 -1.15%，屬於「單月轉強、累計尚未由負轉正」的初步回溫訊號，需要再觀察 2～3 個月才能確認是否為趨勢反轉。</p>
+</section>
+
+<!-- STEP 5 -->
+<section class="step" id="step5">
+  <div class="step-tag">【第 5 步／共 6 步：前瞻本益比／EPS 預估】</div>
+  <h2>估值：前瞻本益比與目標價試算</h2>
+
+  <div class="callout warn">
+    <p><b>資料有限誠實告知：</b>公開搜尋結果中未能取得券商法人對次一年度（2026）、次二年度（2027）EPS 的明確共識預估數字，因此本節無法提供標準的「前瞻本益比」，改以近期已知的實際 EPS 數字做敏感度試算，並提醒使用者這只是試算、不是預測。</p>
+  </div>
+
+  <p><b>隱含本益比（已知股價 ÷ 已知 EPS）：</b>以 2025 全年 EPS 6.70 元、2026/08/05 收盤 224.02 元計算，隱含本益比約 <b>33.4 倍</b>；若用 2026/07/09 收盤 252.5 元計算則約 <b>37.7 倍</b>。兩者皆高於同期市場快照顯示的「同業平均本益比」約 35.98～39.37 倍區間的中低段，估值尚在同業區間內，但已不便宜。<span class="cite">來源：Yahoo股市 tw.stock.yahoo.com/quote/2233.TW</span></p>
+
+  <p><b>目標本益比法（已知合理倍數 → 反推目標價）：</b>以 2025 全年 EPS 6.70 元為基礎，試算三組情境（此為敏感度試算、非預測，倍數選擇沒有標準答案）：</p>
+  <div class="tblwrap">
+  <table>
+    <thead><tr><th>假設本益比</th><th>反推目標價</th><th>相對 2026/08/05 收盤（224.02）</th></tr></thead>
+    <tbody>
+      <tr><td>20 倍（保守）</td><td>134.0 元</td><td class="negv">-40.2%</td></tr>
+      <tr><td>25 倍（中性）</td><td>167.5 元</td><td class="negv">-25.2%</td></tr>
+      <tr><td>30 倍（樂觀，貼近近期隱含本益比下緣）</td><td>201.0 元</td><td class="negv">-10.3%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>即便採用相對樂觀的 30 倍情境，反推目標價仍低於近期收盤價，顯示目前股價已反映相當程度的成長期待（機器人／液冷轉型題材），對獲利數字的容錯空間偏低。若 2026 全年 EPS 無法明顯優於 2025 年的 6.70 元（目前 Q1 單季年減 21% 是負面訊號），現有股價的隱含本益比可能進一步墊高。</p>
+
+  <div class="callout warn">
+    <p><b>不確定性揭露：</b>近期近四季 EPS 快照從約 7.38 元（2026/03）下修到約 6.27 元（2026/05），加上 2026Q1 單季 EPS 年減 21%、季減 5%，顯示獲利動能正在轉弱，與第一步觀察到的「A 近兩年轉弱、2024 年重投資效益尚未顯現」相互呼應。任何以 2025 年 EPS 6.70 元為基礎的估值，都可能高估 2026 年的實際獲利能力，使用者應以此為前提謹慎解讀上表目標價區間。</p>
+  </div>
+</section>
+
+<!-- STEP 6 -->
+<section class="step" id="step6">
+  <div class="step-tag">【第 6 步／共 6 步：投資決策推理】</div>
+  <h2>投資決策推理</h2>
+  <div class="callout">
+    <p>本節為 Claude 基於前五步資料的推理與觀點，<b>不是專業投資建議</b>，Claude 不是持牌理財顧問。實際決策請自行判斷並可諮詢持牌專業人士。</p>
+  </div>
+
+  <h3>若尚未持有：會不會進場？</h3>
+  <p>傾向<b>觀望、不急於進場</b>。核心理由呼應第一步：現金流六大規則總分僅 54％，規則五（A&gt;D 品質，41 分）與規則三（投資效益，50 分）明顯偏弱；2024 年史上最大手筆的 14 億投資，截至 2025、2026Q1 的數字尚未看到 A 明顯回升。同時第二步發現股價近期曾因劇烈波動被列入交易所注意/處置名單，籌碼面雜訊偏高；第五步估值試算顯示，即便用相對樂觀的 30 倍本益比情境，反推目標價仍低於近期收盤價。三者疊加，現階段進場的安全邊際不高。</p>
+  <p><b>可觀察的、尚未發生的訊號</b>（等這些訊號出現再考慮進場，而非現在就假設會發生）：</p>
+  <ul>
+    <li>2026 全年或 2027 年度 A（營業活動現金流）是否明顯回升到 8 億以上（重新驗證 2024 年重投資是否真正轉化為造血能力）。</li>
+    <li>單月營收年增率是否連續 3 個月以上維持正成長（目前僅 2026/06 單月轉正，累計仍為負）。</li>
+    <li>股價是否已從交易所注意/處置狀態解除、成交量與價格波動回歸常態。</li>
+  </ul>
+
+  <h3>若已持有：續抱還是賣出？</h3>
+  <p>視持有原因而定，若原始邏輯是看好機器人／AI 液冷轉型的中長期題材，且能承受短期波動，現金流體質雖偏弱但尚未出現規則四定義的「最嚴重警戒訊號」（A 從未轉負），可考慮<b>維持觀察、但不加碼</b>；若原始邏輯是看重公司過去的現金流品質與股息穩定性，則第一步發現的 A&gt;D 通過率僅 41％、E 現金餘額波動劇烈（近乎腰斬又快速回升），與這類保守持股邏輯已有落差，建議重新檢視持股比例是否需要調整。</p>
+  <p><b>可觀察的、尚未發生的訊號</b>：若接下來一季 A 較 2025 年同期繼續衰退、且營收年增率未能延續 2026/06 的轉正勢頭，屬於偏負面訊號，可考慮降低部位；反之若 2026H2 財報明確顯示 A 回升且 A&gt;D，屬於現金流體質改善的正面訊號，可考慮續抱甚至逢低加碼。</p>
+</section>
+
+</main>
+
+<footer>
+  <span class="verbadge">報告版本 v1.0</span>
+  <span class="verbadge">生成時間：2026-08-07</span><br><br>
+  資料來源總覽：現金流量表、月營收數字均為使用者提供之截圖（非本次搜尋所得）；股價、EPS、股利、法說會摘要等基本面資訊為 Claude 透過網路搜尋取得，已於文中逐項標註來源連結與查詢時間點。本報告依「台股個股初步分析六步驟框架」產生，僅供研究參考，不構成投資建議。
+</footer>
+
+<script>
+(function(){
+  const links = document.querySelectorAll('#stepnav a');
+  const sections = Array.from(links).map(a => document.querySelector(a.getAttribute('href')));
+
+  links.forEach(a => {
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if(target){ target.scrollIntoView({behavior:'smooth', block:'start'}); }
+    });
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const id = entry.target.getAttribute('id');
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+
+  sections.forEach(s => { if(s) observer.observe(s); });
+})();
+</script>
+
+</body>
+</html>
