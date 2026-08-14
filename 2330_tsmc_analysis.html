@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2330 台積電｜長期基本面分析報告</title>
+<style>
+:root {
+  --cream: #f7f3ee;
+  --paper: #fffdfb;
+  --ink: #2b2233;
+  --sub: #6b5f7a;
+  --plum: #5c3a87;
+  --plum-deep: #3d2657;
+  --plum-soft: #efe7f7;
+  --gold: #b8863f;
+  --pos: #a8443f;
+  --neg: #2f7a5c;
+  --border: #e2d9ea;
+  --amber: #b8863f;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  line-height: 1.7;
+}
+h1, h2, h3 { font-family: "Noto Serif TC", "Georgia", serif; color: var(--plum-deep); margin: 0 0 .4em; }
+.masthead {
+  background: linear-gradient(135deg, var(--plum-deep), var(--plum) 70%);
+  color: #fbf7ff;
+  padding: 48px 32px 36px;
+  position: relative;
+  overflow: hidden;
+}
+.masthead::after {
+  content: "";
+  position: absolute; right: -60px; top: -60px; width: 260px; height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.10), transparent 70%);
+}
+.masthead .eyebrow { letter-spacing: .12em; text-transform: uppercase; font-size: 12.5px; color: #d8c3f0; margin-bottom: 10px; }
+.masthead h1 { color: #fff; font-size: 34px; margin-bottom: 6px; }
+.masthead .sub { color: #e6d9f5; font-size: 15px; max-width: 640px; }
+.masthead .stockid { display:inline-block; margin-top:16px; padding: 6px 14px; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; font-size: 13px; color: #f2e9fb;}
+
+nav.stepnav {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(247,243,238,.95); backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+}
+nav.stepnav a {
+  font-size: 12.5px; padding: 7px 12px; border-radius: 999px;
+  color: var(--plum-deep); text-decoration: none; border: 1px solid var(--border);
+  background: var(--paper); white-space: nowrap; transition: all .15s ease;
+}
+nav.stepnav a.active { background: var(--plum); color: #fff; border-color: var(--plum); }
+nav.stepnav a.locked { color: #b5aec2; background: #efeaf3; border-color: #efeaf3; pointer-events: none; }
+nav.stepnav a.amber-active { background: var(--amber); color:#fff; border-color: var(--amber); }
+
+main { max-width: 960px; margin: 0 auto; padding: 40px 24px 100px; }
+section.step { margin-bottom: 56px; scroll-margin-top: 70px; }
+.step-head { display:flex; align-items:baseline; gap:12px; margin-bottom: 18px; }
+.step-num { font-family: "Noto Serif TC", serif; font-size: 13px; color: var(--gold); letter-spacing:.08em; }
+.callout {
+  border-left: 4px solid var(--plum); background: var(--plum-soft);
+  padding: 14px 18px; border-radius: 6px; margin: 14px 0 22px; font-size: 15px;
+}
+.callout.warn { border-left-color: var(--pos); background: #fbeceb; }
+.callout.good { border-left-color: var(--neg); background: #eaf5ef; }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13.5px; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: right; }
+th { background: var(--plum-soft); color: var(--plum-deep); font-weight: 600; text-align: right; }
+td:first-child, th:first-child { text-align: left; }
+tr:hover td { background: #faf7fc; }
+.pos { color: var(--pos); }
+.negv { color: var(--pos); font-weight: 600; }
+.gain { color: var(--neg); }
+.chart-wrap { background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 18px 14px 8px; margin: 16px 0; }
+.chart-svg { width: 100%; height: auto; display:block; }
+.legend { display:flex; gap: 18px; font-size: 12.5px; color: var(--sub); margin: 6px 4px 0; }
+.legend span.dot { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px; }
+.rule-block { background: var(--paper); border:1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin: 18px 0; }
+.rule-block h3 { font-size: 16.5px; display:flex; align-items:center; gap:8px; }
+.score-badge { display:inline-block; background: var(--plum); color:#fff; font-size:12.5px; padding: 2px 10px; border-radius: 999px; margin-left:auto; }
+.rule-block .h3row { display:flex; align-items:center; justify-content:space-between; }
+.persona { font-style: italic; color: var(--gold); font-weight: 600; }
+.score-total { background: var(--plum-deep); color:#fff; border-radius: 14px; padding: 28px 26px; margin: 26px 0; }
+.score-total .num { font-family:"Noto Serif TC",serif; font-size: 42px; }
+.score-total .lbl { color:#d8c3f0; font-size:13px; letter-spacing:.06em; }
+.grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+.infocard { background: var(--paper); border:1px solid var(--border); border-radius:10px; padding:16px 18px; }
+.infocard .k { font-size:12px; color:var(--sub); }
+.infocard .v { font-size:20px; font-family:"Noto Serif TC",serif; color:var(--plum-deep); }
+.src { font-size:11.5px; color:var(--sub); margin-top:2px; }
+.src a { color: var(--plum); }
+footer { text-align:center; padding: 30px; font-size:12px; color: var(--sub); }
+hr.div { border:none; border-top:1px dashed var(--border); margin: 30px 0; }
+.tag { display:inline-block; font-size:11px; padding:2px 8px; border-radius:6px; background:var(--plum-soft); color:var(--plum-deep); margin-right:6px;}
+.amber-zone .callout { border-left-color: var(--amber); background: #fbf1e2; }
+.amber-zone .callout.warn { border-left-color: var(--pos); background:#fbeceb; }
+.amber-zone .step-num { color: var(--amber); }
+.amber-zone h2 { color: #7a4f14; }
+.amber-zone .rule-block, .amber-zone .infocard, .amber-zone .chart-wrap { border-color: #ecd9b8; }
+.amber-zone .score-badge { background: var(--amber); }
+.transition-banner {
+  background: linear-gradient(90deg, #7a4f14, var(--amber));
+  color:#fff; padding: 16px 22px; border-radius: 10px; margin: 40px 0 20px;
+  font-size: 14.5px; text-align:center;
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="eyebrow">台股個股完整分析・長期基本面＋短線操作（第 1–10 步）</div>
+  <h1>台積電 TSMC</h1>
+  <div class="sub">股票代號 2330・半導體晶圓代工產業龍頭。本報告依「現金流優先、基本面在後」原則完成長期六步，並接續技術面／籌碼面／消息面完成短線四步分析。</div>
+  <div class="stockid">報告版本 v3.0・生成時間 2026-08-13</div>
+</header>
+
+<nav class="stepnav">
+  <a href="#step1" class="active">① 現金流六大規則</a>
+  <a href="#step2" class="active">② 基本資訊</a>
+  <a href="#step3" class="active">③ 法說會摘要</a>
+  <a href="#step4" class="active">④ 營收趨勢</a>
+  <a href="#step5" class="active">⑤ 前瞻本益比</a>
+  <a href="#step6" class="active">⑥ 投資決策推理</a>
+  <a href="#step7" class="amber-active">⑦ 技術面</a>
+  <a href="#step8" class="amber-active">⑧ 籌碼面</a>
+  <a href="#step9" class="amber-active">⑨ 消息面</a>
+  <a href="#step10" class="amber-active">⑩ 短線推理</a>
+</nav>
+
+<main>
+
+<section id="step1" class="step">
+  <div class="step-head"><span class="step-num">第 1 步／共 10 步</span><h2>現金流量表六大規則分析（盲測階段）</h2></div>
+  <div class="callout">
+    本步驟僅根據使用者提供之現金流量表截圖數字進行客觀解讀，<b>不查詢股價、EPS、產業地位或新聞背景</b>，以維持盲測狀態。資料涵蓋 <b>2009～2025 年（17個完整年度）</b>，另有 <b>26Q1 單季數字</b>一併列出供參考，不列入計分。
+  </div>
+
+  <h3>現金流量數據表（單位：億元）</h3>
+  <div style="overflow-x:auto;">
+  <table>
+    <tr><th>年度</th><th>A 營業活動</th><th>B 投資活動</th><th>C 融資活動</th><th>D 稅前淨利</th><th>E 期末現金餘額</th></tr>
+    <tr><td>26Q1（單季，僅供參考）</td><td class="gain">6,990</td><td class="negv">-3,569</td><td class="negv">-1,199</td><td>6,878</td><td>30,356</td></tr>
+    <tr><td><b>2025</b></td><td class="gain">22,750</td><td class="negv">-11,444</td><td class="negv">-4,403</td><td>20,417</td><td>27,679</td></tr>
+    <tr><td>2024</td><td class="gain">18,262</td><td class="negv">-8,648</td><td class="negv">-3,463</td><td>14,058</td><td>21,276</td></tr>
+    <tr><td>2023</td><td class="gain">12,420</td><td class="negv">-9,061</td><td class="negv">-2,049</td><td>9,792</td><td>14,654</td></tr>
+    <tr><td>2022</td><td class="gain">16,106</td><td class="negv">-11,909</td><td class="negv">-2,002</td><td>11,442</td><td>13,428</td></tr>
+    <tr><td>2021</td><td class="gain">11,122</td><td class="negv">-8,364</td><td>1,366</td><td>6,631</td><td>10,650</td></tr>
+    <tr><td>2020</td><td class="gain">8,227</td><td class="negv">-5,058</td><td class="negv">-886</td><td>5,848</td><td>6,602</td></tr>
+    <tr><td>2019</td><td class="gain">6,151</td><td class="negv">-4,588</td><td class="negv">-2,696</td><td>3,898</td><td>4,554</td></tr>
+    <tr><td>2018</td><td class="gain">5,740</td><td class="negv">-3,143</td><td class="negv">-2,451</td><td>3,975</td><td>5,778</td></tr>
+    <tr><td>2017</td><td class="gain">5,853</td><td class="negv">-3,362</td><td class="negv">-2,157</td><td>3,961</td><td>5,534</td></tr>
+    <tr><td>2016</td><td class="gain">5,398</td><td class="negv">-3,954</td><td class="negv">-1,578</td><td>3,860</td><td>5,413</td></tr>
+    <tr><td>2015</td><td class="gain">5,299</td><td class="negv">-2,172</td><td class="negv">-1,167</td><td>3,504</td><td>5,626</td></tr>
+    <tr><td>2014</td><td class="gain">4,215</td><td class="negv">-2,824</td><td class="negv">-323</td><td>3,021</td><td>3,585</td></tr>
+    <tr><td>2013</td><td class="gain">3,474</td><td class="negv">-2,811</td><td>321</td><td>2,155</td><td>2,427</td></tr>
+    <tr><td>2012</td><td class="gain">2,850</td><td class="negv">-2,693</td><td class="negv">-136</td><td>1,817</td><td>1,434</td></tr>
+    <tr><td>2011</td><td class="gain">2,476</td><td class="negv">-1,825</td><td class="negv">-679</td><td>1,451</td><td>1,435</td></tr>
+    <tr><td>2010</td><td class="gain">2,295</td><td class="negv">-2,021</td><td class="negv">-486</td><td>1,703</td><td>1,479</td></tr>
+    <tr><td>2009</td><td class="gain">1,600</td><td class="negv">-965</td><td class="negv">-855</td><td>955</td><td>1,713</td></tr>
+  </table>
+  </div>
+  <p class="src">資料來源：使用者提供截圖（現金流量表 17 年度歷史數據，含 2026Q1）。</p>
+
+  <hr class="div">
+
+  <div class="rule-block">
+    <div class="h3row"><h3>規則一・A 逐季與逐年成長趨勢</h3><span class="score-badge">95 分</span></div>
+    <p>台積電的營業活動現金流量從 2009 年的 <b>1,600 億</b>一路成長到 2025 年的 <b>22,750 億</b>，17 年間成長近 <b>14 倍</b>，是典型的<span class="persona">「長跑健將」</span>型：不靠單一年度爆發，而是逐年墊高的紀律型成長。唯一的插曲是 2023 年（12,420 億）較 2022 年（16,106 億）<b>下滑約 22.9%</b>，對應當年半導體業景氣循環下修，但 2024、2025 年隨即恢復強勁成長（18,262 億→22,750 億），顯示這只是景氣循環的正常波動，而非結構性衰退。</p>
+    <div class="chart-wrap">
+      <svg viewBox="0 0 920 300" xmlns="http://www.w3.org/2000/svg" class="chart-svg">
+<line x1="40" y1="250.0" x2="880" y2="250.0" stroke="#c9c2d6" stroke-width="1.5"/>
+<rect x="54.5" y="201.1" width="47.3" height="48.9" rx="3" fill="#d46a83"/>
+<text x="78.2" y="195.1" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">5,299</text>
+<text x="78.2" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 78.2 270.0)">2015</text>
+<rect x="130.9" y="200.2" width="47.3" height="49.8" rx="3" fill="#6b3fa0"/>
+<text x="154.5" y="194.2" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">5,398</text>
+<text x="154.5" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 154.5 270.0)">2016</text>
+<rect x="207.2" y="196.0" width="47.3" height="54.0" rx="3" fill="#6b3fa0"/>
+<text x="230.9" y="190.0" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">5,853</text>
+<text x="230.9" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 230.9 270.0)">2017</text>
+<rect x="283.6" y="197.0" width="47.3" height="53.0" rx="3" fill="#6b3fa0"/>
+<text x="307.3" y="191.0" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">5,740</text>
+<text x="307.3" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 307.3 270.0)">2018</text>
+<rect x="360.0" y="193.2" width="47.3" height="56.8" rx="3" fill="#6b3fa0"/>
+<text x="383.6" y="187.2" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">6,151</text>
+<text x="383.6" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 383.6 270.0)">2019</text>
+<rect x="436.3" y="174.1" width="47.3" height="75.9" rx="3" fill="#6b3fa0"/>
+<text x="460.0" y="168.1" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">8,227</text>
+<text x="460.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 460.0 270.0)">2020</text>
+<rect x="512.7" y="147.3" width="47.3" height="102.7" rx="3" fill="#6b3fa0"/>
+<text x="536.4" y="141.3" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">11,122</text>
+<text x="536.4" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 536.4 270.0)">2021</text>
+<rect x="589.1" y="101.3" width="47.3" height="148.7" rx="3" fill="#6b3fa0"/>
+<text x="612.7" y="95.3" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">16,106</text>
+<text x="612.7" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 612.7 270.0)">2022</text>
+<rect x="665.4" y="135.4" width="47.3" height="114.6" rx="3" fill="#6b3fa0"/>
+<text x="689.1" y="129.4" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">12,420</text>
+<text x="689.1" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 689.1 270.0)">2023</text>
+<rect x="741.8" y="81.4" width="47.3" height="168.6" rx="3" fill="#6b3fa0"/>
+<text x="765.5" y="75.4" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">18,262</text>
+<text x="765.5" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 765.5 270.0)">2024</text>
+<rect x="818.1" y="40.0" width="47.3" height="210.0" rx="3" fill="#c9a24b"/>
+<text x="841.8" y="34.0" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">22,750</text>
+<text x="841.8" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 841.8 270.0)">2025</text>
+</svg>
+      <div class="legend"><span><span class="dot" style="background:#6b3fa0"></span>一般年度</span><span><span class="dot" style="background:#c9a24b"></span>波峰（2025）</span><span><span class="dot" style="background:#d46a83"></span>波谷（2015，僅本圖區間內最低）</span></div>
+    </div>
+  </div>
+
+  <div class="rule-block">
+    <div class="h3row"><h3>規則二・B 投資紀律評估</h3><span class="score-badge">90 分</span></div>
+    <p>B 長期呈現大幅負值（2009 年 -965 億 → 2025 年 -11,444 億），代表台積電<span class="persona">「敢衝且有實力」</span>：作為資本密集的晶圓代工龍頭，持續加碼資本支出屬產業常態。觀察 |B| 與 A 的比例，近年 |B| 大致落在 A 的 <b>45%～75%</b> 區間（例如 2025 年 |B|=11,444 億，僅為 A=22,750 億的 50.3%），代表投資規模雖大，但本業現金流足以覆蓋，並未出現「舉債擴產」的失控跡象。</p>
+    <div class="chart-wrap">
+      <svg viewBox="0 0 920 300" xmlns="http://www.w3.org/2000/svg" class="chart-svg">
+<line x1="40" y1="40.0" x2="880" y2="40.0" stroke="#c9c2d6" stroke-width="1.5"/>
+<rect x="54.5" y="40.0" width="47.3" height="38.3" rx="3" fill="#c9a24b"/>
+<text x="78.2" y="92.3" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">-2,172</text>
+<text x="78.2" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 78.2 270.0)">2015</text>
+<rect x="130.9" y="40.0" width="47.3" height="69.7" rx="3" fill="#8a6bb0"/>
+<text x="154.5" y="123.7" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">-3,954</text>
+<text x="154.5" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 154.5 270.0)">2016</text>
+<rect x="207.2" y="40.0" width="47.3" height="59.3" rx="3" fill="#8a6bb0"/>
+<text x="230.9" y="113.3" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">-3,362</text>
+<text x="230.9" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 230.9 270.0)">2017</text>
+<rect x="283.6" y="40.0" width="47.3" height="55.4" rx="3" fill="#8a6bb0"/>
+<text x="307.3" y="109.4" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">-3,143</text>
+<text x="307.3" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 307.3 270.0)">2018</text>
+<rect x="360.0" y="40.0" width="47.3" height="80.9" rx="3" fill="#8a6bb0"/>
+<text x="383.6" y="134.9" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">-4,588</text>
+<text x="383.6" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 383.6 270.0)">2019</text>
+<rect x="436.3" y="40.0" width="47.3" height="89.2" rx="3" fill="#8a6bb0"/>
+<text x="460.0" y="143.2" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">-5,058</text>
+<text x="460.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 460.0 270.0)">2020</text>
+<rect x="512.7" y="40.0" width="47.3" height="147.5" rx="3" fill="#8a6bb0"/>
+<text x="536.4" y="201.5" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">-8,364</text>
+<text x="536.4" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 536.4 270.0)">2021</text>
+<rect x="589.1" y="40.0" width="47.3" height="210.0" rx="3" fill="#d46a83"/>
+<text x="612.7" y="264.0" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">-11,909</text>
+<text x="612.7" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 612.7 270.0)">2022</text>
+<rect x="665.4" y="40.0" width="47.3" height="159.8" rx="3" fill="#8a6bb0"/>
+<text x="689.1" y="213.8" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">-9,061</text>
+<text x="689.1" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 689.1 270.0)">2023</text>
+<rect x="741.8" y="40.0" width="47.3" height="152.5" rx="3" fill="#8a6bb0"/>
+<text x="765.5" y="206.5" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">-8,648</text>
+<text x="765.5" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 765.5 270.0)">2024</text>
+<rect x="818.1" y="40.0" width="47.3" height="201.8" rx="3" fill="#8a6bb0"/>
+<text x="841.8" y="255.8" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">-11,444</text>
+<text x="841.8" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 841.8 270.0)">2025</text>
+</svg>
+      <div class="legend"><span><span class="dot" style="background:#8a6bb0"></span>投資活動現金流量 B（負值＝持續投資）</span></div>
+    </div>
+  </div>
+
+  <div class="rule-block">
+    <div class="h3row"><h3>規則三・B 投資效益分析（隔年 A 是否轉強）</h3><span class="score-badge">88 分</span></div>
+    <p>核心對照指標為 A（而非易受業外損益干擾的 D）。整體而言，台積電多數年度的重度投資都在隔 1～2 年反映在 A 的明顯成長上，屬<span class="persona">「投資有轉化為造血能力」</span>型；唯一的例外落在 2022→2023：2022 年 B 大幅投入 -11,909 億，但 2023 年 A 反而從 16,106 億<b>回落</b>至 12,420 億——這對應的是 2023 年全球半導體庫存修正、下游需求疲弱的產業循環，而非台積電自身投資效益不彰，2024、2025 年 A 隨即創新高即為佐證。</p>
+    <table>
+      <tr><th>投資年度</th><th>當年 B</th><th>隔年 A</th><th>較前一年 A 變化</th><th>解讀</th></tr>
+      <tr><td>2019</td><td class="negv">-4,588</td><td>8,227（2020）</td><td class="gain">+33.7%</td><td>轉強</td></tr>
+      <tr><td>2020</td><td class="negv">-5,058</td><td>11,122（2021）</td><td class="gain">+35.2%</td><td>轉強</td></tr>
+      <tr><td>2021</td><td class="negv">-8,364</td><td>16,106（2022）</td><td class="gain">+44.8%</td><td>轉強</td></tr>
+      <tr><td>2022</td><td class="negv">-11,909</td><td>12,420（2023）</td><td class="negv">-22.9%</td><td>反轉（景氣循環影響）</td></tr>
+      <tr><td>2023</td><td class="negv">-9,061</td><td>18,262（2024）</td><td class="gain">+47.0%</td><td>強勁轉強</td></tr>
+      <tr><td>2024</td><td class="negv">-8,648</td><td>22,750（2025）</td><td class="gain">+24.6%</td><td>轉強</td></tr>
+    </table>
+    <p class="src">提醒：投資活動現金流量細項（如「固定資產減少」）才是資本支出的主要對應科目，其餘可能含金融資產買賣；本報告依使用者提供之彙總數字判讀，未逐年拆解細項。</p>
+  </div>
+
+  <div class="rule-block">
+    <div class="h3row"><h3>規則四・C 融資活動合理性</h3><span class="score-badge">96 分</span></div>
+    <p>17 年中僅 <b>2013 年（+321億）與 2021 年（+1,366億）</b>兩個年度 C 為正值，其餘年度 C 均為負值，代表台積電絕大多數時間是<b>自體造血、償還融資</b>，而非依賴外部資金。更關鍵的是：<b>本報告定義的最高警戒訊號「A 為負＋C 為正或小幅負值」在 17 年間從未出現過</b>——台積電的 A 從未轉負，因此即使個別年度 C 轉正，也不構成「本業造血不足、被迫舉債」的警訊，屬<span class="persona">「財務體質穩健、極少寅吃卯糧」</span>型。</p>
+    <div class="chart-wrap">
+      <svg viewBox="0 0 920 320" xmlns="http://www.w3.org/2000/svg" class="chart-svg">
+<line x1="40" y1="63.7" x2="880" y2="63.7" stroke="#c9c2d6" stroke-width="1.5"/>
+<rect x="51.7" y="63.7" width="24.4" height="37.6" rx="2" fill="#6b3fa0"/>
+<rect x="80.2" y="63.7" width="24.4" height="20.2" rx="2" fill="#d46a83"/>
+<text x="64.0" y="114.3" font-size="10.5" text-anchor="middle" fill="#3d2c52">-2,172</text>
+<text x="92.4" y="96.9" font-size="10.5" text-anchor="middle" fill="#3d2c52">-1,167</text>
+<text x="78.2" y="290.0" font-size="11" text-anchor="middle" fill="#6b5f7a">2015</text>
+<rect x="128.1" y="63.7" width="24.4" height="68.5" rx="2" fill="#6b3fa0"/>
+<rect x="156.5" y="63.7" width="24.4" height="27.3" rx="2" fill="#d46a83"/>
+<text x="140.3" y="145.2" font-size="10.5" text-anchor="middle" fill="#3d2c52">-3,954</text>
+<text x="168.8" y="104.0" font-size="10.5" text-anchor="middle" fill="#3d2c52">-1,578</text>
+<text x="154.5" y="290.0" font-size="11" text-anchor="middle" fill="#6b5f7a">2016</text>
+<rect x="204.5" y="63.7" width="24.4" height="58.2" rx="2" fill="#6b3fa0"/>
+<rect x="232.9" y="63.7" width="24.4" height="37.4" rx="2" fill="#d46a83"/>
+<text x="216.7" y="134.9" font-size="10.5" text-anchor="middle" fill="#3d2c52">-3,362</text>
+<text x="245.1" y="114.0" font-size="10.5" text-anchor="middle" fill="#3d2c52">-2,157</text>
+<text x="230.9" y="290.0" font-size="11" text-anchor="middle" fill="#6b5f7a">2017</text>
+<rect x="280.8" y="63.7" width="24.4" height="54.5" rx="2" fill="#6b3fa0"/>
+<rect x="309.3" y="63.7" width="24.4" height="42.5" rx="2" fill="#d46a83"/>
+<text x="293.1" y="131.1" font-size="10.5" text-anchor="middle" fill="#3d2c52">-3,143</text>
+<text x="321.5" y="119.1" font-size="10.5" text-anchor="middle" fill="#3d2c52">-2,451</text>
+<text x="307.3" y="290.0" font-size="11" text-anchor="middle" fill="#6b5f7a">2018</text>
+<rect x="357.2" y="63.7" width="24.4" height="79.5" rx="2" fill="#6b3fa0"/>
+<rect x="385.6" y="63.7" width="24.4" height="46.7" rx="2" fill="#d46a83"/>
+<text x="369.4" y="156.2" font-size="10.5" text-anchor="middle" fill="#3d2c52">-4,588</text>
+<text x="397.9" y="123.4" font-size="10.5" text-anchor="middle" fill="#3d2c52">-2,696</text>
+<text x="383.6" y="290.0" font-size="11" text-anchor="middle" fill="#6b5f7a">2019</text>
+<rect x="433.6" y="63.7" width="24.4" height="87.6" rx="2" fill="#6b3fa0"/>
+<rect x="462.0" y="63.7" width="24.4" height="15.4" rx="2" fill="#d46a83"/>
+<text x="445.8" y="164.3" font-size="10.5" text-anchor="middle" fill="#3d2c52">-5,058</text>
+<text x="474.2" y="92.0" font-size="10.5" text-anchor="middle" fill="#3d2c52">-886</text>
+<text x="460.0" y="290.0" font-size="11" text-anchor="middle" fill="#6b5f7a">2020</text>
+<rect x="509.9" y="63.7" width="24.4" height="144.9" rx="2" fill="#6b3fa0"/>
+<rect x="538.4" y="40.0" width="24.4" height="23.7" rx="2" fill="#b98a2e"/>
+<text x="522.1" y="221.6" font-size="10.5" text-anchor="middle" fill="#3d2c52">-8,364</text>
+<text x="550.6" y="35.0" font-size="10.5" text-anchor="middle" fill="#3d2c52">1,366</text>
+<text x="536.4" y="290.0" font-size="11" text-anchor="middle" fill="#6b5f7a">2021</text>
+<rect x="586.3" y="63.7" width="24.4" height="206.3" rx="2" fill="#6b3fa0"/>
+<rect x="614.7" y="63.7" width="24.4" height="34.7" rx="2" fill="#d46a83"/>
+<text x="598.5" y="283.0" font-size="10.5" text-anchor="middle" fill="#3d2c52">-11,909</text>
+<text x="626.9" y="111.4" font-size="10.5" text-anchor="middle" fill="#3d2c52">-2,002</text>
+<text x="612.7" y="290.0" font-size="11" text-anchor="middle" fill="#6b5f7a">2022</text>
+<rect x="662.7" y="63.7" width="24.4" height="157.0" rx="2" fill="#6b3fa0"/>
+<rect x="691.1" y="63.7" width="24.4" height="35.5" rx="2" fill="#d46a83"/>
+<text x="674.9" y="233.7" font-size="10.5" text-anchor="middle" fill="#3d2c52">-9,061</text>
+<text x="703.3" y="112.2" font-size="10.5" text-anchor="middle" fill="#3d2c52">-2,049</text>
+<text x="689.1" y="290.0" font-size="11" text-anchor="middle" fill="#6b5f7a">2023</text>
+<rect x="739.0" y="63.7" width="24.4" height="149.8" rx="2" fill="#6b3fa0"/>
+<rect x="767.5" y="63.7" width="24.4" height="60.0" rx="2" fill="#d46a83"/>
+<text x="751.2" y="226.5" font-size="10.5" text-anchor="middle" fill="#3d2c52">-8,648</text>
+<text x="779.7" y="136.7" font-size="10.5" text-anchor="middle" fill="#3d2c52">-3,463</text>
+<text x="765.5" y="290.0" font-size="11" text-anchor="middle" fill="#6b5f7a">2024</text>
+<rect x="815.4" y="63.7" width="24.4" height="198.3" rx="2" fill="#6b3fa0"/>
+<rect x="843.8" y="63.7" width="24.4" height="76.3" rx="2" fill="#d46a83"/>
+<text x="827.6" y="274.9" font-size="10.5" text-anchor="middle" fill="#3d2c52">-11,444</text>
+<text x="856.0" y="153.0" font-size="10.5" text-anchor="middle" fill="#3d2c52">-4,403</text>
+<text x="841.8" y="290.0" font-size="11" text-anchor="middle" fill="#6b5f7a">2025</text>
+</svg>
+      <div class="legend"><span><span class="dot" style="background:#6b3fa0"></span>B 投資活動</span><span><span class="dot" style="background:#d46a83"></span>C 融資活動（負值）</span><span><span class="dot" style="background:#b98a2e"></span>C 融資活動（正值，2021 唯一顯著年度）</span></div>
+    </div>
+    <p style="font-size:13px;color:var(--sub);">註：本報告僅取得 B、C 彙總數字，未取得融資活動細項（短期借款／現金增資／發放股利等拆解），故無法進一步判斷 2021 年 C 轉正的資金來源結構；但因當年 A 仍高達 11,122 億且遠大於 D，整體風險判斷仍屬低度。</p>
+  </div>
+
+  <div class="rule-block">
+    <div class="h3row"><h3>規則五・A ＞ D 現金流品質（嚴格二分法）</h3><span class="score-badge">100 分</span></div>
+    <p>逐年檢視「A 是否大於稅前淨利 D」，<b>17 個完整年度全數通過（17/17 = 100%）</b>，包含最新的 2025 年（A=22,750 億 ＞ D=20,417 億）。這代表台積電每年入帳的會計利潤，都能確實轉化為等量甚至更多的現金流入，完全不是<span class="persona">「膨風灌水」</span>型公司，屬於現金流品質最高等級的企業之一。</p>
+    <table>
+      <tr><th>年度區間</th><th>通過年數</th><th>總年數</th><th>通過率</th></tr>
+      <tr><td>2009–2025</td><td>17</td><td>17</td><td class="gain"><b>100%</b></td></tr>
+    </table>
+  </div>
+
+  <div class="rule-block">
+    <div class="h3row"><h3>規則六・E 期末現金餘額穩定性</h3><span class="score-badge">90 分</span></div>
+    <p>期末現金餘額由 2009 年的 1,713 億，成長至 2025 年的 <b>27,679 億</b>（26Q1 單季further升至 30,356 億），長期呈現穩定上升軌跡，屬<span class="persona">「現金水庫持續加深」</span>型。唯一的例外是 <b>2019 年較 2018 年下滑 21.2%</b>（5,778 億 → 4,554 億），對應當年重度資本支出（B=-4,588億）加上融資活動同步淨流出（C=-2,696億）的雙重現金消耗，屬單一年度的合理波動，2020 年即恢復成長軌道且持續至今。</p>
+    <div class="chart-wrap">
+      <svg viewBox="0 0 920 300" xmlns="http://www.w3.org/2000/svg" class="chart-svg">
+<line x1="40" y1="250.0" x2="880" y2="250.0" stroke="#c9c2d6" stroke-width="1.5"/>
+<rect x="54.5" y="207.3" width="47.3" height="42.7" rx="3" fill="#4f7a6b"/>
+<text x="78.2" y="201.3" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">5,626</text>
+<text x="78.2" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 78.2 270.0)">2015</text>
+<rect x="130.9" y="208.9" width="47.3" height="41.1" rx="3" fill="#4f7a6b"/>
+<text x="154.5" y="202.9" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">5,413</text>
+<text x="154.5" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 154.5 270.0)">2016</text>
+<rect x="207.2" y="208.0" width="47.3" height="42.0" rx="3" fill="#4f7a6b"/>
+<text x="230.9" y="202.0" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">5,534</text>
+<text x="230.9" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 230.9 270.0)">2017</text>
+<rect x="283.6" y="206.2" width="47.3" height="43.8" rx="3" fill="#4f7a6b"/>
+<text x="307.3" y="200.2" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">5,778</text>
+<text x="307.3" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 307.3 270.0)">2018</text>
+<rect x="360.0" y="215.4" width="47.3" height="34.6" rx="3" fill="#d46a83"/>
+<text x="383.6" y="209.4" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">4,554</text>
+<text x="383.6" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 383.6 270.0)">2019</text>
+<rect x="436.3" y="199.9" width="47.3" height="50.1" rx="3" fill="#4f7a6b"/>
+<text x="460.0" y="193.9" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">6,602</text>
+<text x="460.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 460.0 270.0)">2020</text>
+<rect x="512.7" y="169.2" width="47.3" height="80.8" rx="3" fill="#4f7a6b"/>
+<text x="536.4" y="163.2" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">10,650</text>
+<text x="536.4" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 536.4 270.0)">2021</text>
+<rect x="589.1" y="148.1" width="47.3" height="101.9" rx="3" fill="#4f7a6b"/>
+<text x="612.7" y="142.1" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">13,428</text>
+<text x="612.7" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 612.7 270.0)">2022</text>
+<rect x="665.4" y="138.8" width="47.3" height="111.2" rx="3" fill="#4f7a6b"/>
+<text x="689.1" y="132.8" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">14,654</text>
+<text x="689.1" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 689.1 270.0)">2023</text>
+<rect x="741.8" y="88.6" width="47.3" height="161.4" rx="3" fill="#4f7a6b"/>
+<text x="765.5" y="82.6" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">21,276</text>
+<text x="765.5" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 765.5 270.0)">2024</text>
+<rect x="818.1" y="40.0" width="47.3" height="210.0" rx="3" fill="#c9a24b"/>
+<text x="841.8" y="34.0" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">27,679</text>
+<text x="841.8" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 841.8 270.0)">2025</text>
+</svg>
+      <div class="legend"><span><span class="dot" style="background:#4f7a6b"></span>期末現金餘額 E</span><span><span class="dot" style="background:#c9a24b"></span>波峰（2025）</span><span><span class="dot" style="background:#d46a83"></span>波谷（2019）</span></div>
+    </div>
+  </div>
+
+  <div class="score-total">
+    <div class="lbl">六大規則平均總分</div>
+    <div class="num">92.2 <span style="font-size:20px;">／ 100</span></div>
+    <div style="margin-top:10px; color:#f0e6fa; font-size:14.5px;">六項分數：規則一 95・規則二 90・規則三 88・規則四 96・規則五 100・規則六 90</div>
+  </div>
+
+  <div class="callout good">
+    <b>關卡判斷：總分 92.2%，屬「優秀」等級（≥80%），且全程未出現「A 為負＋重度投資＋C 為正或小幅負值」的三重警訊。現金流體質可以繼續看下去，進入第二步基本資訊查詢。</b>
+  </div>
+</section>
+
+<section id="step2" class="step">
+  <div class="step-head"><span class="step-num">第 2 步／共 10 步</span><h2>基本資訊查詢</h2></div>
+  <div class="callout">
+    以下股價、法人買賣為<b>查詢當下的單一時間點快照</b>，非即時報價，正式交易請以看盤軟體／券商 App 為準。
+  </div>
+  <div class="grid2">
+    <div class="infocard">
+      <div class="k">股價（2026/08/13 開盤更新）</div>
+      <div class="v">2,435 元 <span style="font-size:13px;color:var(--gold)">+20（+0.83%）</span></div>
+      <div class="src">來源：<a href="https://tw.stock.yahoo.com/quote/2330.TW/technical-analysis" target="_blank">Yahoo股市 技術分析頁</a>，查詢時間 2026/08/13 09:17 更新</div>
+    </div>
+    <div class="infocard">
+      <div class="k">本益比（同業平均對照）</div>
+      <div class="v">32.47 倍 <span style="font-size:13px;color:var(--sub)">（同業均值 53.99）</span></div>
+      <div class="src">來源：同上 Yahoo股市 技術分析頁</div>
+    </div>
+    <div class="infocard">
+      <div class="k">2025 年度稅後 EPS</div>
+      <div class="v">66.26 元</div>
+      <div class="src">來源：使用者提供現金流量表截圖（含歷年 EPS 欄位）</div>
+    </div>
+    <div class="infocard">
+      <div class="k">2026Q1 單季稅後 EPS</div>
+      <div class="v">22.08 元</div>
+      <div class="src">來源：同上（單季僅供參考）</div>
+    </div>
+    <div class="infocard">
+      <div class="k">近 5 年平均現金殖利率</div>
+      <div class="v">1.81%</div>
+      <div class="src">來源：<a href="https://tw.stock.yahoo.com/quote/2330.TW/dividend" target="_blank">Yahoo股市 股利政策頁</a>；已連續 35 年發放股利，累計 199.90 元</div>
+    </div>
+    <div class="infocard">
+      <div class="k">最新股利動態</div>
+      <div class="v">Q2 現金股利 7 元</div>
+      <div class="src">來源：<a href="https://goodinfo.tw/tw/StockDetail.asp?STOCK_ID=2330" target="_blank">Goodinfo 公告訊息</a>，2026/08/11 董事會決議，維持每股 7 元、首次提供外資美元股利選擇</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:26px;">近期營收概況</h3>
+  <p>2026 年 7 月合併營收約 <b>4,676 億元</b>，月增 <b>+5.62%</b>、年增 <b>+44.7%</b>；累計前 7 月營收 28,721 億元，年增 <b>+37%</b>。近 12 個月營收呈現明顯上升軌跡，詳見第四步營收趨勢圖。</p>
+  <p class="src">資料來源：使用者提供之月營收截圖（2025/08～2026/07）。</p>
+
+  <h3 style="margin-top:26px;">法說會 / 重大公告</h3>
+  <p>2026/08/11 台積電董事會核准與 Sony 合資成立新公司，研發製造下一世代影像感測器，預計 <b>2029 年量產</b>；同日董事會亦核准機器設備、不動產及資本化租賃資產的資本預算案。</p>
+  <p class="src">來源：<a href="https://goodinfo.tw/tw/StockDetail.asp?STOCK_ID=2330" target="_blank">Goodinfo 公告訊息彙整</a>（Anue鉅亨轉載，2026/08/11）</p>
+</section>
+
+<section id="step3" class="step">
+  <div class="step-head"><span class="step-num">第 3 步／共 10 步</span><h2>法說會資料摘要</h2></div>
+  <div class="callout">
+    近期法說會與董事會重點聚焦於 <b>AI 需求驅動的先進製程擴產</b>、<b>2nm 製程進度</b>與<b>與 Sony 的影像感測器合資案</b>。若你想針對其中任一主題（例如資本支出結構、先進封裝 CoWoS 產能、特定廠區進度）深入討論，歡迎直接告訴我方向，我可以再進一步搜尋整理；本次先依既定流程完成第四至六步。
+  </div>
+</section>
+
+<section id="step4" class="step">
+  <div class="step-head"><span class="step-num">第 4 步／共 10 步</span><h2>營收趨勢視覺化</h2></div>
+  <p>近 12 個月（2025/08～2026/07）合併營收呈現<b>持續放量成長</b>的軌跡，月營收從 3,358 億元一路墊高至 <b>4,676 億元</b>，其中 2026 年 2 月因農曆春節工作天數較少而季節性回落至 3,177 億元，隨後 3 月起強勁反彈並屢創新高。近 12 個月中有 <b>10 個月年增率超過 +25%</b>，反映 AI 相關先進製程需求持續強勁。</p>
+  <div class="chart-wrap">
+    <svg viewBox="0 0 920 300" xmlns="http://www.w3.org/2000/svg" class="chart-svg">
+<line x1="40" y1="250.0" x2="880" y2="250.0" stroke="#c9c2d6" stroke-width="1.5"/>
+<rect x="53.3" y="99.2" width="43.4" height="150.8" rx="3" fill="#3f5f8a"/>
+<text x="75.0" y="93.2" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">3,358</text>
+<text x="75.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 75.0 270.0)">25/08</text>
+<rect x="123.3" y="101.3" width="43.4" height="148.7" rx="3" fill="#3f5f8a"/>
+<text x="145.0" y="95.3" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">3,310</text>
+<text x="145.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 145.0 270.0)">25/09</text>
+<rect x="193.3" y="85.0" width="43.4" height="165.0" rx="3" fill="#3f5f8a"/>
+<text x="215.0" y="79.0" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">3,675</text>
+<text x="215.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 215.0 270.0)">25/10</text>
+<rect x="263.3" y="95.7" width="43.4" height="154.3" rx="3" fill="#3f5f8a"/>
+<text x="285.0" y="89.7" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">3,436</text>
+<text x="285.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 285.0 270.0)">25/11</text>
+<rect x="333.3" y="99.6" width="43.4" height="150.4" rx="3" fill="#3f5f8a"/>
+<text x="355.0" y="93.6" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">3,350</text>
+<text x="355.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 355.0 270.0)">25/12</text>
+<rect x="403.3" y="69.8" width="43.4" height="180.2" rx="3" fill="#3f5f8a"/>
+<text x="425.0" y="63.8" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">4,013</text>
+<text x="425.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 425.0 270.0)">26/01</text>
+<rect x="473.3" y="107.3" width="43.4" height="142.7" rx="3" fill="#d46a83"/>
+<text x="495.0" y="101.3" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">3,177</text>
+<text x="495.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 495.0 270.0)">26/02</text>
+<rect x="543.3" y="63.5" width="43.4" height="186.5" rx="3" fill="#3f5f8a"/>
+<text x="565.0" y="57.5" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">4,152</text>
+<text x="565.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 565.0 270.0)">26/03</text>
+<rect x="613.3" y="65.6" width="43.4" height="184.4" rx="3" fill="#3f5f8a"/>
+<text x="635.0" y="59.6" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">4,107</text>
+<text x="635.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 635.0 270.0)">26/04</text>
+<rect x="683.3" y="62.7" width="43.4" height="187.3" rx="3" fill="#3f5f8a"/>
+<text x="705.0" y="56.7" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">4,170</text>
+<text x="705.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 705.0 270.0)">26/05</text>
+<rect x="753.3" y="51.2" width="43.4" height="198.8" rx="3" fill="#3f5f8a"/>
+<text x="775.0" y="45.2" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">4,427</text>
+<text x="775.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 775.0 270.0)">26/06</text>
+<rect x="823.3" y="40.0" width="43.4" height="210.0" rx="3" fill="#c9a24b"/>
+<text x="845.0" y="34.0" font-size="12" text-anchor="middle" fill="#3d2c52" font-family="Georgia, serif">4,676</text>
+<text x="845.0" y="270.0" font-size="11" text-anchor="middle" fill="#6b5f7a" transform="rotate(0 845.0 270.0)">26/07</text>
+</svg>
+    <div class="legend"><span><span class="dot" style="background:#3f5f8a"></span>單月合併營收（億元）</span><span><span class="dot" style="background:#c9a24b"></span>波峰（2026/07）</span><span><span class="dot" style="background:#d46a83"></span>波谷（2026/02，農曆春節效應）</span></div>
+  </div>
+  <table>
+    <tr><th>月份</th><th>單月營收(億)</th><th>月增%</th><th>年增%</th></tr>
+    <tr><td>2026/07</td><td>4,676</td><td class="gain">+5.62%</td><td class="gain">+44.7%</td></tr>
+    <tr><td>2026/06</td><td>4,427</td><td class="gain">+6.16%</td><td class="gain">+67.9%</td></tr>
+    <tr><td>2026/05</td><td>4,170</td><td class="gain">+1.52%</td><td class="gain">+30.1%</td></tr>
+    <tr><td>2026/04</td><td>4,107</td><td class="negv">-1.07%</td><td class="gain">+17.5%</td></tr>
+    <tr><td>2026/03</td><td>4,152</td><td class="gain">+30.7%</td><td class="gain">+45.2%</td></tr>
+    <tr><td>2026/02</td><td>3,177</td><td class="negv">-20.8%</td><td class="gain">+22.2%</td></tr>
+    <tr><td>2026/01</td><td>4,013</td><td class="gain">+19.8%</td><td class="gain">+36.8%</td></tr>
+    <tr><td>2025/12</td><td>3,350</td><td class="negv">-2.5%</td><td class="gain">+20.4%</td></tr>
+    <tr><td>2025/11</td><td>3,436</td><td class="negv">-6.49%</td><td class="gain">+24.5%</td></tr>
+    <tr><td>2025/10</td><td>3,675</td><td class="gain">+11%</td><td class="gain">+16.9%</td></tr>
+    <tr><td>2025/09</td><td>3,310</td><td class="negv">-1.42%</td><td class="gain">+31.4%</td></tr>
+    <tr><td>2025/08</td><td>3,358</td><td class="gain">+3.9%</td><td class="gain">+33.8%</td></tr>
+  </table>
+  <p class="src">資料來源：使用者提供之月營收截圖。</p>
+</section>
+
+<section id="step5" class="step">
+  <div class="step-head"><span class="step-num">第 5 步／共 10 步</span><h2>前瞻本益比／EPS 預估</h2></div>
+  <div class="callout warn">
+    市場法人對台積電 2026、2027 年 EPS 預估<b>分歧幅度相當大</b>（不同外資模型假設差異明顯），以下呈現區間並附來源，不採單一數字。
+  </div>
+  <table>
+    <tr><th>來源</th><th>2026E EPS</th><th>2027E EPS</th><th>備註</th></tr>
+    <tr><td>FactSet 分析師共識調查</td><td>約 93 元</td><td>—</td><td>2026/04 上修後數字，屬多家分析師平均</td></tr>
+    <tr><td>美系外資模型</td><td>82.56 元</td><td>105.93 元</td><td>假設毛利率 60% 左右，較保守</td></tr>
+    <tr><td>亞系外資模型</td><td>97 元</td><td>120 元</td><td>假設產能利用率提升更快</td></tr>
+    <tr><td>元大投顧</td><td>約 99.7 元</td><td>128.46 元</td><td>2026/04 法說會後上修</td></tr>
+    <tr><td>高盛（法說會前展望）</td><td>—</td><td>125 元</td><td>2028E 165.32 元，AI 需求驅動結構性毛利率提升</td></tr>
+    <tr><td>美銀（近期報告）</td><td>—</td><td>上看 178 元（樂觀情境）</td><td>約 1 個月前發布，假設先進製程 2027 年再漲價 5–10%</td></tr>
+  </table>
+  <p class="src">來源：Anue鉅亨（<a href="https://today.line.me/tw/v3/article/nX3rvrD" target="_blank">FactSet 調查轉載</a>、<a href="https://cmnews.com.tw/article/newsyoudeservetoknow-dd87d893-3399-11f1-8467-fef931a2dbe1" target="_blank">高盛/大摩/小摩調升報導</a>）、ETtoday財經雲（<a href="https://finance.ettoday.net/news/3095500" target="_blank">外資模型比較</a>）、Yahoo股市（<a href="https://tw.stock.yahoo.com/news/%E7%9B%AE%E6%A8%99%E5%83%B9%E7%9B%B4%E4%B8%8A2600%E5%85%83-%E5%8F%B0%E7%A9%8D%E9%9B%BB2026%E5%B9%B4eps%E5%8F%AF%E9%80%BC%E8%BF%91%E7%99%BE%E5%85%83-%E6%B3%95%E4%BA%BA%E6%8F%AD3%E5%B9%B4-%E7%84%A1%E6%95%B5%E5%85%A7%E5%B9%95-104500873.html" target="_blank">元大投顧報導</a>）、FTNN新聞網（<a href="https://tw.stock.yahoo.com/news/%E6%B3%95%E8%AA%AA%E5%89%8D%E5%A4%96%E8%B3%87%E6%9C%80%E9%AB%98%E5%96%8A3-100%E5%85%83-%E5%8F%B0%E7%A9%8D%E9%9B%BBeps%E9%A0%90%E4%BC%B0%E4%B8%8A%E7%9C%8B178%E5%85%83-ai-2%E5%A5%88%E7%B1%B3-003600344.html" target="_blank">美銀報告轉載</a>）。
+
+  <h3 style="margin-top:24px;">隱含前瞻本益比（現在股價 ÷ 預估EPS）</h3>
+  <table>
+    <tr><th>情境</th><th>2026E EPS</th><th>股價 2,435 元對應隱含 PE</th></tr>
+    <tr><td>保守（美系模型）</td><td>82.56</td><td>29.5 倍</td></tr>
+    <tr><td>共識中樞（FactSet）</td><td>93</td><td>26.2 倍</td></tr>
+    <tr><td>樂觀（元大／亞系模型）</td><td>97～99.7</td><td>24.4～25.1 倍</td></tr>
+  </table>
+
+  <h3 style="margin-top:24px;">目標本益比法反推目標價（用 2027E EPS 試算，倍數為敏感度情境，非預測）</h3>
+  <table>
+    <tr><th>倍數情境</th><th>2027E EPS ≈105.93元（保守）</th><th>2027E EPS ≈120元（中樞）</th><th>2027E EPS ≈128.46元（樂觀）</th></tr>
+    <tr><td>20 倍</td><td>2,119 元</td><td>2,400 元</td><td>2,569 元</td></tr>
+    <tr><td>25 倍</td><td>2,648 元</td><td>3,000 元</td><td>3,212 元</td></tr>
+    <tr><td>30 倍</td><td>3,178 元</td><td>3,600 元</td><td>3,854 元</td></tr>
+  </table>
+  <p style="font-size:13.5px;color:var(--sub);">前瞻本益比＝已知股價反推「市場現在用幾倍在評價未來一年獲利」；目標本益比法＝已知假設倍數反推「合理價可能落在哪」，兩者是同一公式的不同用法，不應混為一談。目標價對「倍數怎麼選」高度敏感，25～30 倍屬台積電近幾年評價區間的中高段，若市場情緒轉趨保守，倍數壓縮至 15～18 倍也並非沒有先例。</p>
+
+  <div class="callout warn">
+    <b>不確定性揭露：</b>近期不同外資對 2026／2027 年 EPS 的預估差距可達 <b>40% 以上</b>（例如 2027E 從 105.93 元到 178 元），反映法人對 AI 需求延續性、先進製程漲價幅度、資本支出效率等假設分歧甚大。使用任何單一法人預估作為投資依據前，建議留意其背後假設是否過度樂觀或保守。
+  </div>
+</section>
+
+<section id="step6" class="step">
+  <div class="step-head"><span class="step-num">第 6 步／共 10 步</span><h2>長期投資決策推理</h2></div>
+  <div class="callout warn">此為推理與觀點分享，不是專業投資建議，我不是理財顧問。</div>
+
+  <h3>基本面判斷：值不值得投資</h3>
+  <p>呼應第一步結論：台積電現金流六大規則平均 <b>92.2 分</b>，屬「優秀」等級，17 年間 A（營業活動現金流）從未轉負、A＞D 現金流品質 100% 通過、也從未出現舉債支應重度投資的最高警戒訊號。營收持續高速成長（近 12 月多數月份年增逾 25%），基本面判斷為<b>體質優良、具長期投資價值</b>的公司。</p>
+
+  <h3 style="margin-top:20px;">籌碼面判斷：現在這個價位划不划算</h3>
+  <p>查詢近期（2026/08/03～08/10）三大法人日買賣超：外資籌碼呈現<b>短線震盪</b>——08/04 大幅賣超 12,430 張，08/05 隨即買超 12,251 張，08/06 又賣超 4,011 張，08/07、08/10 轉為小幅買超並形成「連 2 買」。整體來看近一週外資買賣拉鋸、尚未形成單一方向的明確趨勢，籌碼面訊號中性偏震盪。</p>
+  <p>股價 2,435 元對照第五步估值：以 2026E EPS 共識中樞 93 元計算，隱含前瞻本益比約 <b>26.2 倍</b>，落在台積電近年評價區間的中段，<b>非明顯便宜，但也未到過熱區間</b>；技術面近日「連 4 漲」顯示短期動能偏強，需留意追高風險。</p>
+  <p class="src">籌碼來源：<a href="https://tw.stock.yahoo.com/quote/2330.TW/institutional-trading" target="_blank">Yahoo股市 法人買賣頁</a>，查詢時間 2026/08/13。</p>
+
+  <h3 style="margin-top:20px;">情境判斷</h3>
+  <table>
+    <tr><th>情境</th><th>判斷</th><th>觀察訊號（尚未發生）</th></tr>
+    <tr><td>尚未持有，是否進場</td><td>基本面支持長期布局，但目前估值不算便宜，<b>不建議追高進場</b>；可等待回檔或分批布局</td><td>①股價回落至隱含 PE 22～24 倍區間（約對應 2,050～2,230 元）②或下一季法說會後 A（營業現金流）延續成長趨勢再確認</td></tr>
+    <tr><td>已持有，續抱或賣出</td><td>基本面與現金流品質均無疑慮，<b>建議續抱</b>，不因短期籌碼震盪而動搖長期部位</td><td>若未來出現「A 轉負＋C 轉為明顯正值」的組合訊號，或營收年增率連續 3 個月低於 10%，須重新檢視基本面是否轉弱</td></tr>
+  </table>
+
+  <p style="margin-top:18px;">若之後想進一步評估「現在的價位適不適合短線進出場」，可以接續第 7～10 步技術面、籌碼面、消息面與短線操作情境分析。</p>
+</section>
+
+<div class="transition-banner">
+  以下為短線操作分析（第 7–10 步），判斷維度從「這家公司值不值得投資」轉為「現在進出場划不划算」。短線操作風險高於長期持有，以下內容為分析推理，不是專業投資建議、不是報明牌。
+</div>
+
+<section id="step7" class="step amber-zone">
+  <div class="step-head"><span class="step-num">第 7 步／共 10 步</span><h2>技術面分析</h2></div>
+  <div class="callout">
+    已收到你提供的 <b>日K線圖（2026/03～08/13）</b>與<b>另一張標示週線頁籤的線圖</b>。判讀信心分級：日K圖標示清晰，訊號明確；週K圖頁籤雖切到「周線」，但畫面標題與燭身密度看起來與日K圖幾乎相同，<b>無法 100% 確認該圖確實為週線資料</b>，故本節以日K圖為主要判讀依據，週K圖僅用於交叉驗證關鍵價位。兩張圖「還原股價」皆未勾選，惟台積電近年無股票分割/減資事件，故不影響指標可信度。
+  </div>
+
+  <h3>趨勢與均線排列</h3>
+  <p>日K圖顯示 2026 年 3 月至 6 月底為<b>清楚多頭趨勢</b>：股價從約 1,750 元一路墊高至 6 月底、7 月初高點約 <b>2,475～2,500 元</b>。隨後在 7 月中出現一根跳空重挫的長黑K棒（對應第九步已知的「717股災」），最低探至約 <b>2,180～2,290 元</b>區間，之後價格逐步回穩、以紅K棒為主緩步墊高，至 08/13 回到 <b>2,400～2,435 元</b>附近。</p>
+  <p>圖上標示的均線數值：<b>月線（20MA，紅）2,372 ▲、季線（60MA，橙）2,234.33 ▲、半年線（綠）2,013.13 ▲、年線（藍）1,661.58 ▲、3年線（洋紅）1,110.54 ▲</b>，五條均線全數上揚，且由短而長依序排列在下方，屬於<b>教科書式的多頭排列</b>；現在股價已重新站上月線，技術面結構未被 717 股災的單日重挫破壞。</p>
+
+  <h3 style="margin-top:20px;">關鍵價位</h3>
+  <table>
+    <tr><th>價位</th><th>意義</th></tr>
+    <tr><td><b>2,470～2,500 元</b></td><td>前波高點（6月底～7月初），短線壓力區</td></tr>
+    <tr><td><b>2,372 元</b></td><td>月線（20MA），第一層動態支撐</td></tr>
+    <tr><td><b>2,290 元</b></td><td>717股災週K收盤區間低點（雙圖皆可見），關鍵支撐</td></tr>
+    <tr><td><b>2,180 元附近</b></td><td>日K圖上可見的極端下影線低點，型態失敗的最後防線</td></tr>
+    <tr><td><b>2,234 元</b></td><td>季線（60MA），若月線失守的第二道防線</td></tr>
+  </table>
+
+  <h3 style="margin-top:20px;">動能指標（KD）</h3>
+  <p>日K圖 KD 讀值：<b>K 38.39、D 49.32、J 16.54</b>；週線頁籤圖讀值：<b>K 34.88、D 42.14、J 20.36</b>。兩者皆呈現 <b>K 值低於 D 值、J 值落入 20 以下的相對低檔區</b>，訊號傾向「短線超賣後的低檔鈍化」，對照右側價格區塊已經出現連續紅K反彈，<b>KD 有低檔黃金交叉、動能回溫的跡象</b>，但因非最新一根K棒的即時讀值，確定性中等。</p>
+
+  <h3 style="margin-top:20px;">量價關係</h3>
+  <p>近期成交量（日K圖顯示最新一筆 4.95 萬張）略高於月均量 4.23 萬張，且伴隨價格上漲，屬<b>價漲量增的健康型態</b>；717股災當日雖有爆量下殺，但之後沒有出現持續性的量縮下跌，顯示賣壓已大致宣洩完畢。</p>
+
+  <p class="src">與長期分析呼應：長期基本面（第1–6步）判斷體質優良，技術面目前處於「重挫後修復、重新站上多頭排列」階段，方向與長期基本面一致，但股價已逼近前波高點壓力區，追高前建議留意能否有效突破 2,470～2,500 元。</p>
+</section>
+
+<section id="step8" class="step amber-zone">
+  <div class="step-head"><span class="step-num">第 8 步／共 10 步</span><h2>籌碼面分析</h2></div>
+  <div class="callout">
+    你提供的第三張截圖為 <b>法人買賣超「季線」圖（2001Q4～2026Q3，橫跨 24 年）</b>，屬於長期籌碼／外資持股趨勢圖，而非週/月波段操作最需要的「近 8–12 週」買賣超明細；下方先解讀這張長期圖，短線判斷仍併同先前查得的近一週日資料。
+  </div>
+
+  <h3>長期外資持股趨勢（依你提供的季線圖）</h3>
+  <p>圖中三個關鍵指標：<b>法人累計買賣超</b>自 2020Q3 起明顯轉為長期加碼、曲線持續墊高；<b>外資持股比率</b>已攀升至 <b>30.66%</b>（▲上升中）；<b>外資持有張數</b>達 <b>516.1 萬張</b>（▲上升中）。三者同步走升，代表外資對台積電的長期布局是<b>持續增持、尚未出現趨勢性反轉</b>的訊號，這與第一步現金流優秀、第六步基本面優良的結論互相印證——法人用真金白銀長期加碼，佐證基本面判斷。</p>
+  <p style="font-size:13.5px;color:var(--sub);">提醒：此圖為季度累計的長期籌碼趨勢，<b>不能直接當作短線進出場時機的依據</b>——長期外資持續加碼，不代表這一兩週股價不會震盪拉回，仍須搭配下方近期日資料判斷。</p>
+
+  <h3 style="margin-top:22px;">近一週三大法人日買賣超（張）</h3>
+  <table>
+    <tr><th>日期</th><th>外資</th><th>投信</th><th>自營商</th><th>合計</th></tr>
+    <tr><td>2026/08/10</td><td class="gain">+119</td><td class="gain">+132</td><td class="gain">+448</td><td class="gain">+700</td></tr>
+    <tr><td>2026/08/07</td><td class="gain">+642</td><td class="gain">+61</td><td class="gain">+1,243</td><td class="gain">+1,946</td></tr>
+    <tr><td>2026/08/06</td><td class="negv">-4,011</td><td class="negv">-82</td><td class="negv">-583</td><td class="negv">-4,677</td></tr>
+    <tr><td>2026/08/05</td><td class="gain">+12,251</td><td class="negv">-1,205</td><td class="negv">-1,099</td><td class="gain">+9,948</td></tr>
+    <tr><td>2026/08/04</td><td class="negv">-12,430</td><td class="gain">+434</td><td class="negv">-2,327</td><td class="negv">-14,323</td></tr>
+    <tr><td>2026/08/03</td><td class="negv">-9,717</td><td class="gain">+387</td><td class="negv">-1,587</td><td class="negv">-10,917</td></tr>
+  </table>
+  <p><b>訊號傾向但不確定：</b>外資近一週買賣拉鋸（8/3–8/4 連續大賣逾 2.2 萬張，8/5 單日回補 1.2 萬張，8/10 形成「連 2 買」），短線籌碼尚未形成單一方向的持續趨勢，但疊加上方長期持股比率仍在墊高的背景，<b>整體傾向「短線震盪、長線續抱」</b>的解讀。若想更精準判斷近期是否已止穩，建議另外提供 Goodinfo「三大法人買賣超日統計」或「周統計」的 8–12 週明細圖（非季線圖）。</p>
+  <p class="src">來源：<a href="https://tw.stock.yahoo.com/quote/2330.TW/institutional-trading" target="_blank">Yahoo股市 法人買賣頁</a>，查詢時間 2026/08/13；長期持股趨勢來源：使用者提供 Goodinfo 法人買賣超（季）截圖。</p>
+
+  <h3 style="margin-top:22px;">融資餘額</h3>
+  <p>最新融資餘額 <b>33,061 張</b>（2026/07/09 資料），為近一年<b>第 98 百分位</b>，屬歷史相對高檔。<span class="negv">融資餘額偏高，代表浮動籌碼較多</span>，若股價未能延續強勢，這類浮額在拉回時可能轉為賣壓來源，是短線操作需留意的風險因子；此數字早於 717 股災之後的去化情況，若你能補充股災後的最新融資餘額截圖，可進一步確認浮額是否已消化。</p>
+  <p class="src">來源：<a href="https://blave.org/studio/twstock/zh/chips/margin" target="_blank">Blave 台股籌碼平台</a>，資料時間 2026/07/09。</p>
+</section>
+
+
+<section id="step9" class="step amber-zone">
+  <div class="step-head"><span class="step-num">第 9 步／共 10 步</span><h2>消息面分析</h2></div>
+
+  <div class="rule-block">
+    <h3>已發生的消息</h3>
+    <p><b>2026/07/16 法說會＋隔日「717股災」：</b>台積電公布財報後，市場對資本支出上修等展望「利多不漲」，隔日（7/17）外資單日賣超台積電創史上紀錄（三大法人合計賣超 261.7 億元、外資賣超 189.0 億元），台股加權指數單日重挫 2,953.71 點創史上最大跌點，台積電股價重挫 7.29% 至 2,290 元、跌破季線 <span class="src">[<a href="https://finance.ettoday.net/news/3202701" target="_blank">2</a>][<a href="https://www.cmmedia.com.tw/home/articles/61858" target="_blank">3</a>]</span>。<b>此利空事件已明顯反映在股價上</b>（單日重挫逾 7%），目前股價已從該低點反彈約 6%，顯示市場情緒已部分修復。</p>
+    <p><b>2026/08/11 董事會決議：</b>與 Sony 合資設立新公司開發下世代影像感測器（預計 2029 年量產）、核准資本支出預算案、維持 Q2 現金股利 7 元。屬中性偏正面的長期題材，尚未見市場出現顯著單日反應，可能仍在被市場逐步消化中。</p>
+  </div>
+
+  <div class="rule-block">
+    <h3>即將發生的事件</h3>
+    <table>
+      <tr><th>事件</th><th>日期</th><th>備註</th></tr>
+      <tr><td>除權息交易日（2026年第3次）</td><td>2026/09/16</td><td>發放現金股利 7 元，除息前後常見price adjustment與量能變化 <span class="src">[<a href="https://winvest.tw/Stock/Symbol/Comment/2330" target="_blank">4</a>]</span></td></tr>
+      <tr><td>下一次法人說明會（推估）</td><td>約 2026 年 10 月中旬</td><td>依台積電季度法說慣例推估，實際日期尚待官方公告，屬短線波動放大的觀察時點</td></tr>
+    </table>
+  </div>
+
+  <p><b>判讀重點：</b>近期最大的消息面事件（717股災）已經price in，且股價已收復失土；下一個潛在催化劑是 9/16 除權息與約 10 月的法說會，兩者都尚未發生，屬觀察中的變數，非已知定論。</p>
+</section>
+
+<section id="step10" class="step amber-zone">
+  <div class="step-head"><span class="step-num">第 10 步／共 10 步</span><h2>短線操作情境推理</h2></div>
+  <div class="callout warn">此為推理與觀點分享，非專業投資建議，短線操作風險高於長期持有，請嚴守停損紀律。</div>
+
+  <p><b>三方訊號整合：</b>技術面偏多且訊號明確（日K圖確認多頭排列、KD低檔回溫、量價健康）；籌碼面呈現「短線震盪、長線續增持」（近一週外資買賣拉鋸，但季線圖顯示外資持股比率長期走升至30.66%）；消息面利空（717股災）已price in、下一催化劑（9/16除權息、約10月法說會）尚未發生。三者<b>方向一致偏多，確定性中高</b>，此時進出場的把握度優於前次評估，但股價已逼近前波高點壓力區，仍建議「分批、嚴設停損」而非重倉追價。</p>
+
+  <table>
+    <tr><th>情境</th><th>判斷</th></tr>
+    <tr><td><b>尚未持有，是否進場</b></td><td>短線可考慮分批試單，但不建議在目前接近前波高點（2,470～2,500元）附近一次追滿；<b>較佳進場參考區間為股價拉回至月線 2,372 元附近或 2,350～2,380 元</b>，若股價直接放量突破 2,500 元，也可視為型態轉強、順勢小量跟進</td></tr>
+    <tr><td><b>已持有，續抱或出場</b></td><td>可續抱核心部位（呼應第六步長期基本面優良、且外資季線圖持股比率續創新高的結論），短線加碼部位建議在接近前高壓力區（2,470～2,500元）附近先減碼落袋，保留核心持股</td></tr>
+  </table>
+
+  <h3 style="margin-top:20px;">具體價位條件（皆為訊號式推理，非精準預測）</h3>
+  <ul>
+    <li><b>進場參考區間：</b>2,350～2,380 元（拉回至月線附近不破時）；積極者可等站穩前高後順勢進場</li>
+    <li><b>停損價位：</b>跌破月線 2,372 元為警示，<b>確認跌破季線 2,234 元或前低 2,180～2,290 元區間視為型態失敗</b></li>
+    <li><b>停利／減碼參考：</b>觸及 2,470～2,500 元前高壓力區時分批減碼；若能帶量站穩此區之上，則可上修目標</li>
+    <li><b>型態失效條件：</b>若股價跌破季線（2,234元）且外資轉為連續多日賣超，代表「多頭排列」的判斷失敗，應重新評估</li>
+  </ul>
+  <p style="margin-top:16px;"><b>持有時間範圍：</b>目前技術面屬修復後重返多頭排列的較大級別型態，建議以 <b>2–4 週</b>的波段視角觀察能否站穩並突破前高，而非以單日、隔日沖的極短線思考。</p>
+
+  <div class="callout">
+    <b>與第六步呼應：</b>第六步已判斷長期基本面優良、值得布局，但估值不算便宜；第十步的短線訊號（多頭排列修復、外資長期持股比率續創新高、短期籌碼震盪）可視為「基本面與籌碼長線同步看好，短線可在拉回或突破前高兩種情境下分批布局」，比單純追高或空手觀望更平衡。
+  </div>
+</section>
+
+<hr class="div">
+<p style="text-align:center; color:var(--sub); font-size:13.5px;">長期基本面（第1–6步）與短線操作（第7–10步）分析已全部完成。如需依實際截圖精修技術面與籌碼面，歡迎隨時提供。</p>
+
+<footer>
+  報告版本 v3.0・生成時間 2026-08-13・資料來源：使用者提供截圖（現金流量表、月營收、日K/週K線圖、法人買賣超季線圖）與公開網路搜尋（股價、法人買賣、EPS 預估、新聞事件），已於各節標註出處。本報告為分析推理整理，不構成投資建議，短線部分風險尤高，請自行審慎判斷並嚴守停損。
+</footer>
+
+</main>
+
+<script>
+(function() {
+  var links = Array.from(document.querySelectorAll('nav.stepnav a:not(.locked)'));
+  var sections = links.map(function(a) {
+    return document.querySelector(a.getAttribute('href'));
+  }).filter(Boolean);
+
+  links.forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+    });
+  });
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var id = entry.target.getAttribute('id');
+        links.forEach(function(a) {
+          if (a.getAttribute('href') === '#' + id) {
+            a.classList.add('active');
+          } else if (!a.classList.contains('locked')) {
+            a.classList.remove('active');
+          }
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+  sections.forEach(function(s) { observer.observe(s); });
+})();
+</script>
+
+</body>
+</html>
