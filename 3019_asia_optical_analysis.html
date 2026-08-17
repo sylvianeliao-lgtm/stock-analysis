@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>亞光(3019) 完整分析報告</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --plum:#5b3a63; --plum-deep:#3d2643; --plum-light:#f4eef6;
+  --amber:#b4581a; --amber-deep:#7a3a10; --amber-light:#fbf0e4;
+  --paper:#faf6f0; --card:#ffffff; --ink:#241f26; --sub:#6c6470; --line:#e6dfe8;
+  --pos:#c0392b; --neg:#1a7a48; --peak:#e3b45c; --trough:#e08fa0;
+  --accent-line:#d8cadd;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Noto Sans TC',sans-serif;line-height:1.7;padding-bottom:80px;}
+h1,h2,h3,h4{font-family:'Noto Serif TC',serif;margin:0 0 .5em;}
+h1{font-size:2rem;} h2{font-size:1.5rem;} h3{font-size:1.15rem;}
+p{margin:.4em 0;}
+a{color:inherit;}
+.header{background:linear-gradient(135deg,var(--plum-deep),var(--plum));color:#fff;padding:48px 24px 36px;text-align:center;}
+.header .stock-id{font-family:'Noto Serif TC',serif;font-size:.95rem;letter-spacing:.3em;opacity:.85;text-transform:uppercase;}
+.header h1{font-size:2.6rem;margin:.15em 0;}
+.header .meta{font-size:.9rem;opacity:.85;}
+.stepnav{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:center;gap:2px;padding:8px 10px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.stepnav a{font-size:.78rem;padding:7px 10px;border-radius:20px;color:var(--sub);text-decoration:none;white-space:nowrap;border:1px solid transparent;transition:.2s;}
+.stepnav a.long{}
+.stepnav a.short{}
+.stepnav a.active.long{background:var(--plum-light);color:var(--plum-deep);border-color:var(--accent-line);font-weight:700;}
+.stepnav a.active.short{background:var(--amber-light);color:var(--amber-deep);border-color:#eccba0;font-weight:700;}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px;}
+section.pad{padding:44px 0;border-bottom:1px dashed var(--line);}
+section.pad:last-of-type{border-bottom:none;}
+.eyebrow{display:inline-block;font-size:.78rem;letter-spacing:.15em;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:10px;}
+.long .eyebrow{background:var(--plum-light);color:var(--plum-deep);}
+.short .eyebrow{background:var(--amber-light);color:var(--amber-deep);}
+.callout{border-left:4px solid var(--plum);background:var(--plum-light);padding:14px 18px;border-radius:4px;margin:16px 0;}
+.short .callout{border-left-color:var(--amber);background:var(--amber-light);}
+.callout b{color:var(--plum-deep);} .short .callout b{color:var(--amber-deep);}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.86rem;}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:right;}
+th{background:var(--plum-light);color:var(--plum-deep);font-weight:700;}
+.short th{background:var(--amber-light);color:var(--amber-deep);}
+td:first-child,th:first-child{text-align:left;}
+.pos{color:var(--pos);font-weight:700;} .neg{color:var(--neg);font-weight:700;}
+.tag{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:10px;background:#eee;color:#555;margin-left:6px;}
+.tag.est{background:#fde9d3;color:#8a4a0c;}
+.tag.user{background:#e5f0ea;color:#1a5c36;}
+.scorebox{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0;}
+.scoreitem{flex:1;min-width:130px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center;}
+.scoreitem .num{font-family:'Noto Serif TC',serif;font-size:1.6rem;font-weight:900;color:var(--plum);}
+.scoreitem .lab{font-size:.78rem;color:var(--sub);}
+.totalscore{text-align:center;background:var(--plum-deep);color:#fff;border-radius:14px;padding:26px;margin:24px 0;}
+.totalscore .big{font-family:'Noto Serif TC',serif;font-size:3.2rem;font-weight:900;}
+.chart{margin:18px 0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 10px 6px;}
+.chart-title{font-size:.85rem;font-weight:700;color:var(--sub);margin-bottom:6px;text-align:center;}
+.barwrap{display:flex;align-items:flex-end;height:210px;gap:3px;overflow-x:auto;padding-bottom:20px;position:relative;}
+.barwrap.zero .zeroline{position:absolute;left:0;right:0;height:1px;background:#999;}
+.bcol{display:flex;flex-direction:column;align-items:center;min-width:24px;flex:1;position:relative;height:100%;}
+.bar{width:70%;position:absolute;border-radius:2px 2px 0 0;font-size:.6rem;}
+.bar.negbar{border-radius:0 0 2px 2px;}
+.bar-label{position:absolute;font-size:.6rem;color:var(--sub);white-space:nowrap;}
+.xlabel{position:absolute;bottom:-18px;font-size:.62rem;color:var(--sub);transform:rotate(0deg);white-space:nowrap;}
+.legend{display:flex;gap:14px;justify-content:center;font-size:.75rem;margin-top:4px;flex-wrap:wrap;}
+.legend span{display:inline-flex;align-items:center;gap:4px;}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block;}
+.source{font-size:.75rem;color:var(--sub);margin-top:6px;}
+.source a{color:var(--plum);}
+.short .source a{color:var(--amber-deep);}
+ul{padding-left:1.3em;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+.transition-banner{background:linear-gradient(90deg,var(--amber-deep),var(--amber));color:#fff;padding:18px 20px;border-radius:10px;text-align:center;font-weight:700;margin:30px 0 10px;}
+.disclaimer{font-size:.82rem;background:#fff3e0;border:1px solid #f0d9b5;padding:10px 14px;border-radius:8px;color:#7a4a0c;}
+.footer{text-align:center;font-size:.78rem;color:var(--sub);padding:30px 0;}
+.locked{opacity:.35;pointer-events:none;}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+.badge{font-size:.75rem;padding:4px 10px;background:#f0eaf1;border-radius:20px;color:var(--plum-deep);}
+.short .badge{background:#f5e4d2;color:var(--amber-deep);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="stock-id">3019 · TWSE · 光電</div>
+  <h1>亞光 亞洲光學</h1>
+  <div class="meta">台股個股完整分析報告（長期六步＋短線四步）｜產出時間：2026-08-17</div>
+</div>
+
+<nav class="stepnav" id="stepnav">
+  <a href="#step1" class="long" data-step="1">①現金流六法則</a>
+  <a href="#step2" class="long" data-step="2">②基本資訊</a>
+  <a href="#step3" class="long" data-step="3">③法說會</a>
+  <a href="#step4" class="long" data-step="4">④營收趨勢</a>
+  <a href="#step5" class="long" data-step="5">⑤前瞻本益比</a>
+  <a href="#step6" class="long" data-step="6">⑥長期決策</a>
+  <a href="#step7" class="short" data-step="7">⑦技術面</a>
+  <a href="#step8" class="short" data-step="8">⑧籌碼面</a>
+  <a href="#step9" class="short" data-step="9">⑨消息面</a>
+  <a href="#step10" class="short" data-step="10">⑩短線推理</a>
+</nav>
+
+<div class="wrap">
+
+<!-- STEP 1 -->
+<section class="pad long" id="step1">
+  <div class="eyebrow">第 1 步／共 10 步</div>
+  <h2>現金流量表六大規則分析（盲測）</h2>
+  <div class="callout"><b>重點：</b>六大規則平均分 <b>73 分（良好）</b>。公司在 2014 年之後已由「舉債擴張」轉為「本業自造血、穩健投資」的體質，僅 2010～2013 年的擴張期曾出現舉債投資的警訊，近十餘年財務紀律良好，<b>現金流體質過關，可以繼續往下看基本面</b>。</div>
+
+  <p class="source">資料來源：使用者提供之現金流量表截圖（2009～2026Q2）<span class="tag user">使用者截圖</span>。本步驟依規則僅根據現金流數字盲測，不參考股價、EPS 之外的產業背景資訊。</p>
+
+  <h3>原始數據（單位：億元）</h3>
+  <div style="overflow-x:auto;">
+  <table>
+    <thead><tr><th>年度</th><th>A 營業活動</th><th>B 投資活動</th><th>C 融資活動</th><th>D 稅前淨利</th><th>E 期末現金餘額</th></tr></thead>
+    <tbody id="cfTable"></tbody>
+  </table>
+  </div>
+  <p class="source">26Q2 為單季數字，僅供參考，不列入六大規則計分。</p>
+
+  <h3>規則一：A 逐年成長趨勢（分數：70／100）</h3>
+  <p>2009～2013 年 A 值忽正忽負（最低 -12 億於 2010 年），屬於「站不穩」的草創擴張期；自 2015 年起 A 連續 11 年維持正值，多落在 15～38 億區間，屬於「穩定造血」的性格，但並非單調上升，2024 年衝到 38.3 億高峰後、2025 年又回落至 21 億，波動仍在，故不給到「優秀」等級。</p>
+  <div class="chart"><div class="chart-title">規則一：A 營業活動現金流量（億元）逐年趨勢</div><div class="barwrap zero" id="chartA"></div></div>
+
+  <h3>規則二：B 投資紀律評估（分數：75／100）</h3>
+  <p>亞光屬光學製造業，資本密集度中等。2010～2013 年 |B| 一度大於甚至遠大於 A（如 2013 年 B=-15.8 億 而 A=7.48 億），屬於「敢衝但底子還沒跟上」的階段；2015 年後 |B| 穩定小於 A（多數年份僅為 A 的 15～30%），近年因菲律賓新廠擴產，2025 年 B 放大到 -11 億，但仍低於同年 A（21 億），投資規模與造血能力大致匹配，屬合理的「量力而為」型。</p>
+  <div class="chart"><div class="chart-title">規則二／規則四：B 投資活動 vs C 融資活動（並排長條圖）</div><div class="barwrap zero" id="chartBC"></div>
+    <div class="legend"><span><i style="background:var(--plum);"></i>B 投資活動</span><span><i style="background:var(--amber);"></i>C 融資活動</span></div>
+  </div>
+
+  <h3>規則三：B 投資效益分析（分數：65／100）</h3>
+  <p>核心看隔年 A 是否轉強，效果需要 1-2 年發酵：</p>
+  <table>
+    <thead><tr><th>投資年度（B）</th><th>投資規模</th><th>隔年 A 表現</th><th>解讀</th></tr></thead>
+    <tbody>
+      <tr><td>2010</td><td>-16.4 億</td><td>2011：僅 1.42 億</td><td class="neg">效益不明顯</td></tr>
+      <tr><td>2011</td><td>-11.2 億</td><td>2012：-2.99 億（轉負）</td><td class="neg">未見轉化</td></tr>
+      <tr><td>2013</td><td>-15.8 億（本年）</td><td>2014：3.92 億</td><td class="neg">仍偏弱</td></tr>
+      <tr><td>2023</td><td>-7.28 億</td><td>2024：38.3 億（歷史新高）</td><td class="pos">效益顯著</td></tr>
+      <tr><td>2025</td><td>-11 億</td><td>26Q2 單季 A=8.43 億（估年化約 21 億上下）</td><td>待觀察，尚在發酵中</td></tr>
+    </tbody>
+  </table>
+  <p>個性標籤：早期（2010～2013）屬於「老將自費特訓型」——不斷投入卻成效沒有保證；但 2023→2024 這一次投資明顯轉化成功（A 幾乎翻倍），顯示公司近年執行力優於草創期。提醒：投資活動現金流內仍需留意「固定資產（增加）減少」細項才能準確判斷資本支出用途，目前僅有加總數字，細項需另外查證。</p>
+
+  <h3>規則四：C 融資活動合理性（分數：77／100）</h3>
+  <div class="callout"><b>最高警戒訊號檢查：</b>逐年檢視「A 為負 + C 為正/小幅負值」的組合，<b>僅 2010 年同時符合三重警訊</b>（A=-12 億、B=-16.4 億重度投資、C=+6.15 億疑似舉債），為歷史上財務體質最脆弱的一年；2011、2013 年雖 C 大幅為正（+27.4 億、+34.1 億，顯示重度舉債支應投資），但當年 A 仍勉強為正，警戒程度略低於 2010。</div>
+  <p><b>2014 年起是關鍵轉折點：</b>C 連續 12 年（2014～2025）維持負值，代表公司持續還債／配發股利，不再依賴外部融資支應投資，資金結構已從「舉債擴張」轉為「自有現金流支應」。惟目前僅有 C 的加總數字，若能取得融資活動細項（短期借款、公司債、現金增資、股利發放等拆解），可以更精確判斷 C 為負究竟是「還債」還是「發放股利」為主，兩者意義不同，建議後續有需要可另外提供財報附註資料。</p>
+
+  <h3>規則五：A &gt; D 現金流品質（分數：<span id="rule5score"></span>／100，嚴格二分法）</h3>
+  <p>逐年判斷 A 是否單純大於 D（稅前淨利），17 個年度中共 <b>13 年通過、4 年不通過</b>（2010、2012、2021、2025 未通過，其中 2021、2025 屬於「帳面獲利成長但現金流未同步跟上」的年度，需留意應收帳款或存貨是否墊高了獲利，但未達連續惡化，故仍屬中等偏上表現）。</p>
+
+  <h3>規則六：E 期末現金餘額穩定性（分數：78／100）</h3>
+  <p>2009～2013 年餘額震盪較大（58→42→60→45→73 億），2014 年起轉為長期緩升格局，從 68.5 億穩步墊高至 2024 年的 131 億高點，2022 年曾有一次 -10% 的季度級回落、2025 年由 131 億小幅收斂至 122 億，26Q2 回升至 128 億，整體屬於「體質持續變好」型，僅偶有正常波動。</p>
+  <div class="chart"><div class="chart-title">規則六：E 期末現金餘額（億元）逐年趨勢</div><div class="barwrap zero" id="chartE"></div></div>
+
+  <div class="totalscore">
+    <div class="lab" style="opacity:.8;">六大規則總平均分</div>
+    <div class="big">73<span style="font-size:1.2rem;">分</span></div>
+    <div class="lab" style="opacity:.85;">良好（60～79 分區間）→ 現金流體質可以繼續看下去</div>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section class="pad long" id="step2">
+  <div class="eyebrow">第 2 步／共 10 步</div>
+  <h2>基本資訊查詢</h2>
+  <div class="callout"><b>重點：</b>股價約 <b>137 元</b>（週K收盤，2026/08/14）；2026 年前 7 月累計營收 <b>167.05 億元</b>，年增 <b>+15.5%</b>，7 月單月創「近十年同期新高」；2026H1 EPS <b>2.98 元</b>（年減 47%，主因去年基期較高），但 Q2 單季 EPS <b>1.93 元已季增 83.8%</b>，呈現落底回升。</div>
+
+  <table>
+    <tbody>
+      <tr><td>最新股價（週K收盤）</td><td>137.0 元（2026/08/10～08/14 當週）</td></tr>
+      <tr><td>本益比（近四季，網頁快照）</td><td>約 19.5～21.8 倍（不同時間點快照，非固定區間）</td></tr>
+      <tr><td>現金股利／殖利率</td><td>2025 年度配發 4.6 元，以最新股價 137 元計約 3.4%</td></tr>
+      <tr><td>2025 全年 EPS</td><td>6.6 元</td></tr>
+      <tr><td>2026Q1 EPS</td><td>1.05 元（季減 4%，年增 33%）</td></tr>
+      <tr><td>2026Q2 EPS</td><td>1.93 元（季增 83.8%，年減 32.5%）</td></tr>
+      <tr><td>2026H1 累計 EPS</td><td>2.98 元（年減 47.1%）</td></tr>
+      <tr><td>2026 年 1～7 月累計營收</td><td>167.05 億元（年增 +15.5%）</td></tr>
+      <tr><td>2026 年 7 月單月營收</td><td>24.67 億元（月減 -15.3%，年增 +14.8%，創近十年同期新高）</td></tr>
+    </tbody>
+  </table>
+  <p class="source">資料來源：<a href="https://www.nstock.tw/%E4%BA%9E%E5%85%89%E5%81%9A%E4%BB%80%E9%BA%BC.html" target="_blank">nStock 公司小百科</a>（2026/08/08）、<a href="https://tw.stock.yahoo.com/quote/3019.TW" target="_blank">Yahoo股市 亞光走勢頁</a>（2026/07/28、08/07 快照）、<a href="https://winvest.tw/Stock/Symbol/Comment/3019" target="_blank">Win投資</a>。股價與本益比屬即時報價類欄位，僅為查詢當下快照，非官方公布區間，正式交易請以看盤軟體/券商App為準。經查證亞光近年股本穩定在約 27.9～28.2 億元，並無股票分割、減資等股本變動事件，EPS／每股數字可直接比較，不需回溯調整。</p>
+</section>
+
+<!-- STEP 3 -->
+<section class="pad long" id="step3">
+  <div class="eyebrow">第 3 步／共 10 步</div>
+  <h2>法說會重點摘要</h2>
+  <div class="callout"><b>重點：</b>公司提出「數位相機／車用鏡頭／AI 資料中心液冷散熱」三線並進的成長故事，菲律賓新廠預計 <b>2026 年第 4 季量產</b>是最主要的中期催化劑。</div>
+  <ul>
+    <li><b>數位相機：</b>2025 年出貨量 274 萬台（較 2024 年約 136 萬台翻倍），2026 年月產能 25～30 萬台，管理層預期出貨量續增。</li>
+    <li><b>車用鏡頭：</b>需求回溫，帶動下半年營運展望轉佳（董事長：「下半年看起來不錯」）。</li>
+    <li><b>AI 資料中心液冷散熱：</b>與美商 Frore Systems 深化合作，由子公司精熙供應水冷板關鍵金屬件，預計 2026Q4 於菲律賓新廠量產貢獻業績（此為 2026/04/24 消息面帶動股價一度漲停的主因）。</li>
+    <li><b>人形機器人鏡頭 ／ AR/VR/Metalens：</b>仍在技術研發與客戶開發階段，目前僅聚焦臉部高難度鏡頭應用，尚未形成明顯營收貢獻。</li>
+    <li><b>資本支出：</b>2026 年規劃約 10.5 億元（與 2025 年相當），主要用於菲律賓新廠無塵室、NIL 設備等，其中約 6 億元投入菲律賓新廠。</li>
+  </ul>
+  <p class="source">資料來源：<a href="https://udn.com/news/story/7253/9529711" target="_blank">聯合新聞網（2026/05/28 股東會報導）</a>、<a href="https://news.cnyes.com/news/id/6471514" target="_blank">鉅亨網（2026/05/27）</a>、<a href="https://vocus.cc/article/69b3c279fd897800012334b2" target="_blank">法說最速報摘要（2026/03）</a>。以上為財經媒體對法說會／股東會逐字稿的整理摘要，非 Claude 直接讀取官方 PDF 原文。若想針對特定主題（如菲律賓新廠具體投產排程、AI 液冷散熱訂單能見度）深入討論，歡迎再告訴我。</p>
+</section>
+
+<!-- STEP 4 -->
+<section class="pad long" id="step4">
+  <div class="eyebrow">第 4 步／共 10 步</div>
+  <h2>營收趨勢視覺化</h2>
+  <div class="callout"><b>重點：</b>近 24 個月營收呈現「緩步墊高＋旺季集中」格局，2026 年前 7 月每個月幾乎都是年增雙位數成長，7 月單月 24.67 億元已是近十年同期最高，唯 6 月（29.14 億）為近 2 年單月高點，7 月出現季節性回落（月減 -15.3%）。</div>
+  <div class="chart"><div class="chart-title">近 24 個月單月營收（億元）</div><div class="barwrap" id="chartRev"></div></div>
+  <p class="source">資料來源：使用者提供之月營收截圖（Goodinfo 格式，2024/08～2026/07）<span class="tag user">使用者截圖</span>。</p>
+</section>
+
+<!-- STEP 5 -->
+<section class="pad long" id="step5">
+  <div class="eyebrow">第 5 步／共 10 步</div>
+  <h2>前瞻本益比／EPS 預估</h2>
+  <div class="callout"><b>重點：</b>法人預估 2026 全年 EPS 落在 <b>7.2～8.13 元</b>，對應目前股價 137 元的<b>隱含前瞻本益比約 16.9～19.0 倍</b>；但此預估是在 26Q2 財報公布前做出，而實際 H1 EPS（2.98 元）年減 47%，法人估值需留意是否會因此下修。</div>
+
+  <h3>隱含前瞻本益比（現在股價 ÷ 預估EPS）</h3>
+  <table>
+    <thead><tr><th>情境</th><th>2026 預估 EPS</th><th>隱含前瞻本益比（股價137元）</th></tr></thead>
+    <tbody>
+      <tr><td>法人預估區間下緣</td><td>7.2 元</td><td>19.0 倍</td></tr>
+      <tr><td>法人預估區間上緣</td><td>8.13 元</td><td>16.9 倍</td></tr>
+    </tbody>
+  </table>
+
+  <h3>目標本益比法（預估EPS × 假設倍數，估算目標價）</h3>
+  <table>
+    <thead><tr><th>假設本益比</th><th>EPS=7.2元 目標價</th><th>EPS=8.13元 目標價</th></tr></thead>
+    <tbody>
+      <tr><td>20 倍（保守）</td><td>144 元</td><td>163 元</td></tr>
+      <tr><td>25 倍（中性）</td><td>180 元</td><td>203 元</td></tr>
+      <tr><td>30 倍（樂觀）</td><td>216 元</td><td>244 元</td></tr>
+    </tbody>
+  </table>
+  <p>需特別說明：「隱含前瞻本益比」是已知股價反推倍數，回答「現在貴不貴」；「目標本益比法」是已知倍數反推目標價，回答「合理價可能落在哪」，兩者是同一公式的不同用法，目標價對「倍數怎麼選」高度敏感，僅為敏感度試算、不是預測。</p>
+  <div class="callout"><b>預估不確定性揭露：</b>2025 年中曾有法人系統預估 2026 年 EPS 上看 8.54 元（年增 8.7%），但實際上 2026H1 EPS 僅 2.98 元、年減 47%，顯示先前預估明顯過於樂觀。目前 7.2～8.13 元的估值區間，仍高度仰賴下半年（尤其 Q4 菲律賓新廠量產＋消費電子旺季）能否如期發酵，建議對法人預估保持一定保留，不宜完全信賴單一數字。查無明確的 2027（N+2）預估資料，暫不提供次二年度估值。</div>
+  <p class="source">資料來源：<a href="https://www.cmoney.tw/notes/note-detail.aspx?nid=1208240" target="_blank">CMoney（2026/06/05，法人機構平均預估）</a>、<a href="https://cmnews.com.tw/article/bubuypope-e50a30bb-8229-11f0-97d8-2e5d50abab54" target="_blank">CMoney 陳重銘專欄（2025/08，較舊之預估，僅供對照）</a>。</p>
+</section>
+
+<!-- STEP 6 -->
+<section class="pad long" id="step6">
+  <div class="eyebrow">第 6 步／共 10 步</div>
+  <h2>長期投資決策推理</h2>
+  <div class="disclaimer">以下為分析推理與觀點整理，並非專業投資建議（Claude 不具理財顧問身分），請自行判斷風險。</div>
+  <div class="callout"><b>核心結論：</b>基本面「值不值得投資」偏正向（現金流體質良好、三大成長引擎具體），但「現在這個價位好不好買」偏中性——目前 137 元落在法人目標價區間（144～244 元）的下緣或略低於下緣，估值尚未明顯偏貴，惟短線籌碼面已出現外資近期回補訊號，也代表已有部分買盤先行反映。</div>
+
+  <div class="two-col">
+    <div>
+      <h3>若尚未持有</h3>
+      <p>基本面：現金流健檢 73 分、H2 有菲律賓新廠量產與消費電子旺季雙催化劑，屬於可以布局的體質。<br>進場時機判斷：目前股價對應保守情境（20倍×7.2元=144元）僅小幅低於現價，並非明顯低估，可考慮分批進場，而非一次重壓；若股價回落至法人目標價下緣（約144元）附近或更低，會是相對更甜的切入點。</p>
+    </div>
+    <div>
+      <h3>若已持有</h3>
+      <p>基本面尚未轉壞，Q2 EPS 已季增 84% 顯示落底回升訊號，建議續抱觀察 Q3/Q4 財報是否延續。<br>若股價漲至樂觀情境目標價（30倍×8.13元≈244元）附近，或消息面出現不如預期（如菲律賓新廠量產延遲），則應重新檢視是否減碼。</p>
+    </div>
+  </div>
+
+  <p><b>觀察訊號（尚未發生，可作為未來驗證依據）：</b></p>
+  <ul>
+    <li>Q3 財報（約 10～11 月公布）EPS 是否延續季增動能</li>
+    <li>菲律賓新廠是否如期於 2026Q4 量產並開始貢獻液冷散熱相關營收</li>
+    <li>法人是否在 Q2 財報後上修或下修全年 EPS 預估區間（目前 7.2～8.13 元尚未反映 26Q2 實際結果）</li>
+  </ul>
+  <p>核心邏輯呼應第一步結論：公司已從「舉債擴張」轉為「自有現金流支應成長」，這代表菲律賓新廠與液冷散熱的資本支出，是建立在較健康的財務基礎上推進，而非過度加槓桿的賭注，這是本檔股票長期投資論述中相對加分的一點。</p>
+
+  <div class="transition-banner">以下為短線操作分析，判斷維度從「公司值不值得投資」轉為「現在進出場划不划算」</div>
+</section>
+
+<!-- STEP 7 -->
+<section class="pad short" id="step7">
+  <div class="eyebrow">第 7 步／共 10 步</div>
+  <h2>技術面分析</h2>
+  <div class="disclaimer">短線操作為高風險、高波動行為，以下僅為技術面推理，非報明牌，用詞一律採條件式表達。</div>
+  <div class="callout"><b>重點：</b>週K在 130.5 元附近止跌反彈（本週 +5.79%），KD 值來到 27～29 的低檔區、K線正準備向上黃金交叉 D線，屬於「訊號偏多但均線仍呈壓制」的格局。</div>
+
+  <table>
+    <tbody>
+      <tr><td>週期</td><td>週K（2024W23～2026W33，約2年）</td></tr>
+      <tr><td>本週收盤 / 開盤 / 高 / 低</td><td>137.00 / 132.00 / 141.00 / 130.50</td></tr>
+      <tr><td>本週漲跌</td><td class="pos">+7.50 元（+5.79%）</td></tr>
+      <tr><td>成交量</td><td>1.4 萬張（低於季均量 3.49 萬張、年均量 3.79 萬張）</td></tr>
+      <tr><td>月線 / 季線 / 半年線 / 年線 / 3年線</td><td>131.75▲ / 143▼ / 139.31▼ / 144.33▼ / 116.18▲</td></tr>
+      <tr><td>KD</td><td>K 27.55▲ D 28.81▼ J 25.04▲（低檔區）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>判讀（訊號明確度：中等）</h3>
+  <ul>
+    <li><b>趨勢方向（訊號傾向但不確定）：</b>股價自 2024 年中約 60 元一路噴出至 2024 年底／2025 年初高點約 190 元後，進入長達逾一年的區間震盪（約 118～170 元），目前位於區間中下段，本週由低點 130.5 反彈。</li>
+    <li><b>均線排列（訊號明確）：</b>非典型多頭或空頭排列——股價高於月線與3年線，但低於季線、半年線、年線，代表短期止穩但中期仍受制於上方均線帶（139～144元）壓力，尚未確立中期反轉。</li>
+    <li><b>動能指標（訊號明確）：</b>KD 三線都在 30 以下低檔鈍化區，K值已由底部翹頭向上，接近與D線黃金交叉，屬偏多的低檔反轉訊號，但尚未正式交叉完成。</li>
+    <li><b>量價關係（訊號傾向但不確定）：</b>本週價漲但量能仍低於季均與年均量，屬於「價漲量縮」，動能還不夠強勁，需要後續量能放大確認。</li>
+  </ul>
+
+  <div class="callout"><b>與長期基本面呼應：</b>技術面低檔反轉的時間點，與籌碼面外資近期由賣轉買（見第8步）方向一致，且與長期分析「現金流體質良好、H2 有催化劑」的結論同方向，屬於較有參考性的疊加訊號；但均線仍未轉多頭排列，代表這仍是「相對高機率的反彈」而非「已確認的中期反轉」。</div>
+
+  <div class="disclaimer" style="margin-top:14px;">⚠️ <b>資料缺口提醒：</b>目前僅取得「週K」一種週期，技術面判讀尚不完整。建議依需求補充以下截圖以取得更完整的五週期技術面（大格局→精確價位）：
+    <ul style="margin:8px 0 0;">
+      <li>日K：<a href="https://goodinfo.tw/tw/ShowK_Chart.asp?STOCK_ID=3019&CHT_CAT=DATE" target="_blank">連結</a>（找精確進出場價位）</li>
+      <li>月K：<a href="https://goodinfo.tw/tw/ShowK_Chart.asp?STOCK_ID=3019&CHT_CAT=MONTH" target="_blank">連結</a></li>
+      <li>季K：<a href="https://goodinfo.tw/tw/ShowK_Chart.asp?STOCK_ID=3019&CHT_CAT=QUAR" target="_blank">連結</a>（確認大格局是否有壞掉）</li>
+      <li>年K：<a href="https://goodinfo.tw/tw/ShowK_Chart.asp?STOCK_ID=3019&CHT_CAT=YEAR" target="_blank">連結</a>（第一步現金流表中的歷年收盤價可作為年線走勢的輔助參考，但仍建議附上正式年K圖表）</li>
+    </ul>
+    另外，你提供的週K截圖右上角顯示「還原股價」<b>未勾選</b>；經查證亞光近年並無股票分割／減資事件，理論上不影響本次判讀，但若之後要精確比對長期價位，仍建議勾選還原股價後重新截圖。
+  </div>
+</section>
+
+<!-- STEP 8 -->
+<section class="pad short" id="step8">
+  <div class="eyebrow">第 8 步／共 10 步</div>
+  <h2>籌碼面分析</h2>
+  <div class="callout"><b>重點：</b>外資買賣超呈現「短多長空」轉折——近 2 天～3 個月轉為連續買超（且力道逐週放大），但半年～1年期仍是淨賣超，屬於「資金正在回流、但尚未完全回補先前的減碼」格局，年初至今（YTD）已轉為淨買超。</div>
+
+  <div class="chart"><div class="chart-title">外資買賣超張數（依期間，張）</div><div class="barwrap zero" id="chartForeign"></div></div>
+
+  <table>
+    <thead><tr><th>期間</th><th>外資買賣超（張）</th><th>解讀</th></tr></thead>
+    <tbody>
+      <tr><td>近 2 日</td><td class="pos">+963</td><td rowspan="4">短期連續買超，力道隨天數拉長而放大</td></tr>
+      <tr><td>近 3 日</td><td class="pos">+1,124</td></tr>
+      <tr><td>近 5 日</td><td class="pos">+2,441</td></tr>
+      <tr><td>近 10 日</td><td class="pos">+4,416</td></tr>
+      <tr><td>近 1 個月</td><td class="pos">+11,500</td><td>買超延續，短線偏多</td></tr>
+      <tr><td>近 3 個月</td><td class="pos">+9,440</td><td>三個月維度仍為淨買超</td></tr>
+      <tr><td>近半年</td><td class="neg">-8,301</td><td rowspan="2">拉長至半年、一年期仍是淨賣超，顯示近期買超是「減碼放緩後轉買」，還沒完全回補</td></tr>
+      <tr><td>近 1 年</td><td class="neg">-36,800</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>判讀傾向：偏多（但把握度中等）。</b>近期（1個月內）外資買超力道加速放大，與第7步技術面 KD 低檔反轉的時間點相符，兩者疊加使短線偏多訊號更具參考性；惟半年、一年期仍是淨賣超，代表這波買盤還在「止血回補」階段，尚不能視為外資轉為全面加碼。</p>
+
+  <div class="disclaimer"><b>⚠️ 資料缺口提醒：</b>你提供的籌碼截圖是「各期間加總」格式，並非理想的 8-12 週逐週趨勢圖，較難判斷買超力道是連續穩定放大、還是集中在少數幾天。若要更精確評估，建議補充以下兩張截圖（期間請拉到 8-12 週）：
+    <ul style="margin:8px 0 0;">
+      <li>三大法人買賣超週統計：<a href="https://goodinfo.tw/tw/ShowBuySaleChart.asp?STOCK_ID=3019&CHT_CAT=WEEK" target="_blank">連結</a></li>
+      <li>融資融券餘額週統計：<a href="https://goodinfo.tw/tw/ShowMarginChart.asp?STOCK_ID=3019&CHT_CAT=WEEK" target="_blank">連結</a></li>
+    </ul>
+    投信近日（2-5日）買賣超張數在截圖中接近 0，顯示投信目前偏觀望，未跟進外資的短線回補。自營商數據雜訊較高，本分析予以忽略。
+  </div>
+  <p class="source">資料來源：使用者提供之三大法人籌碼截圖（統計至2026/08/14）<span class="tag user">使用者截圖</span>。</p>
+</section>
+
+<!-- STEP 9 -->
+<section class="pad short" id="step9">
+  <div class="eyebrow">第 9 步／共 10 步</div>
+  <h2>消息面分析</h2>
+  <div class="callout"><b>重點：</b>近期已發生的最大催化劑（AI液冷散熱合作、股東會展望）多已反映在 4～5 月的漲勢中；接下來的關鍵事件是 <b>Q3 財報（約10-11月）</b>與 <b>菲律賓新廠 2026Q4 量產</b>，屬於尚未完全反映的變數。</div>
+
+  <h3>已發生的消息</h3>
+  <ul>
+    <li><b>2026/04/23-24：</b>亞光宣布攜手美商 Frore Systems 深化 AI 資料中心液冷散熱合作，股價當日放量拉出漲停，此利多已明顯 price in。</li>
+    <li><b>2026/05/27：</b>股東會，董事長釋出「下半年看起來不錯」的展望，並通過配發 4.6 元現金股利（除息日 2026/06/24）。</li>
+    <li><b>2026/08/03：</b>董事會通過 Q2 財報（稅後淨利、EPS已於第2步呈現），市場已消化。</li>
+    <li><b>2026/07 營收：</b>單月創近十年同期新高，但月減 15.3%（季節性回落），此為已公布事實。</li>
+  </ul>
+
+  <h3>即將發生的事件（尚未反映，短線潛在催化劑）</h3>
+  <ul>
+    <li><b>菲律賓新廠量產：</b>公司規劃 2026 年第 4 季量產，屆時液冷散熱水冷板金屬件與瞄準器等產品開始貢獻業績，為中期最主要的營收催化劑，時間點尚未明確到日，需持續追蹤官方公告。</li>
+    <li><b>Q3 財報：</b>依過去慣例約在 10 月底～11 月公布，市場將檢驗「Q2 EPS 季增 84%」的回升動能能否延續。</li>
+  </ul>
+  <p class="source">資料來源：<a href="https://goodinfo.tw/tw/StockDetail.asp?STOCK_ID=3019" target="_blank">Goodinfo 個股新聞列表</a>、<a href="https://finance.biggo.com.tw/news/bRQW450BYH_ypPqOrWYf" target="_blank">BigGo財經（2026/05）</a>。目前查無市場傳聞類消息，以上均為公司公告或正式財經媒體報導。</p>
+</section>
+
+<!-- STEP 10 -->
+<section class="pad short" id="step10">
+  <div class="eyebrow">第 10 步／共 10 步</div>
+  <h2>短線操作情境推理</h2>
+  <div class="disclaimer">以下為推理與觀點，非專業投資建議。短線操作風險高於長期持有，任何價位僅為條件式參考，請自行嚴格執行停損紀律。</div>
+
+  <div class="callout"><b>整合結論：</b>技術面（KD低檔翻揚）、籌碼面（外資近1個月轉買超且力道放大）、基本面（H2雙催化劑、估值未明顯偏貴）三者方向大致一致，屬於「訊號偏多但確定性中等」的組合；均線仍在上方構成壓力，量能尚未明顯放大，是主要風險。</div>
+
+  <div class="two-col">
+    <div>
+      <h3>若尚未持有</h3>
+      <p>可考慮的進場參考區間：<b>131～137 元</b>（月線附近至現價，此區間為近期止跌反彈的成本重心）。<br>
+      若股價回測不破本週低點 130.5 元，且量能溫和放大，可視為較佳的分批切入點；若一口氣站上季線 143 元及半年線 139.31 元，則代表反彈格局進一步確立，可小幅追價，但追價風險相對提高。</p>
+    </div>
+    <div>
+      <h3>若已持有</h3>
+      <p>目前反彈 +5.79%，可續抱觀察是否延續，但因季線／半年線／年線（139～144元）構成上方壓力區，不建議在此區間追高，可考慮於壓力區分批減碼鎖利。<br>
+      停損參考：跌破 130.5 元（本週低點）視為短線型態偏弱，若同時外資轉為連續賣超，則應嚴格執行停損。</p>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>項目</th><th>參考數值／條件</th></tr></thead>
+    <tbody>
+      <tr><td>進場參考區間</td><td>131～137 元</td></tr>
+      <tr><td>停損價位</td><td>跌破 130.5 元（本週低點）</td></tr>
+      <tr><td>停利／減碼參考</td><td>觸及季線 143 元、半年線 139.31 元、年線 144.33 元附近分批減碼；觀察 KD 是否出現高檔背離</td></tr>
+      <tr><td>型態失效條件</td><td>股價跌破 130.5 元，且外資轉為連續數日賣超、KD 未能完成黃金交叉反而轉頭向下</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>時間範圍判斷：</b>本次訊號源於週K級別的低檔反轉與外資短期回補，屬於「數週級別（約2-4週）」的短波段思考較合適；若進一步結合消息面的 Q3 財報（10-11月）與菲律賓新廠 Q4 量產等催化劑，波段也可能延伸至第四季，但那已較接近「跨季度波段」，與純技術面的短線判斷屬於不同時間尺度，操作時建議分開看待、分批應對。</p>
+
+  <div class="callout"><b>訊號可信度提醒：</b>本次三方訊號雖然方向一致，但技術面僅有週K一種週期、籌碼面也非逐週趨勢圖，資料完整度有限，把握度僅屬中等，建議依第7、8步提到的缺口補充截圖後，可以再進一步確認訊號強度。</div>
+</section>
+
+<div class="wrap">
+<p class="footer">
+報告版本 v1.0｜產出時間：2026-08-17｜本報告依 tw-stock-full-analysis 十步驟框架產出，第1步現金流分析採盲測原則（不參考股價/EPS等背景資訊）。所有市場數據均標註來源，技術面／籌碼面／營收月表依使用者提供截圖判讀。本報告為分析推理整理，不構成投資建議，投資請自負風險。
+</p>
+</div>
+</div>
+
+<script>
+// ---------- data ----------
+const cf = [
+ {y:'2009',A:2.33,B:-4.95,C:4.78,D:-2.82,E:58.3},
+ {y:'2010',A:-12,B:-16.4,C:6.15,D:-7.73,E:41.6},
+ {y:'2011',A:1.42,B:-11.2,C:27.4,D:-17.6,E:60.2},
+ {y:'2012',A:-2.99,B:-6.93,C:-4.85,D:-2.38,E:44.6},
+ {y:'2013',A:7.48,B:-15.8,C:34.1,D:-7.14,E:73.3},
+ {y:'2014',A:3.92,B:-2.2,C:-9.49,D:-1.09,E:68.5},
+ {y:'2015',A:22.1,B:-2.29,C:-15.9,D:3.98,E:74.2},
+ {y:'2016',A:33.3,B:-6.47,C:-15.3,D:11.4,E:83.5},
+ {y:'2017',A:23,B:-2.79,C:-10.9,D:11.3,E:83.8},
+ {y:'2018',A:24.8,B:-3.24,C:-10.4,D:18.7,E:96.1},
+ {y:'2019',A:19.4,B:-4.76,C:-12,D:16.5,E:95.5},
+ {y:'2020',A:21.8,B:-6.14,C:-8.26,D:8.13,E:100},
+ {y:'2021',A:15.9,B:-5.02,C:-6.38,D:20.9,E:102},
+ {y:'2022',A:23,B:-3.7,C:-35.2,D:17.2,E:91.8},
+ {y:'2023',A:22.4,B:-7.28,C:-8.67,D:13.2,E:97.5},
+ {y:'2024',A:38.3,B:-6.38,C:-5.96,D:24.9,E:131},
+ {y:'2025',A:21,B:-11,C:-15.4,D:27,E:122},
+ {y:"26Q2",A:8.43,B:-6.15,C:-0.24,D:12.3,E:128,q:true},
+];
+
+const revData = [
+ ['24/08',24.17],['24/09',21.85],['24/10',20.64],['24/11',21.09],['24/12',21.45],
+ ['25/01',18.27],['25/02',16],['25/03',19.82],['25/04',20.75],['25/05',22.57],['25/06',25.76],
+ ['25/07',21.49],['25/08',24.67],['25/09',25.37],['25/10',23.55],['25/11',25.15],['25/12',21.05],
+ ['26/01',22.73],['26/02',17.1],['26/03',22.26],['26/04',24.9],['26/05',26.24],['26/06',29.14],['26/07',24.67]
+];
+
+const foreignData = [
+ ['2日',963],['3日',1124],['5日',2441],['10日',4416],['1個月',11500],['3個月',9440],['半年',-8301],['1年',-36800]
+];
+
+// ---------- render cash flow table ----------
+const cfTbody = document.getElementById('cfTable');
+cf.slice().reverse().forEach(r=>{
+  const tr = document.createElement('tr');
+  const fmt = v => (v>=0?'<span class="pos">+':'<span class="neg">') + v.toFixed(2) + '</span>';
+  tr.innerHTML = `<td>${r.y}${r.q?' <span class="tag">單季</span>':''}</td><td>${fmt(r.A)}</td><td>${fmt(r.B)}</td><td>${fmt(r.C)}</td><td>${fmt(r.D)}</td><td>${r.E.toFixed(1)}</td>`;
+  cfTbody.appendChild(tr);
+});
+
+// rule5 score calc
+let pass=0,total=0;
+cf.filter(r=>!r.q).forEach(r=>{ total++; if(r.A>r.D) pass++; });
+document.getElementById('rule5score').textContent = Math.round(pass/total*100);
+
+// ---------- generic zero-axis bar chart ----------
+function renderZeroChart(containerId, data, opts={}){
+  const el = document.getElementById(containerId);
+  const vals = data.map(d=>d.v);
+  const maxPos = Math.max(1, ...vals.filter(v=>v>0), 0);
+  const maxNeg = Math.max(1, ...vals.filter(v=>v<0).map(v=>-v), 0);
+  const topH = 130, botH = 60; // px zones
+  const zeroTop = topH;
+  el.style.height = (topH+botH+20)+'px';
+  el.innerHTML = `<div class="zeroline" style="top:${zeroTop}px;"></div>`;
+  const maxAbsPos = Math.max(...vals);
+  const minVal = Math.min(...vals);
+  const peakIdx = vals.indexOf(Math.max(...vals));
+  const troughIdx = vals.indexOf(Math.min(...vals));
+  data.forEach((d,i)=>{
+    const col = document.createElement('div'); col.className='bcol';
+    const bar = document.createElement('div'); bar.className='bar'+(d.v<0?' negbar':'');
+    let h,top,color;
+    if(d.v>=0){ h = (d.v/maxPos)*topH; top = zeroTop-h; }
+    else { h = (-d.v/maxNeg)*botH; top = zeroTop; }
+    color = d.color || 'var(--plum)';
+    if(opts.short) color = d.color || 'var(--amber)';
+    if(i===peakIdx) color='var(--peak)';
+    if(i===troughIdx) color='var(--trough)';
+    bar.style.height = Math.max(h,2)+'px';
+    bar.style.top = top+'px';
+    bar.style.background = color;
+    const lab = document.createElement('div'); lab.className='bar-label';
+    lab.textContent = d.v.toFixed(1);
+    lab.style.top = d.v>=0 ? (top-13)+'px' : (top+h+2)+'px';
+    col.appendChild(bar); col.appendChild(lab);
+    const xl = document.createElement('div'); xl.className='xlabel'; xl.textContent = d.label;
+    col.appendChild(xl);
+    el.appendChild(col);
+  });
+}
+
+renderZeroChart('chartA', cf.filter(r=>!r.q).map(r=>({label:r.y.slice(2),v:r.A})));
+
+// E is always positive, so render as a simple ascending bar chart (no zero-axis needed)
+(function(){
+  const el = document.getElementById('chartE');
+  const data = cf.filter(r=>!r.q).map(r=>({label:r.y.slice(2), v:r.E}));
+  const max = Math.max(...data.map(d=>d.v));
+  const min = Math.min(...data.map(d=>d.v));
+  el.innerHTML = '';
+  el.style.height = '190px';
+  const peakIdx = data.map(d=>d.v).indexOf(max);
+  const troughIdx = data.map(d=>d.v).indexOf(min);
+  data.forEach((d,i)=>{
+    const col = document.createElement('div'); col.className='bcol';
+    const bar = document.createElement('div'); bar.className='bar';
+    const h = (d.v/max)*160;
+    bar.style.height = h+'px'; bar.style.top = (170-h)+'px';
+    bar.style.background = i===peakIdx?'var(--peak)':(i===troughIdx?'var(--trough)':'var(--plum)');
+    const lab = document.createElement('div'); lab.className='bar-label'; lab.textContent = d.v.toFixed(0);
+    lab.style.top = (170-h-13)+'px';
+    col.appendChild(bar); col.appendChild(lab);
+    const xl = document.createElement('div'); xl.className='xlabel'; xl.textContent = d.label;
+    col.appendChild(xl);
+    el.appendChild(col);
+  });
+})();
+
+// paired B/C chart
+(function(){
+  const el = document.getElementById('chartBC');
+  const data = cf.filter(r=>!r.q);
+  const maxAbs = Math.max(...data.map(d=>Math.max(Math.abs(d.B),Math.abs(d.C))));
+  const topH=20, botH=140, zeroTop=topH;
+  el.style.height=(topH+botH+22)+'px';
+  el.innerHTML = `<div class="zeroline" style="top:${zeroTop}px;"></div>`;
+  data.forEach(d=>{
+    const col=document.createElement('div'); col.className='bcol'; col.style.gap='0';
+    const inner=document.createElement('div'); inner.style.cssText='display:flex;gap:2px;justify-content:center;position:relative;height:100%;width:100%;';
+    [['B',d.B,'var(--plum)'],['C',d.C,'var(--amber)']].forEach(([k,v,color])=>{
+      const bar=document.createElement('div'); bar.style.cssText='width:8px;position:absolute;border-radius:2px;';
+      const h=(Math.abs(v)/maxAbs)*botH;
+      bar.style.height=Math.max(h,2)+'px';
+      bar.style.background=color;
+      if(v>=0){ bar.style.top=(zeroTop-h)+'px'; bar.style.left= k==='B' ? 'calc(50% - 10px)':'calc(50% + 2px)'; }
+      else { bar.style.top=zeroTop+'px'; bar.style.left= k==='B' ? 'calc(50% - 10px)':'calc(50% + 2px)'; }
+    });
+    // highlight warning years: B negative & C positive-ish
+    if(d.B<0 && d.C>-1){ col.style.background='rgba(192,57,43,.08)'; col.style.borderRadius='4px'; }
+    inner.appendChild(document.createElement('span'));
+    col.appendChild(inner);
+    const xl=document.createElement('div'); xl.className='xlabel'; xl.textContent=d.y.slice(2);
+    col.appendChild(xl);
+    el.appendChild(col);
+  });
+})();
+
+// revenue chart (positive only)
+(function(){
+  const el = document.getElementById('chartRev');
+  const max = Math.max(...revData.map(d=>d[1]));
+  const min = Math.min(...revData.map(d=>d[1]));
+  el.style.height='190px';
+  const peakIdx = revData.map(d=>d[1]).indexOf(max);
+  const troughIdx = revData.map(d=>d[1]).indexOf(min);
+  revData.forEach(([label,v],i)=>{
+    const col=document.createElement('div'); col.className='bcol';
+    const bar=document.createElement('div'); bar.className='bar';
+    const h=(v/max)*160;
+    bar.style.height=h+'px'; bar.style.top=(170-h)+'px';
+    bar.style.background = i===peakIdx?'var(--peak)':(i===troughIdx?'var(--trough)':'var(--plum)');
+    const lab=document.createElement('div'); lab.className='bar-label'; lab.textContent=v.toFixed(1);
+    lab.style.top=(170-h-13)+'px'; lab.style.fontSize='.55rem';
+    col.appendChild(bar); col.appendChild(lab);
+    const xl=document.createElement('div'); xl.className='xlabel'; xl.textContent=label; xl.style.fontSize='.55rem';
+    col.appendChild(xl);
+    el.appendChild(col);
+  });
+})();
+
+// foreign investor chart
+(function(){
+  const el = document.getElementById('chartForeign');
+  const data = foreignData.map(d=>({label:d[0], v:d[1]}));
+  const maxPos = Math.max(...data.map(d=>d.v>0?d.v:0),1);
+  const maxNeg = Math.max(...data.map(d=>d.v<0?-d.v:0),1);
+  const topH=110, botH=90, zeroTop=topH;
+  el.style.height=(topH+botH+20)+'px';
+  el.innerHTML = `<div class="zeroline" style="top:${zeroTop}px;"></div>`;
+  data.forEach(d=>{
+    const col=document.createElement('div'); col.className='bcol';
+    const bar=document.createElement('div'); bar.className='bar'+(d.v<0?' negbar':'');
+    let h,top;
+    if(d.v>=0){ h=(d.v/maxPos)*topH; top=zeroTop-h; }
+    else { h=(-d.v/maxNeg)*botH; top=zeroTop; }
+    bar.style.height=Math.max(h,2)+'px'; bar.style.top=top+'px';
+    bar.style.background = d.v>=0 ? 'var(--pos)' : 'var(--neg)';
+    const lab=document.createElement('div'); lab.className='bar-label'; lab.textContent=(d.v>0?'+':'')+d.v.toLocaleString();
+    lab.style.top = d.v>=0 ? (top-13)+'px' : (top+h+2)+'px';
+    col.appendChild(bar); col.appendChild(lab);
+    const xl=document.createElement('div'); xl.className='xlabel'; xl.textContent=d.label;
+    col.appendChild(xl);
+    el.appendChild(col);
+  });
+})();
+
+// ---------- nav active state + smooth scroll ----------
+const navLinks = Array.from(document.querySelectorAll('#stepnav a'));
+navLinks.forEach(a=>{
+  a.addEventListener('click', e=>{
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+const sections = navLinks.map(a=>document.querySelector(a.getAttribute('href')));
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const id = '#'+entry.target.id;
+      navLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href')===id));
+    }
+  });
+}, {rootMargin:'-40% 0px -50% 0px', threshold:0});
+sections.forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
